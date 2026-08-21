@@ -26,7 +26,7 @@ app.get('/auction', (req, res) => {
 // รายชื่อ Discord Username ที่อนุญาตให้เข้าถึง
 // (ใช้ชื่อ username ปัจจุบันของ Discord ที่ไม่มี # ตัวเลขแล้ว เช่น 'admin_user')
 const ALLOWED_USERS = [
-    'admin_user','daffodil2693',
+    'admin_user','daffodil2693','amooma_aom',
     'guild_leader',
     'player123'
 ];
