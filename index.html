@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ETERNITY GUILD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #fdf6e3;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
+        .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
+        .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
+        .discord-button { background: linear-gradient(to bottom, #5865F2, #4752C4); box-shadow: 0 2px 4px rgba(88, 101, 242, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); border: 1px solid #3c45a5; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
+        .discord-button:hover { background: linear-gradient(to bottom, #6974F3, #5865F2); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Decorative elements -->
+    <div class="absolute top-10 left-10 w-32 h-32 bg-amber-300 rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-pulse"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 bg-sky-300 rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-pulse" style="animation-delay: 2s;"></div>
+
+    <div class="roo-card w-full max-w-md rounded-[2rem] p-10 relative z-10 text-center animate-[fadeIn_0.5s_ease-out]">
+        
+        <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 to-amber-200 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-inner border border-amber-500/30">
+            <span class="text-4xl text-amber-800 drop-shadow-sm">🛡️</span>
+        </div>
+
+        <h1 class="text-3xl font-extrabold text-amber-900 tracking-tight mb-2 drop-shadow-sm">
+            ETERNITY<span class="text-stone-700">Guild</span>
+        </h1>
+        <p class="text-stone-600 mb-8 text-sm">ระบบจัดการกิลด์ Ragnarok Origin</p>
+
+        <!-- แสดง Error หากมี -->
+        <div id="error-message" class="hidden mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
+        </div>
+
+        <div class="space-y-4">
+            <!-- Link ไปยัง /auth/discord ของ Server -->
+            <a href="/auth/discord" class="discord-button w-full text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition-all">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                </svg>
+                เข้าสู่ระบบด้วย Discord
+            </a>
+            
+            <a href="dashboard.html" class="roo-button block w-full text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all">
+                ทดสอบเข้าแบบไม่ผ่าน Server
+            </a>
+        </div>
+        
+        <p class="text-xs text-stone-400 mt-8">
+            เฉพาะสมาชิกกิลด์ ETERNITY ที่ได้รับอนุญาตเท่านั้น
+        </p>
+    </div>
+
+    <script>
+        // Check for error in URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error === 'not_allowed') {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = '❌ บัญชี Discord ของคุณไม่ได้รับอนุญาตให้เข้าถึงระบบนี้';
+            errorDiv.classList.remove('hidden');
+        } else if (error) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = '❌ เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+            errorDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

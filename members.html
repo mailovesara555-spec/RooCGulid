@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสมาชิก - ROOC GUILD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #fdf6e3;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
+        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
+        .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
+        .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen text-stone-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Links -->
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm">
+                        ETERNITY<span class="text-stone-700">Guild</span>
+                    </h1>
+                    <div class="hidden md:flex space-x-1">
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 shadow-sm border border-amber-200">สมาชิก</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ประมูล</a>
+                    </div>
+                </div>
+                <!-- User Profile -->
+                <div class="flex items-center gap-4">
+                    <div class="text-sm hidden sm:block text-right">
+                        <p class="font-medium text-stone-700 leading-none">นายไม้</p>
+                    </div>
+                    <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                        ออกจากระบบ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+        
+        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in">
+            <!-- Header Section -->
+            <div class="p-6 sm:p-8 border-b border-amber-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm">จัดการสมาชิกในกิลด์</h2>
+                
+                <div class="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+                    <!-- Checkbox -->
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" class="w-4 h-4 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500 cursor-pointer">
+                        <span class="text-sm font-medium text-stone-600 group-hover:text-stone-900 transition">📌 คัดกรองคนที่ยังไม่อัพเดท</span>
+                    </label>
+
+                    <!-- Add Button -->
+                    <button class="roo-button text-white font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm tracking-wide">
+                        + เพิ่มสมาชิกใหม่
+                    </button>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" placeholder="ค้นหาชื่อหรืออาชีพ..." class="w-full bg-white border border-amber-200 rounded-xl pl-10 pr-4 py-2 text-sm text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100 transition-all shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-amber-50/50 border-b border-amber-200/60">
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">USER NAME</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">ชื่อตัวละคร</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">อาชีพ</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">ROLE</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider text-center">ลากิจกรรม</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">อัพเดทล่าสุด</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider text-center">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberTableBody" class="divide-y divide-amber-100/50">
+                        <!-- Content will be generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function loadMembers() {
+            const tbody = document.getElementById('memberTableBody');
+            
+            const defaultMembers = [{
+                uid: 'daffodil160263',
+                name: 'นายไม้',
+                charClass: 'Sniper',
+                role: 'admin',
+                active: true,
+                lastUpdate: '21/08/2569 13:28'
+            }];
+
+            let members = JSON.parse(localStorage.getItem('guildMembers') || 'null');
+            if (!members || members.length === 0) {
+                members = defaultMembers;
+            }
+
+            let auctionResults = JSON.parse(localStorage.getItem('auctionResults') || '{}');
+            let cardReceivers = auctionResults.cardCurrentRound || [];
+            let whiteReceivers = auctionResults.whiteCurrentRound || [];
+            let blackReceivers = auctionResults.blackCurrentRound || [];
+
+            tbody.innerHTML = ''; 
+
+            members.forEach(member => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-50/30 transition-colors';
+                
+                const toggleHtml = member.active 
+                    ? `<div class="w-10 h-5 bg-amber-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
+                    : `<div class="w-10 h-5 bg-stone-300 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`;
+                
+                let icons = '';
+                if (cardReceivers.includes(member.name)) icons += '🃏';
+                if (whiteReceivers.includes(member.name)) icons += '🕊️';
+                if (blackReceivers.includes(member.name)) icons += '🦅';
+                
+                let displayName = member.name;
+                if (icons !== '') {
+                    displayName += ` <span class="text-sm ml-1 bg-amber-100 px-1 py-0.5 rounded border border-amber-200">${icons}</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-sm text-stone-700 font-medium">${member.uid}</td>
+                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold">${displayName}</td>
+                    <td class="py-4 px-6 text-sm text-amber-700 font-medium">${member.charClass}</td>
+                    <td class="py-4 px-6">
+                        <span class="bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-md text-xs font-bold shadow-sm">${member.role}</span>
+                    </td>
+                    <td class="py-4 px-6 cursor-pointer text-center">
+                        ${toggleHtml}
+                    </td>
+                    <td class="py-4 px-6 text-sm">
+                        <div class="text-stone-600">${member.lastUpdate}</div>
+                        <div class="text-amber-600 text-xs font-semibold flex items-center gap-1 mt-0.5">
+                            <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> อัพเดทแล้ว
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="px-3 py-1.5 bg-white border border-amber-300 text-amber-700 hover:bg-amber-50 rounded-lg text-xs font-bold transition shadow-sm">Edit</button>
+                            <button class="px-3 py-1.5 bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 rounded-lg text-xs font-bold transition shadow-sm">Reset PW</button>
+                            <button class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition shadow-sm">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        loadMembers();
+    </script>
+</body>
+</html>

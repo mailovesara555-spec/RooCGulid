@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการประมูล - ROOC GUILD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #fdf6e3;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
+        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
+        .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
+        .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen text-stone-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Links -->
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm">
+                        ETERNITY<span class="text-stone-700">Guild</span>
+                    </h1>
+                    <div class="hidden md:flex space-x-1">
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">สมาชิก</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ประมูล</a>
+                    </div>
+                </div>
+                <!-- User Profile -->
+                <div class="flex items-center gap-4">
+                    <div class="text-sm hidden sm:block text-right">
+                        <p class="font-medium text-stone-700 leading-none">นายไม้</p>
+                    </div>
+                    <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                        ออกจากระบบ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
+            <div>
+                <h2 class="text-2xl font-bold text-amber-900 drop-shadow-sm">จัดการคิวประมูล</h2>
+                <p class="text-sm text-stone-600 mt-1">ตั้งค่าเริ่มต้น-สิ้นสุด และแบ่งคิวแจกจ่ายให้สมาชิกอัตโนมัติแบบวนรอบ (Round-Robin)</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Form Section -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- การตั้งค่าไอเทม -->
+                <div class="roo-card rounded-3xl p-6 shadow-sm border border-amber-200 animate-fade-in" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-stone-800 mb-4 flex items-center gap-2">
+                        <span class="text-amber-500 text-xl">📦</span> ตั้งค่าไอเทม (หน้าละ 4 ใบ)
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <!-- การ์ด -->
+                        <div class="p-4 bg-white/60 rounded-2xl border border-amber-200 shadow-sm">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">🃏 การ์ด</h4>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 mb-1">เริ่มต้น (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="cardStartPage" placeholder="หน้า" value="1" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="cardStartSlot" placeholder="ใบ(1-4)" value="1" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-rose-700 mb-1">สิ้นสุด (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="cardEndPage" placeholder="หน้า" value="1" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="cardEndSlot" placeholder="ใบ(1-4)" value="2" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-600 mb-1">แบ่งรอบละกี่ใบ/คน</label>
+                                <input type="number" id="cardAmount" value="1" min="1" class="w-full bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 font-bold text-amber-800 shadow-inner">
+                            </div>
+                        </div>
+
+                        <!-- ขนขาว -->
+                        <div class="p-4 bg-white/60 rounded-2xl border border-amber-200 shadow-sm">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">🕊️ ขนขาว</h4>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 mb-1">เริ่มต้น (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="whiteStartPage" placeholder="หน้า" value="3" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="whiteStartSlot" placeholder="ใบ(1-4)" value="1" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-rose-700 mb-1">สิ้นสุด (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="whiteEndPage" placeholder="หน้า" value="4" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="whiteEndSlot" placeholder="ใบ(1-4)" value="2" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-600 mb-1">แบ่งรอบละกี่ใบ/คน</label>
+                                <input type="number" id="whiteAmount" value="3" min="1" class="w-full bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 font-bold text-amber-800 shadow-inner">
+                            </div>
+                        </div>
+
+                        <!-- ขนดำ -->
+                        <div class="p-4 bg-white/60 rounded-2xl border border-amber-200 shadow-sm">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">🦅 ขนดำ</h4>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 mb-1">เริ่มต้น (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="blackStartPage" placeholder="หน้า" value="10" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="blackStartSlot" placeholder="ใบ(1-4)" value="1" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-rose-700 mb-1">สิ้นสุด (หน้า/ใบ)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="blackEndPage" placeholder="หน้า" value="11" min="1" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                        <input type="number" id="blackEndSlot" placeholder="ใบ(1-4)" value="2" min="1" max="4" class="w-1/2 bg-white border border-amber-200 rounded-lg px-2 py-1.5 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-600 mb-1">แบ่งรอบละกี่ใบ/คน</label>
+                                <input type="number" id="blackAmount" value="3" min="1" class="w-full bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 font-bold text-amber-800 shadow-inner">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- แจ้งเตือนการดึงข้อมูลสมาชิก -->
+                <div class="bg-amber-100/50 rounded-3xl p-6 shadow-sm border border-amber-200 animate-fade-in" style="animation-delay: 0.2s;">
+                    <h3 class="text-lg font-bold text-amber-900 mb-2 flex items-center gap-2">
+                        <span class="text-amber-600 text-xl">👥</span> ดึงรายชื่อสมาชิกอัตโนมัติ
+                    </h3>
+                    <p class="text-sm text-amber-800/80 mb-4 leading-relaxed">
+                        ระบบจะดึงรายชื่อจากหน้า <b>จัดการสมาชิก</b> เรียงตามลำดับ<br>
+                        - ไอเทมทุกชิ้นใช้รายชื่อสมาชิกเดียวกันในการรันคิว<br>
+                        - หากแจกครบทุกคนแล้วจะเริ่มรอบใหม่จากคนที่ 1 (ไอคอนหน้าชื่อจะถูกรีเซ็ต)<br>
+                        - หน้าสมาชิกจะแสดงไอคอน 🃏🕊️🦅 ท้ายชื่อคนที่ได้รับของในรอบปัจจุบัน
+                    </p>
+                    <div id="memberPreview" class="mb-4 p-3 bg-white/80 rounded-xl border border-amber-200 text-sm text-stone-600 max-h-32 overflow-y-auto hidden shadow-inner"></div>
+                    <button onclick="calculateAuction()" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 tracking-wide text-sm">
+                        🧮 คำนวณแจกจ่ายของประมูล
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Result Section -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="roo-card rounded-3xl p-6 sm:p-8 min-h-[600px] animate-fade-in" style="animation-delay: 0.3s;">
+                    
+                    <div class="flex flex-wrap justify-between items-center mb-6 border-b border-amber-200/60 pb-4 gap-2">
+                        <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm">ตารางสรุปของที่แต่ละคนได้รับ</h2>
+                        <div id="summaryStats" class="text-sm text-stone-500 font-medium bg-amber-50 px-3 py-1 rounded-full border border-amber-200"></div>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-xl border border-amber-200 shadow-sm bg-white/60">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-amber-100/50 border-b border-amber-200/60">
+                                    <th class="py-4 px-4 text-xs font-bold text-amber-800 uppercase tracking-wider">ชื่อสมาชิก</th>
+                                    <th class="py-4 px-4 text-xs font-bold text-amber-800 uppercase tracking-wider">🃏 การ์ด</th>
+                                    <th class="py-4 px-4 text-xs font-bold text-amber-800 uppercase tracking-wider">🕊️ ขนขาว</th>
+                                    <th class="py-4 px-4 text-xs font-bold text-amber-800 uppercase tracking-wider">🦅 ขนดำ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultTableBody" class="divide-y divide-amber-100/50">
+                                <tr>
+                                    <td colspan="4" class="py-12 text-center text-stone-400 text-sm font-medium">
+                                        ยังไม่ได้คำนวณ กรุณากดปุ่ม "คำนวณแจกจ่ายของประมูล"
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // แสดง Preview รายชื่อสมาชิกที่ดึงมา
+        (function showPreview() {
+            let saved = JSON.parse(localStorage.getItem('guildMembers') || '[]');
+            let names = saved.map(m => m.name);
+            const preview = document.getElementById('memberPreview');
+            if (names.length > 0) {
+                preview.classList.remove('hidden');
+                preview.innerHTML = '<b class="text-amber-800">รายชื่อ (' + names.length + ' คน):</b> ' + names.map((n, i) => `<span class="text-stone-800">${i+1}. ${n}</span>`).join(', ');
+            }
+        })();
+
+        // คำนวณ Total Items จากเริ่มต้น-สิ้นสุด
+        function calculateTotalSupply(startPage, startSlot, endPage, endSlot) {
+            const startIndex = ((startPage - 1) * 4) + (startSlot - 1);
+            const endIndex = ((endPage - 1) * 4) + (endSlot - 1);
+            return Math.max(0, endIndex - startIndex + 1);
+        }
+
+        // สร้าง string "น.X ใบY-Z"
+        function formatAllocationString(startIndex, count) {
+            if (count <= 0) return '';
+            let remaining = count;
+            let currentIndex = startIndex;
+            let parts = [];
+            while (remaining > 0) {
+                let page = Math.floor(currentIndex / 4) + 1;
+                let slot = (currentIndex % 4) + 1;
+                let spaceOnPage = 4 - slot + 1;
+                let take = Math.min(remaining, spaceOnPage);
+                if (take === 1) {
+                    parts.push(`น.${page} ใบ${slot}`);
+                } else {
+                    parts.push(`น.${page} ใบ${slot}-${slot + take - 1}`);
+                }
+                remaining -= take;
+                currentIndex += take;
+            }
+            return parts.join(' และ ');
+        }
+
+        // จัดสรรของให้คิวแบบ Round-Robin
+        function allocateItems(queue, supply, amountPerPerson, startIndex) {
+            if (queue.length === 0 || supply <= 0) {
+                return { strings: {}, receivers: [], currentRoundReceivers: [] };
+            }
+
+            let allocations = {};
+            queue.forEach(m => allocations[m] = []);
+
+            let currentSupply = supply;
+            let currIndex = startIndex;
+            let queueIndex = 0;
+            let receivers = new Set();
+
+            while (currentSupply > 0) {
+                let member = queue[queueIndex];
+                let take = Math.min(currentSupply, amountPerPerson);
+                allocations[member].push({ start: currIndex, count: take });
+                receivers.add(member);
+                currentSupply -= take;
+                currIndex += take;
+                queueIndex = (queueIndex + 1) % queue.length;
+            }
+
+            // สร้าง display strings
+            let resultStrings = {};
+            for (const [member, chunks] of Object.entries(allocations)) {
+                if (chunks.length === 0) {
+                    resultStrings[member] = '-';
+                } else {
+                    resultStrings[member] = chunks.map(c => formatAllocationString(c.start, c.count)).join(' | ');
+                }
+            }
+
+            // คำนวณว่ารอบปัจจุบัน (ที่ยังไม่ครบทุกคน) ใครได้บ้าง
+            let totalTurns = Math.ceil(supply / amountPerPerson);
+            let remainingTurns = totalTurns % queue.length;
+            let currentRoundReceivers = [];
+            if (remainingTurns > 0) {
+                currentRoundReceivers = queue.slice(0, remainingTurns);
+            }
+
+            return {
+                strings: resultStrings,
+                receivers: Array.from(receivers),
+                currentRoundReceivers: currentRoundReceivers
+            };
+        }
+
+        function calculateAuction() {
+            // ดึงรายชื่อจาก localStorage
+            let savedMembers = JSON.parse(localStorage.getItem('guildMembers') || '[]');
+            let allMembers = savedMembers.map(m => m.name);
+
+            if (allMembers.length === 0) {
+                allMembers = ['นายไม้', 'สมชาย', 'สมหญิง', 'ใจดี', 'มีชัย'];
+            }
+
+            // === Card Config ===
+            const cStartP = parseInt(document.getElementById('cardStartPage').value) || 1;
+            const cStartS = parseInt(document.getElementById('cardStartSlot').value) || 1;
+            const cEndP   = parseInt(document.getElementById('cardEndPage').value) || 1;
+            const cEndS   = parseInt(document.getElementById('cardEndSlot').value) || 1;
+            const cAmt    = parseInt(document.getElementById('cardAmount').value) || 1;
+            const cardTotal = calculateTotalSupply(cStartP, cStartS, cEndP, cEndS);
+            const cardStartIndex = ((cStartP - 1) * 4) + (cStartS - 1);
+
+            // === White Feather Config ===
+            const wStartP = parseInt(document.getElementById('whiteStartPage').value) || 1;
+            const wStartS = parseInt(document.getElementById('whiteStartSlot').value) || 1;
+            const wEndP   = parseInt(document.getElementById('whiteEndPage').value) || 1;
+            const wEndS   = parseInt(document.getElementById('whiteEndSlot').value) || 1;
+            const wAmt    = parseInt(document.getElementById('whiteAmount').value) || 1;
+            const whiteTotal = calculateTotalSupply(wStartP, wStartS, wEndP, wEndS);
+            const whiteStartIndex = ((wStartP - 1) * 4) + (wStartS - 1);
+
+            // === Black Feather Config ===
+            const bStartP = parseInt(document.getElementById('blackStartPage').value) || 1;
+            const bStartS = parseInt(document.getElementById('blackStartSlot').value) || 1;
+            const bEndP   = parseInt(document.getElementById('blackEndPage').value) || 1;
+            const bEndS   = parseInt(document.getElementById('blackEndSlot').value) || 1;
+            const bAmt    = parseInt(document.getElementById('blackAmount').value) || 1;
+            const blackTotal = calculateTotalSupply(bStartP, bStartS, bEndP, bEndS);
+            const blackStartIndex = ((bStartP - 1) * 4) + (bStartS - 1);
+
+            // === คำนวณแจก: ทั้ง 3 คิวใช้รายชื่อเดียวกันทุกคน ===
+            const cardAlloc  = allocateItems(allMembers, cardTotal, cAmt, cardStartIndex);
+            const whiteAlloc = allocateItems(allMembers, whiteTotal, wAmt, whiteStartIndex);
+            const blackAlloc = allocateItems(allMembers, blackTotal, bAmt, blackStartIndex);
+
+            // === บันทึกผลลงใน localStorage เพื่อให้หน้าสมาชิกแสดงไอคอน ===
+            localStorage.setItem('auctionResults', JSON.stringify({
+                cardCurrentRound:  cardAlloc.currentRoundReceivers,
+                whiteCurrentRound: whiteAlloc.currentRoundReceivers,
+                blackCurrentRound: blackAlloc.currentRoundReceivers,
+            }));
+
+            // แจ้งเตือนว่าบันทึกแล้ว
+            alert('✨ คำนวณและอัปเดตไอคอนในหน้าสมาชิกเรียบร้อยแล้ว!');
+
+            // === สรุปจำนวน ===
+            document.getElementById('summaryStats').innerHTML = 
+                `สมาชิก <b class="text-amber-700">${allMembers.length}</b> คน | การ์ด <b class="text-amber-700">${cardTotal}</b> ใบ, ขาว <b class="text-amber-700">${whiteTotal}</b> ใบ, ดำ <b class="text-amber-700">${blackTotal}</b> ใบ`;
+
+            // === แสดงตาราง (เฉพาะคนที่ได้ของ) ===
+            const allReceivers = new Set([
+                ...cardAlloc.receivers,
+                ...whiteAlloc.receivers,
+                ...blackAlloc.receivers
+            ]);
+            const finalReceivers = allMembers.filter(m => allReceivers.has(m));
+
+            const tbody = document.getElementById('resultTableBody');
+            tbody.innerHTML = '';
+
+            if (finalReceivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-10 text-center text-stone-500 font-medium">ไม่มีผู้ได้รับไอเทม (ของมีจำนวนเป็น 0)</td></tr>`;
+                return;
+            }
+
+            finalReceivers.forEach(member => {
+                const cText = cardAlloc.strings[member] || '-';
+                const wText = whiteAlloc.strings[member] || '-';
+                const bText = blackAlloc.strings[member] || '-';
+
+                const cBadge = cText !== '-' ? `<span class="bg-amber-100 text-amber-800 px-2 py-1 rounded border border-amber-300 text-sm shadow-sm">${cText}</span>` : `<span class="text-stone-300">-</span>`;
+                const wBadge = wText !== '-' ? `<span class="bg-white text-stone-700 px-2 py-1 rounded border border-stone-200 text-sm shadow-sm">${wText}</span>` : `<span class="text-stone-300">-</span>`;
+                const bBadge = bText !== '-' ? `<span class="bg-stone-800 text-stone-100 px-2 py-1 rounded border border-stone-600 text-sm shadow-sm">${bText}</span>` : `<span class="text-stone-300">-</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-50/50 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-4 px-4 font-semibold text-stone-800">${member}</td>
+                    <td class="py-4 px-4">${cBadge}</td>
+                    <td class="py-4 px-4">${wBadge}</td>
+                    <td class="py-4 px-4">${bBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

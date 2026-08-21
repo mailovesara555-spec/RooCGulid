@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลส่วนตัว - ROOC GUILD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #fdf6e3;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
+        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
+        .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
+        .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen text-stone-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Links -->
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm">
+                        ETERNITY<span class="text-stone-700">Guild</span>
+                    </h1>
+                    <div class="hidden md:flex space-x-1">
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">สมาชิก</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ประมูล</a>
+                    </div>
+                </div>
+                <!-- User Profile & Logout -->
+                <div class="flex items-center gap-4">
+                    <div class="text-sm hidden sm:block text-right">
+                        <p class="font-medium text-stone-700 leading-none">นายไม้</p>
+                    </div>
+                    <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                        ออกจากระบบ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
+            <div>
+                <h2 class="text-2xl font-bold text-amber-900 drop-shadow-sm">จัดการข้อมูลส่วนตัว</h2>
+                <p class="text-sm text-stone-600 mt-1">อัปเดตสเตตัสตัวละครด้วยระบบ AI และข้อมูลพื้นฐาน</p>
+            </div>
+            <button class="text-sm font-semibold text-amber-700 bg-amber-100 hover:bg-amber-200 px-4 py-2 rounded-xl transition-colors border border-amber-300">
+                ประวัติการอัปเดต
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: ข้อมูลพื้นฐาน -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="roo-card rounded-3xl p-6 sm:p-8 animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-2xl shadow-inner">
+                            <span class="text-amber-600">🎯</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-stone-800">ข้อมูลตัวละคร</h3>
+                            <p class="text-xs text-stone-500">ข้อมูลสำหรับระบบกิลด์</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mb-8">
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5">UID (อ้างอิงระบบ)</label>
+                            <input type="text" id="charUid" disabled value="daffodil160263" class="w-full bg-stone-100 border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-400 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-700 mb-1.5">ชื่อตัวละคร</label>
+                            <input type="text" id="charName" value="นายไม้" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-700 mb-1.5">สายอาชีพ</label>
+                            <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all appearance-none cursor-pointer shadow-sm">
+                                <option>Sniper</option>
+                                <option>High Wizard</option>
+                                <option>Lord Knight</option>
+                                <option>High Priest</option>
+                                <option>Assassin Cross</option>
+                                <option>Whitesmith</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="btnSaveInfo" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
+                        💾 บันทึกข้อมูลตัวละคร
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: ข้อมูลสเตตัสตัวละคร (AI OCR) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="roo-card rounded-3xl p-6 sm:p-8 min-h-[500px] flex flex-col animate-fade-in" style="animation-delay: 0.2s;">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                        <div>
+                            <h3 class="text-lg font-bold text-stone-800 flex items-center gap-2">
+                                <span class="text-sky-500 text-xl">✨</span> ระบบอ่านค่าสเตตัส (AI)
+                            </h3>
+                            <p class="text-xs text-stone-500 mt-1">อัปโหลดรูปภาพสเตตัสเพื่อกรอกอัตโนมัติ</p>
+                        </div>
+                        
+                        <div class="relative w-full sm:w-auto overflow-hidden">
+                            <input type="file" id="aiFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <button class="w-full sm:w-auto bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 font-semibold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                                📸 อัปโหลดรูปภาพ (AI)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Loading Overlay (Hidden by default) -->
+                    <div id="aiLoading" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm z-20 rounded-3xl flex flex-col items-center justify-center">
+                        <div class="relative w-20 h-20">
+                            <div class="absolute inset-0 border-4 border-amber-100 rounded-full"></div>
+                            <div class="absolute inset-0 border-4 border-amber-500 rounded-full border-t-transparent animate-spin"></div>
+                            <div class="absolute inset-0 flex items-center justify-center text-2xl">✨</div>
+                        </div>
+                        <p class="mt-4 text-amber-700 font-bold animate-pulse">AI กำลังวิเคราะห์สเตตัส...</p>
+                        <p class="text-xs text-stone-500 mt-1">กรุณารอสักครู่ (Poring is working)</p>
+                    </div>
+
+                    <!-- Form Stats -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 flex-1 relative">
+                        
+                        <!-- CP (Full width highlight) -->
+                        <div class="sm:col-span-2 p-5 bg-amber-50 border border-amber-200 rounded-2xl">
+                            <label class="block text-sm font-extrabold text-amber-800 mb-2 uppercase tracking-wider">Combat Power (CP)</label>
+                            <input type="number" id="statCP" placeholder="0" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-3 text-lg font-bold text-stone-800 shadow-sm transition-all text-center">
+                        </div>
+
+                        <!-- Basic Stats -->
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">STR</label>
+                            <input type="number" id="statSTR" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">AGI</label>
+                            <input type="number" id="statAGI" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">VIT</label>
+                            <input type="number" id="statVIT" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">INT</label>
+                            <input type="number" id="statINT" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">DEX</label>
+                            <input type="number" id="statDEX" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">LUK</label>
+                            <input type="number" id="statLUK" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-stone-100 flex justify-end">
+                        <button class="roo-button text-white font-bold py-2.5 px-8 rounded-xl transition-all shadow-md flex items-center gap-2 text-sm tracking-wide">
+                            อัปเดตสเตตัส
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // จำลองการโหลด AI แบบ RO
+        const aiFileInput = document.getElementById('aiFileInput');
+        const aiLoading = document.getElementById('aiLoading');
+        
+        aiFileInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                aiLoading.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    aiLoading.classList.add('hidden');
+                    
+                    document.getElementById('statCP').value = 45210;
+                    document.getElementById('statSTR').value = 12;
+                    document.getElementById('statAGI').value = 99;
+                    document.getElementById('statVIT').value = 40;
+                    document.getElementById('statINT').value = 1;
+                    document.getElementById('statDEX').value = 80;
+                    document.getElementById('statLUK').value = 30;
+                    
+                    alert('✨ วิเคราะห์สำเร็จ! (ข้อมูลจำลอง)');
+                    aiFileInput.value = '';
+                }, 2000);
+            }
+        });
+
+        // บันทึกข้อมูลพื้นฐาน
+        const btnSaveInfo = document.getElementById('btnSaveInfo');
+        if (btnSaveInfo) {
+            btnSaveInfo.addEventListener('click', () => {
+                const uid = document.getElementById('charUid').value;
+                const name = document.getElementById('charName').value;
+                const charClass = document.getElementById('charClass').value;
+                
+                const now = new Date();
+                const updateTime = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()+543} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+                const memberData = {
+                    uid: uid,
+                    name: name,
+                    charClass: charClass,
+                    role: 'admin',
+                    active: true,
+                    lastUpdate: updateTime
+                };
+
+                let members = JSON.parse(localStorage.getItem('guildMembers') || '[]');
+                const existingIndex = members.findIndex(m => m.uid === uid);
+                if(existingIndex >= 0) {
+                    members[existingIndex] = memberData;
+                } else {
+                    members.push(memberData);
+                }
+
+                localStorage.setItem('guildMembers', JSON.stringify(members));
+                alert('💾 บันทึกข้อมูลสำเร็จ! ตรวจสอบได้ที่หน้าจัดการสมาชิก');
+            });
+        }
+    </script>
+</body>
+</html>
