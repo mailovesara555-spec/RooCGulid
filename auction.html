@@ -6,10 +6,11 @@
     <title>จัดการประมูล - ROOC GUILD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDKs -->
+    
+    <!-- Firebase SDKs (Compat version for Browser) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
+
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
@@ -169,7 +170,7 @@
                         - หากแจกครบทุกคนแล้ว จะเริ่มรอบใหม่จากคนที่ 1 และรีเซ็ตไอคอน
                     </p>
                     <div id="memberPreview" class="mb-4 p-3 bg-white/80 rounded-xl border border-amber-200 text-sm text-stone-600 max-h-32 overflow-y-auto shadow-inner">
-                        กำลังโหลดรายชื่อสมาชิก...
+                        กำลังโหลดรายชื่อสมาชิกจาก Cloud...
                     </div>
                     <button onclick="calculateAuction()" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 tracking-wide text-sm">
                         🧮 คำนวณแจกจ่ายของประมูล (Save to Cloud)
@@ -214,9 +215,26 @@
     </main>
 
     <script>
+        // 1. Firebase Initializer (Direct Embed)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
+            authDomain: "rooc-guild.firebaseapp.com",
+            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rooc-guild",
+            storageBucket: "rooc-guild.firebasestorage.app",
+            messagingSenderId: "326463676837",
+            appId: "1:326463676837:web:048169408eb182d96c484c",
+            measurementId: "G-VR163R8CYD"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         let guildMembersList = [];
 
-        // ดึงรายชื่อสมาชิก Real-time จาก Firebase
+        // 2. ดึงรายชื่อสมาชิก Real-time
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             const preview = document.getElementById('memberPreview');
@@ -233,14 +251,14 @@
             }
         });
 
-        // คำนวณ Total Items
+        // 3. คำนวณ Total Items
         function calculateTotalSupply(startPage, startSlot, endPage, endSlot) {
             const startIndex = ((startPage - 1) * 4) + (startSlot - 1);
             const endIndex = ((endPage - 1) * 4) + (endSlot - 1);
             return Math.max(0, endIndex - startIndex + 1);
         }
 
-        // สร้าง string "น.X ใบY-Z"
+        // สร้างข้อความ string
         function formatAllocationString(startIndex, count) {
             if (count <= 0) return '';
             let remaining = count;

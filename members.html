@@ -6,10 +6,11 @@
     <title>จัดการสมาชิก - ROOC GUILD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDKs -->
+    
+    <!-- Firebase SDKs (Compat version for Browser) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
+
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
@@ -50,7 +51,7 @@
                 <!-- User Profile -->
                 <div class="flex items-center gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p class="font-medium text-stone-700 leading-none">นายไม้</p>
+                        <p id="navUsername" class="font-medium text-stone-700 leading-none">สมาชิกกิลด์</p>
                     </div>
                     <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
                         ออกจากระบบ
@@ -69,7 +70,9 @@
                 <div>
                     <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm flex items-center gap-2">
                         จัดการสมาชิกในกิลด์ 
-                        <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-300">Live Sync</span>
+                        <span id="syncBadge" class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full border border-amber-300">
+                            Connecting...
+                        </span>
                     </h2>
                     <p class="text-xs text-stone-500 mt-1">รายชื่อและข้อมูลสมาชิกทุกคนในกิลด์ (อัปเดตแบบเรียลไทม์)</p>
                 </div>
@@ -113,10 +116,39 @@
     </main>
 
     <script>
+        // 1. Firebase Initializer (Direct Embed)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
+            authDomain: "rooc-guild.firebaseapp.com",
+            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rooc-guild",
+            storageBucket: "rooc-guild.firebasestorage.app",
+            messagingSenderId: "326463676837",
+            appId: "1:326463676837:web:048169408eb182d96c484c",
+            measurementId: "G-VR163R8CYD"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         let allMembersData = [];
         let currentAuctionResults = {};
 
-        // ฟังก์ชัน Render ตาราง
+        // สถานะการเชื่อมต่อ
+        const syncBadge = document.getElementById('syncBadge');
+        db.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+                syncBadge.className = "text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-300";
+                syncBadge.innerText = "🟢 Live Sync";
+            } else {
+                syncBadge.className = "text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full border border-amber-300";
+                syncBadge.innerText = "🟡 Connecting...";
+            }
+        });
+
+        // 2. Render Table
         function renderTable() {
             const tbody = document.getElementById('memberTableBody');
             const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -134,7 +166,7 @@
             });
 
             if (filteredMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-stone-500">ไม่พบข้อมูลสมาชิก</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-stone-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
                 return;
             }
 
@@ -142,12 +174,10 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-amber-50/30 transition-colors';
                 
-                // Toggle Switch Status
                 const toggleHtml = member.active 
                     ? `<div class="w-10 h-5 bg-amber-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
                     : `<div class="w-10 h-5 bg-stone-300 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`;
                 
-                // เช็คไอคอนประมูล
                 let icons = '';
                 if (cardReceivers.includes(member.name)) icons += '🃏';
                 if (whiteReceivers.includes(member.name)) icons += '🕊️';
@@ -184,16 +214,16 @@
             });
         }
 
-        // ลบสมาชิกจากฐานข้อมูล
+        // ลบสมาชิก
         function deleteMember(uid) {
-            if (confirm('คุณต้องการลบข้อมูลสมาชิกนี้ใช่หรือไม่?')) {
+            if (confirm(`คุณต้องการลบข้อมูลของ ${uid} ใช่หรือไม่?`)) {
                 db.ref('members/' + uid).remove().then(() => {
                     alert('ลบสมาชิกเรียบร้อยแล้ว');
                 });
             }
         }
 
-        // ฟังเหตุการณ์ข้อมูลสมาชิก Real-time จาก Firebase
+        // 3. Real-time Listeners
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -202,15 +232,16 @@
                 allMembersData = [];
             }
             renderTable();
+        }, (error) => {
+            console.error("Firebase Read Error:", error);
+            document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="7" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
         });
 
-        // ฟังผลการประมูลล่าสุด Real-time จาก Firebase
         db.ref('auctionResults').on('value', (snapshot) => {
             currentAuctionResults = snapshot.val() || {};
             renderTable();
         });
 
-        // ค้นหา
         document.getElementById('searchInput').addEventListener('input', renderTable);
     </script>
 </body>
