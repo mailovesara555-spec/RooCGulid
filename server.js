@@ -6,6 +6,23 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// เสิร์ฟไฟล์ Static (HTML, CSS, JS) ในโฟลเดอร์ปัจจุบัน
+app.use(express.static(path.join(__dirname)));
+
+// Route สำหรับหน้าแรกและหน้าต่างๆ
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+app.get('/members', (req, res) => {
+    res.sendFile(path.join(__dirname, 'members.html'));
+});
+app.get('/auction', (req, res) => {
+    res.sendFile(path.join(__dirname, 'auction.html'));
+});
+
 // รายชื่อ Discord Username ที่อนุญาตให้เข้าถึง
 // (ใช้ชื่อ username ปัจจุบันของ Discord ที่ไม่มี # ตัวเลขแล้ว เช่น 'admin_user')
 const ALLOWED_USERS = [
