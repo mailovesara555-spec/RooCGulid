@@ -77,14 +77,13 @@ app.get('/auth/discord/callback', async (req, res) => {
             }
         });
 
-        const userData = userResponse.data;
-        const username = userData.username.toLowerCase(); // ชื่อ Username ของ Discord
+        const discordUser = userResponse.data;
+        const username = discordUser.username.toLowerCase(); // ชื่อ Username ของ Discord
 
         // 3. ตรวจสอบว่าชื่อ Username อยู่ในรายชื่ออนุญาตหรือไม่
         if (ALLOWED_USERS.includes(username)) {
-            // สำเร็จ! อนุญาตให้เข้าถึง ไปที่หน้า Dashboard
-            // หมายเหตุ: ในระบบจริงควรใช้ Session หรือ JWT Cookie เก็บสถานะล็อกอิน
-            res.redirect('/dashboard.html?user=' + username);
+            // อนุญาตให้เข้าถึง: ส่งต่อไปยังหน้า Dashboard พร้อมแนบ Discord Username
+            res.redirect(`/dashboard.html?user=${encodeURIComponent(discordUser.username)}`);
         } else {
             // ไม่มีสิทธิ์เข้าถึง กลับไปหน้าแรกพร้อมแจ้งเตือน
             res.redirect('/?error=not_allowed');

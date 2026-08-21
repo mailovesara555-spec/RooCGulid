@@ -1,5 +1,4 @@
-// Firebase App (the core Firebase SDK) is always required and must be listed first
-// Initialize Firebase
+// Firebase App configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
   authDomain: "rooc-guild.firebaseapp.com",
@@ -11,8 +10,10 @@ const firebaseConfig = {
   measurementId: "G-VR163R8CYD"
 };
 
-// Initialize Firebase
+// Initialize Firebase App
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
-const db = firebase.database();
+
+// ผูกตัวแปร db ไว้กับ window เพื่อให้เข้าถึงได้จากทุกไฟล์
+window.db = firebase.database();
