@@ -6,6 +6,10 @@
     <title>จัดการประมูล - ROOC GUILD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
@@ -62,7 +66,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
             <div>
                 <h2 class="text-2xl font-bold text-amber-900 drop-shadow-sm">จัดการคิวประมูล</h2>
-                <p class="text-sm text-stone-600 mt-1">ตั้งค่าเริ่มต้น-สิ้นสุด และแบ่งคิวแจกจ่ายให้สมาชิกอัตโนมัติแบบวนรอบ (Round-Robin)</p>
+                <p class="text-sm text-stone-600 mt-1">คำนวณและแบ่งไอเทมประมูลให้สมาชิกทุกคนแบบวนรอบ (บันทึกข้อมูลกิลด์ส่วนกลาง)</p>
             </div>
         </div>
 
@@ -158,17 +162,17 @@
                 <!-- แจ้งเตือนการดึงข้อมูลสมาชิก -->
                 <div class="bg-amber-100/50 rounded-3xl p-6 shadow-sm border border-amber-200 animate-fade-in" style="animation-delay: 0.2s;">
                     <h3 class="text-lg font-bold text-amber-900 mb-2 flex items-center gap-2">
-                        <span class="text-amber-600 text-xl">👥</span> ดึงรายชื่อสมาชิกอัตโนมัติ
+                        <span class="text-amber-600 text-xl">👥</span> รายชื่อสมาชิกในระบบกิลด์
                     </h3>
                     <p class="text-sm text-amber-800/80 mb-4 leading-relaxed">
-                        ระบบจะดึงรายชื่อจากหน้า <b>จัดการสมาชิก</b> เรียงตามลำดับ<br>
-                        - ไอเทมทุกชิ้นใช้รายชื่อสมาชิกเดียวกันในการรันคิว<br>
-                        - หากแจกครบทุกคนแล้วจะเริ่มรอบใหม่จากคนที่ 1 (ไอคอนหน้าชื่อจะถูกรีเซ็ต)<br>
-                        - หน้าสมาชิกจะแสดงไอคอน 🃏🕊️🦅 ท้ายชื่อคนที่ได้รับของในรอบปัจจุบัน
+                        ดึงรายชื่อสมาชิกจากฐานข้อมูล Cloud อัตโนมัติ<br>
+                        - หากแจกครบทุกคนแล้ว จะเริ่มรอบใหม่จากคนที่ 1 และรีเซ็ตไอคอน
                     </p>
-                    <div id="memberPreview" class="mb-4 p-3 bg-white/80 rounded-xl border border-amber-200 text-sm text-stone-600 max-h-32 overflow-y-auto hidden shadow-inner"></div>
+                    <div id="memberPreview" class="mb-4 p-3 bg-white/80 rounded-xl border border-amber-200 text-sm text-stone-600 max-h-32 overflow-y-auto shadow-inner">
+                        กำลังโหลดรายชื่อสมาชิก...
+                    </div>
                     <button onclick="calculateAuction()" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 tracking-wide text-sm">
-                        🧮 คำนวณแจกจ่ายของประมูล
+                        🧮 คำนวณแจกจ่ายของประมูล (Save to Cloud)
                     </button>
                 </div>
 
@@ -210,18 +214,26 @@
     </main>
 
     <script>
-        // แสดง Preview รายชื่อสมาชิกที่ดึงมา
-        (function showPreview() {
-            let saved = JSON.parse(localStorage.getItem('guildMembers') || '[]');
-            let names = saved.map(m => m.name);
-            const preview = document.getElementById('memberPreview');
-            if (names.length > 0) {
-                preview.classList.remove('hidden');
-                preview.innerHTML = '<b class="text-amber-800">รายชื่อ (' + names.length + ' คน):</b> ' + names.map((n, i) => `<span class="text-stone-800">${i+1}. ${n}</span>`).join(', ');
-            }
-        })();
+        let guildMembersList = [];
 
-        // คำนวณ Total Items จากเริ่มต้น-สิ้นสุด
+        // ดึงรายชื่อสมาชิก Real-time จาก Firebase
+        db.ref('members').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const preview = document.getElementById('memberPreview');
+            if (data) {
+                guildMembersList = Object.values(data).map(m => m.name).filter(n => Boolean(n));
+            } else {
+                guildMembersList = [];
+            }
+
+            if (guildMembersList.length > 0) {
+                preview.innerHTML = '<b class="text-amber-800">รายชื่อในกิลด์ (' + guildMembersList.length + ' คน):</b> ' + guildMembersList.map((n, i) => `<span class="text-stone-800">${i+1}. ${n}</span>`).join(', ');
+            } else {
+                preview.innerHTML = '<span class="text-stone-400">ยังไม่มีสมาชิกในระบบ (สามารถไปเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</span>';
+            }
+        });
+
+        // คำนวณ Total Items
         function calculateTotalSupply(startPage, startSlot, endPage, endSlot) {
             const startIndex = ((startPage - 1) * 4) + (startSlot - 1);
             const endIndex = ((endPage - 1) * 4) + (endSlot - 1);
@@ -274,7 +286,6 @@
                 queueIndex = (queueIndex + 1) % queue.length;
             }
 
-            // สร้าง display strings
             let resultStrings = {};
             for (const [member, chunks] of Object.entries(allocations)) {
                 if (chunks.length === 0) {
@@ -284,7 +295,6 @@
                 }
             }
 
-            // คำนวณว่ารอบปัจจุบัน (ที่ยังไม่ครบทุกคน) ใครได้บ้าง
             let totalTurns = Math.ceil(supply / amountPerPerson);
             let remainingTurns = totalTurns % queue.length;
             let currentRoundReceivers = [];
@@ -300,12 +310,11 @@
         }
 
         function calculateAuction() {
-            // ดึงรายชื่อจาก localStorage
-            let savedMembers = JSON.parse(localStorage.getItem('guildMembers') || '[]');
-            let allMembers = savedMembers.map(m => m.name);
+            let allMembers = guildMembersList;
 
             if (allMembers.length === 0) {
-                allMembers = ['นายไม้', 'สมชาย', 'สมหญิง', 'ใจดี', 'มีชัย'];
+                alert('ยังไม่มีสมาชิกในระบบกิลด์ กรุณาให้สมาชิกบันทึกข้อมูลในหน้า ข้อมูลส่วนตัว ก่อนครับ');
+                return;
             }
 
             // === Card Config ===
@@ -335,26 +344,26 @@
             const blackTotal = calculateTotalSupply(bStartP, bStartS, bEndP, bEndS);
             const blackStartIndex = ((bStartP - 1) * 4) + (bStartS - 1);
 
-            // === คำนวณแจก: ทั้ง 3 คิวใช้รายชื่อเดียวกันทุกคน ===
+            // คำนวณ
             const cardAlloc  = allocateItems(allMembers, cardTotal, cAmt, cardStartIndex);
             const whiteAlloc = allocateItems(allMembers, whiteTotal, wAmt, whiteStartIndex);
             const blackAlloc = allocateItems(allMembers, blackTotal, bAmt, blackStartIndex);
 
-            // === บันทึกผลลงใน localStorage เพื่อให้หน้าสมาชิกแสดงไอคอน ===
-            localStorage.setItem('auctionResults', JSON.stringify({
+            // บันทึกผลประมูลขึ้น Firebase Cloud
+            db.ref('auctionResults').set({
                 cardCurrentRound:  cardAlloc.currentRoundReceivers,
                 whiteCurrentRound: whiteAlloc.currentRoundReceivers,
                 blackCurrentRound: blackAlloc.currentRoundReceivers,
-            }));
+                lastCalculated: new Date().toISOString()
+            }).then(() => {
+                alert('✨ คำนวณและบันทึกผลการประมูลขึ้นระบบกิลด์เรียบร้อยแล้ว! ทุกคนจะเห็นไอคอนตรงกันทันที');
+            });
 
-            // แจ้งเตือนว่าบันทึกแล้ว
-            alert('✨ คำนวณและอัปเดตไอคอนในหน้าสมาชิกเรียบร้อยแล้ว!');
-
-            // === สรุปจำนวน ===
+            // สรุปจำนวน
             document.getElementById('summaryStats').innerHTML = 
                 `สมาชิก <b class="text-amber-700">${allMembers.length}</b> คน | การ์ด <b class="text-amber-700">${cardTotal}</b> ใบ, ขาว <b class="text-amber-700">${whiteTotal}</b> ใบ, ดำ <b class="text-amber-700">${blackTotal}</b> ใบ`;
 
-            // === แสดงตาราง (เฉพาะคนที่ได้ของ) ===
+            // แสดงตารางผลลัพธ์
             const allReceivers = new Set([
                 ...cardAlloc.receivers,
                 ...whiteAlloc.receivers,
