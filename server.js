@@ -93,8 +93,15 @@ app.get('/auth/discord/callback', async (req, res) => {
                     if (Array.isArray(whitelistData)) {
                         isAllowed = whitelistData.map(u => String(u).toLowerCase()).includes(username);
                     } else if (typeof whitelistData === 'object') {
-                        const keys = Object.keys(whitelistData).map(k => k.toLowerCase());
-                        isAllowed = keys.includes(username);
+                        const allowedList = [];
+                        for (let k in whitelistData) {
+                            allowedList.push(k.toLowerCase());
+                            allowedList.push(k.toLowerCase().replace(/__dot__/g, '.'));
+                            if (whitelistData[k] && whitelistData[k].username) {
+                                allowedList.push(whitelistData[k].username.toLowerCase());
+                            }
+                        }
+                        isAllowed = allowedList.includes(username);
                     }
                 }
             } catch (fbErr) {
