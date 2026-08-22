@@ -26,17 +26,15 @@ app.get('/auction', (req, res) => {
     res.sendFile(path.join(__dirname, 'auction.html'));
 });
 
-// รายชื่อ Discord Username ที่อนุญาตให้เข้าถึง
-// (ใช้ชื่อ username ปัจจุบันของ Discord ที่ไม่มี # ตัวเลขแล้ว เช่น 'admin_user')
+// รายชื่อ Discord Username พื้นฐานที่อนุญาตให้เข้าถึง (Fallback)
 const ALLOWED_USERS = [
-    'admin_user','daffodil2693','amooma_aom','zinchess
-',
+    'admin_user',
+    'daffodil2693',
+    'amooma_aom',
+    'zinchess',
     'guild_leader',
     'player123'
 ];
-
-// ให้บริการไฟล์ Static (HTML, CSS, JS) จากโฟลเดอร์ปัจจุบัน
-app.use(express.static(__dirname));
 
 // Route: สำหรับกดเข้าสู่ระบบผ่าน Discord
 app.get('/auth/discord', (req, res) => {
@@ -118,6 +116,11 @@ app.get('/auth/discord/callback', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export สำหรับ Vercel Serverless Function
+module.exports = app;
+
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
