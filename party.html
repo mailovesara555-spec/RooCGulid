@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดปาร์ตี้ - ROOC GUILD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs (Compat version for Browser) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #fdf6e3;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #292524;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
+        
+        .roo-card { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(8px); 
+            border: 1px solid #e5d3b3; 
+            box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); 
+        }
+        .roo-button { 
+            background: linear-gradient(to bottom, #fbbf24, #d97706); 
+            box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); 
+            border: 1px solid #b45309; 
+            text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); 
+        }
+        .roo-button:hover { 
+            background: linear-gradient(to bottom, #fcd34d, #ea580c); 
+        }
+        
+        .slot-box {
+            transition: all 0.15s ease-in-out;
+            background: rgba(253, 246, 227, 0.6);
+            border: 1.5px dashed #d4c4a8;
+            cursor: pointer;
+        }
+        .slot-box.drag-over {
+            border-color: #d97706 !important;
+            background: #fef3c7 !important;
+            transform: scale(1.03);
+            box-shadow: 0 0 0 2px #f59e0b;
+        }
+        .slot-box.filled {
+            border-style: solid;
+            border-color: #e5d3b3;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            cursor: grab;
+        }
+        .slot-box.filled:active {
+            cursor: grabbing;
+        }
+
+        .member-chip {
+            cursor: grab;
+            transition: all 0.15s ease-in-out;
+            user-select: none;
+        }
+        .member-chip:active {
+            cursor: grabbing;
+        }
+        .member-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
+            border-color: #f59e0b;
+        }
+
+        /* Prevent children from intercepting drop events during drag */
+        .is-dragging * {
+            pointer-events: none !important;
+        }
+        .is-dragging .slot-box,
+        .is-dragging #waitlistDropzone,
+        .is-dragging #leaveDropzone {
+            pointer-events: auto !important;
+        }
+
+        .animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Links -->
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm flex items-center gap-2">
+                        ETERNITY<span class="text-stone-700 font-bold">Guild</span>
+                    </h1>
+                    <div class="hidden md:flex space-x-1">
+                        <a href="party.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-amber-100 text-amber-800 shadow-sm border border-amber-200">จัดปาร์ตี้</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
+                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">สมาชิก</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ประมูล</a>
+                    </div>
+                </div>
+                <!-- User Profile -->
+                <div class="flex items-center gap-4">
+                    <div class="text-sm hidden sm:block text-right">
+                        <p id="navUsername" class="font-medium text-stone-700 leading-none">กำลังเชื่อมต่อ...</p>
+                    </div>
+                    <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                        ออกจากระบบ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        
+        <!-- Header Info -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-900 drop-shadow-sm flex items-center gap-3">
+                    จัดทีมลงกิจกรรม
+                    <span id="rolePermissionBadge" class="text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full border border-amber-300">
+                        ตรวจสอบสิทธิ์...
+                    </span>
+                </h2>
+                <p class="text-sm text-stone-600 mt-1">ลากสมาชิกข้ามปาร์ตี้ หรือสลับตำแหน่งกันได้โดยตรงแบบเรียลไทม์</p>
+            </div>
+            
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="exportPartyLineup()" class="roo-button px-4 py-2 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+                    📋 Export ตาราง
+                </button>
+                <button onclick="autoFillParties()" id="btnAutoFill" class="px-3.5 py-2 bg-white hover:bg-amber-50 text-amber-900 font-bold rounded-xl text-xs border border-amber-300 shadow-sm transition flex items-center gap-1.5">
+                    ⚡ จัดออโต้ตามคลาส
+                </button>
+                <button onclick="clearAllParties()" id="btnClearParties" class="px-3.5 py-2 bg-white hover:bg-red-50 text-red-600 font-bold rounded-xl text-xs border border-red-200 shadow-sm transition flex items-center gap-1.5">
+                    🗑️ ล้างปาร์ตี้
+                </button>
+            </div>
+        </div>
+
+        <!-- Banner Info & Controls -->
+        <div class="p-4 bg-amber-100/70 border-2 border-amber-300 rounded-2xl text-amber-950 text-xs font-medium shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
+            <div class="flex items-center gap-2">
+                <span class="text-base">💡</span>
+                <span><b>วิธีใช้งาน:</b> สามารถลากสมาชิกจากปาร์ตี้หนึ่งไปใส่อีกปาร์ตี้หนึ่งได้โดยตรง (ถ้ามีคนอยู่จะสลับตำแหน่งกันอัตโนมัติ)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-stone-600">สถานะ:</span>
+                <span id="saveStatusIndicator" class="font-bold text-emerald-700 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ซิงค์ Cloud เรียบร้อย
+                </span>
+            </div>
+        </div>
+
+        <!-- Activity Tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 animate-fade-in">
+            <button onclick="switchTab('guildLeague')" id="tabGuildLeague" class="roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0">
+                <span>🏆</span> Guild League (40v40)
+            </button>
+            <button onclick="switchTab('emperiumOverrun')" id="tabEmperiumOverrun" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0">
+                <span>🏰</span> Emperium Overrun
+            </button>
+        </div>
+
+        <!-- Grid Layout: Left 8 Parties + Right Waitlist -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left 8 Parties (Main Team 40 คน) -->
+            <div class="lg:col-span-8 space-y-4">
+                
+                <div class="flex items-center justify-between bg-amber-50/70 px-4 py-2.5 rounded-2xl border border-amber-200 shadow-sm">
+                    <h3 class="text-sm font-extrabold text-amber-900 flex items-center gap-2">
+                        <span class="text-amber-600">🛡️</span> ทีมหลัก (Main Team) - <span id="assignedCount" class="text-amber-700">0</span>/40 คน
+                    </h3>
+                    <span class="text-xs bg-amber-200/80 text-amber-900 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
+                        ปาร์ตี้ 1 - 8
+                    </span>
+                </div>
+
+                <!-- 8 Parties Grid -->
+                <div id="partiesContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <!-- Party 1 to 8 rendered dynamically -->
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar: Waitlist & On-Leave -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Waitlist (รอจัดปาร์ตี้) -->
+                <div class="roo-card rounded-3xl p-5 space-y-4 shadow-sm border border-amber-200">
+                    <div class="flex items-center justify-between border-b border-amber-200 pb-3">
+                        <h3 class="text-sm font-bold text-amber-900 flex items-center gap-2">
+                            <span>👥</span> รอจัดปาร์ตี้ (Waitlist)
+                        </h3>
+                        <span id="waitlistCountBadge" class="text-xs font-extrabold bg-amber-500 text-white px-2.5 py-0.5 rounded-full shadow-sm">
+                            0
+                        </span>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <input type="text" id="waitlistSearch" placeholder="🔍 ค้นหาชื่อหรืออาชีพ..." class="w-full bg-white border border-amber-200 rounded-xl px-3.5 py-2 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 shadow-sm">
+                    </div>
+
+                    <!-- Waitlist Dropzone & List -->
+                    <div id="waitlistDropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropWaitlist(event)" class="min-h-[220px] max-h-[380px] overflow-y-auto space-y-2 p-2 rounded-2xl bg-amber-50/40 border border-amber-200/70 shadow-inner">
+                        <div class="text-center py-8 text-xs text-stone-400">
+                            กำลังโหลดรายชื่อสมาชิก...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- On Leave (ลากิจกรรม) -->
+                <div class="roo-card rounded-3xl p-5 space-y-3 border-2 border-rose-200 bg-rose-50/40 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-rose-200 pb-3">
+                        <h3 class="text-sm font-bold text-rose-900 flex items-center gap-2">
+                            <span>🏖️</span> ลากิจกรรม (On Leave)
+                        </h3>
+                        <span id="leaveCountBadge" class="text-xs font-extrabold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-sm">
+                            0
+                        </span>
+                    </div>
+
+                    <!-- Leave Dropzone -->
+                    <div id="leaveDropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropLeave(event)" class="min-h-[120px] max-h-[220px] overflow-y-auto space-y-2 p-2 rounded-2xl bg-white/70 border border-rose-200 shadow-inner">
+                        <div id="emptyLeaveHint" class="text-center py-6 text-xs text-rose-400 font-medium">
+                            ลากสมาชิกมาที่นี่ หากแจ้งลากิจกรรม
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal Export Preview -->
+    <div id="exportModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-white border-2 border-amber-300 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-4">
+                <h3 class="text-lg font-bold text-amber-900 flex items-center gap-2">
+                    <span>📋</span> สรุปตารางจัดปาร์ตี้กิลด์ ETERNITY
+                </h3>
+                <button onclick="closeExportModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+            <textarea id="exportTextarea" readonly class="w-full h-80 bg-amber-50/50 border border-amber-200 rounded-2xl p-4 text-xs font-mono text-stone-800 focus:outline-none shadow-inner leading-relaxed select-all"></textarea>
+            <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-amber-200">
+                <button onclick="closeExportModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition">
+                    ปิด
+                </button>
+                <button onclick="copyExportText()" class="roo-button px-5 py-2 rounded-xl text-white font-bold text-xs shadow-md flex items-center gap-1.5">
+                    📋 คัดลอกข้อความทั้งหมด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Firebase Initializer
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
+            authDomain: "rooc-guild.firebaseapp.com",
+            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rooc-guild",
+            storageBucket: "rooc-guild.firebasestorage.app",
+            messagingSenderId: "326463676837",
+            appId: "1:326463676837:web:048169408eb182d96c484c",
+            measurementId: "G-VR163R8CYD"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // 2. User & Permissions
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil2693';
+        sessionStorage.setItem('discord_user', currentUser);
+
+        let currentUserRole = 'สมาชิกกิลด์';
+        let canEditParties = false;
+
+        function checkUserPermission() {
+            const isSuperAdmin = currentUser.toLowerCase() === 'daffodil2693';
+
+            db.ref('members/' + currentUser).once('value').then((snapshot) => {
+                const data = snapshot.val();
+                if (data && data.role) {
+                    currentUserRole = data.role;
+                } else if (isSuperAdmin) {
+                    currentUserRole = 'Admin';
+                } else {
+                    currentUserRole = 'สมาชิกกิลด์';
+                }
+
+                const allowedRoles = ['Admin', 'admin', 'หัวหน้ากิลด์', 'หัวหน้ากิล', 'รองหัวหน้ากิลด์', 'รองหัวหน้ากิล', 'ผู้จัดการ'];
+                canEditParties = isSuperAdmin || allowedRoles.includes(currentUserRole);
+
+                applyPermissionUI();
+            }).catch(() => {
+                canEditParties = isSuperAdmin;
+                applyPermissionUI();
+            });
+        }
+
+        function applyPermissionUI() {
+            const badge = document.getElementById('rolePermissionBadge');
+            const btnAuto = document.getElementById('btnAutoFill');
+            const btnClear = document.getElementById('btnClearParties');
+            document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
+
+            if (canEditParties) {
+                badge.className = "text-xs bg-emerald-100 text-emerald-900 font-bold px-3 py-1 rounded-full border border-emerald-300";
+                badge.innerText = `⚡ สิทธิ์: ${currentUserRole} (แก้ไขได้)`;
+                btnAuto.classList.remove('hidden');
+                btnClear.classList.remove('hidden');
+            } else {
+                badge.className = "text-xs bg-stone-100 text-stone-700 font-bold px-3 py-1 rounded-full border border-stone-300";
+                badge.innerText = `🛡️ สิทธิ์: สมาชิกกิลด์ (ดูเท่านั้น)`;
+                btnAuto.classList.add('hidden');
+                btnClear.classList.add('hidden');
+            }
+        }
+
+        checkUserPermission();
+
+        // 3. State Management
+        let currentMode = 'guildLeague'; // 'guildLeague' | 'emperiumOverrun'
+        let allGuildMembers = [];
+        let partyAssignments = {};
+        let leaveMembers = [];
+        let draggedMember = null;
+
+        const CLASS_ICONS = {
+            'Lord Knight': '⚔️',
+            'Paladin': '🛡️',
+            'Biochemist': '🧪',
+            'Mastersmith': '🔨',
+            'Bard': '🎵',
+            'Gypsy': '💃',
+            'Sniper': '🏹',
+            'Champion': '🥊',
+            'Priest': '✨',
+            'Assassin': '🗡️',
+            'Rogue': '🎭',
+            'Wizard': '🔮',
+            'Sage': '📖',
+            'Summoner': '🐱',
+            'Rebellion': '🔫'
+        };
+
+        function initEmptyParties() {
+            const parties = {};
+            for (let i = 1; i <= 8; i++) {
+                parties[`p${i}`] = {
+                    slot1: null,
+                    slot2: null,
+                    slot3: null,
+                    slot4: null,
+                    slot5: null
+                };
+            }
+            return parties;
+        }
+
+        partyAssignments = initEmptyParties();
+
+        // 4. Render 8 Parties Layout
+        function renderPartiesGrid() {
+            const container = document.getElementById('partiesContainer');
+            container.innerHTML = '';
+
+            let assignedTotal = 0;
+
+            for (let pNum = 1; pNum <= 8; pNum++) {
+                const pKey = `p${pNum}`;
+                const partyData = partyAssignments[pKey] || {};
+
+                let pCount = 0;
+                for (let s = 1; s <= 5; s++) {
+                    if (partyData[`slot${s}`]) pCount++;
+                }
+                assignedTotal += pCount;
+
+                const card = document.createElement('div');
+                card.className = 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-amber-200 bg-white/95 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between pb-1.5 border-b border-amber-200">
+                        <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center text-[10px] font-extrabold border border-amber-300">
+                                ${pNum}
+                            </span>
+                            Party ${pNum}
+                        </h4>
+                        <span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2 py-0.5 rounded-full border">
+                            ${pCount}/5
+                        </span>
+                    </div>
+                    <div class="space-y-1.5" id="partySlots_${pKey}">
+                        ${[1,2,3,4,5].map(sNum => renderSlotHtml(pKey, sNum, partyData[`slot${sNum}`])).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+
+            document.getElementById('assignedCount').innerText = assignedTotal;
+        }
+
+        function renderSlotHtml(pKey, sNum, assignedMemberName) {
+            const member = allGuildMembers.find(m => m.name === assignedMemberName);
+
+            if (member) {
+                const icon = CLASS_ICONS[member.charClass] || '👤';
+                return `
+                    <div id="slot_${pKey}_${sNum}" 
+                         draggable="${canEditParties}" 
+                         ondragstart="handleDragStart(event, '${member.name}', '${pKey}', ${sNum})"
+                         ondragend="handleDragEnd(event)"
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
+                         class="slot-box filled rounded-xl p-2 flex items-center justify-between group">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base">${icon}</span>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-stone-900 truncate">${member.name}</p>
+                                <p class="text-[10px] text-amber-800 font-medium leading-tight">${member.charClass || '-'}</p>
+                            </div>
+                        </div>
+                        ${canEditParties ? `
+                            <button onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded transition font-bold" title="นำออกจากปาร์ตี้">
+                                ✕
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                return `
+                    <div id="slot_${pKey}_${sNum}" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
+                         class="slot-box rounded-xl p-2 text-center text-stone-400 text-[11px] font-medium min-h-[42px] flex items-center justify-center">
+                        <span>Slot ${sNum}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // 5. Render Waitlist & Leave
+        function renderWaitlistAndLeave() {
+            const waitlistContainer = document.getElementById('waitlistDropzone');
+            const leaveContainer = document.getElementById('leaveDropzone');
+            const searchKeyword = (document.getElementById('waitlistSearch').value || '').toLowerCase().trim();
+
+            const assignedNames = new Set();
+            for (let p in partyAssignments) {
+                for (let s in partyAssignments[p]) {
+                    if (partyAssignments[p][s]) assignedNames.add(partyAssignments[p][s]);
+                }
+            }
+            const leaveNames = new Set(leaveMembers);
+
+            const waitlist = allGuildMembers.filter(m => !assignedNames.has(m.name) && !leaveNames.has(m.name));
+            const leaveList = allGuildMembers.filter(m => leaveNames.has(m.name));
+
+            document.getElementById('waitlistCountBadge').innerText = waitlist.length;
+            document.getElementById('leaveCountBadge').innerText = leaveList.length;
+
+            // Render Waitlist
+            const filteredWaitlist = waitlist.filter(m => {
+                return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
+                       (m.charClass && m.charClass.toLowerCase().includes(searchKeyword));
+            });
+
+            if (filteredWaitlist.length === 0) {
+                waitlistContainer.innerHTML = `<div class="text-center py-8 text-xs text-stone-400">ไม่มีสมาชิกใน Waitlist</div>`;
+            } else {
+                waitlistContainer.innerHTML = filteredWaitlist.map(m => {
+                    const icon = CLASS_ICONS[m.charClass] || '👤';
+                    const cpText = (m.stats && m.stats.cp) ? Number(m.stats.cp).toLocaleString() : '-';
+                    return `
+                        <div draggable="${canEditParties}" 
+                             ondragstart="handleDragStart(event, '${m.name}', 'waitlist', null)"
+                             ondragend="handleDragEnd(event)"
+                             class="member-chip bg-white rounded-xl p-2.5 flex items-center justify-between border border-amber-200 hover:border-amber-400 shadow-sm">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="text-lg">${icon}</span>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-stone-900 truncate">${m.name}</p>
+                                    <p class="text-[10px] text-amber-800">${m.charClass || '-'} • CP: ${cpText}</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-300 font-bold shrink-0">
+                                ลากได้
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render Leave List
+            if (leaveList.length === 0) {
+                leaveContainer.innerHTML = `<div class="text-center py-6 text-xs text-rose-400 font-medium">ลากสมาชิกมาที่นี่ หากแจ้งลากิจกรรม</div>`;
+            } else {
+                leaveContainer.innerHTML = leaveList.map(m => {
+                    const icon = CLASS_ICONS[m.charClass] || '👤';
+                    return `
+                        <div draggable="${canEditParties}" 
+                             ondragstart="handleDragStart(event, '${m.name}', 'leave', null)"
+                             ondragend="handleDragEnd(event)"
+                             class="member-chip bg-white rounded-xl p-2 flex items-center justify-between border border-rose-200 shadow-sm">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="text-base">${icon}</span>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
+                                    <p class="text-[10px] text-rose-700">${m.charClass || '-'}</p>
+                                </div>
+                            </div>
+                            ${canEditParties ? `
+                                <button onclick="returnFromLeave('${m.name}')" class="text-stone-600 hover:text-stone-900 text-xs px-2 py-0.5 rounded bg-stone-100 font-bold" title="กลับไป Waitlist">
+                                    คืนค่า
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 6. Direct Drag & Drop Between Parties
+        function handleDragStart(e, memberName, sourceContainer, sourceSlot) {
+            if (!canEditParties) return;
+            draggedMember = {
+                name: memberName,
+                source: sourceContainer, // 'waitlist' | 'leave' | 'p1'...'p8'
+                slot: sourceSlot
+            };
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', JSON.stringify(draggedMember));
+            document.body.classList.add('is-dragging');
+        }
+
+        function handleDragEnd(e) {
+            document.body.classList.remove('is-dragging');
+            document.querySelectorAll('.slot-box, #waitlistDropzone, #leaveDropzone').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(e) {
+            if (!canEditParties) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        // Drop into Party Slot (Directly moves or swaps between any party)
+        function handleDropSlot(e, targetPartyKey, targetSlotNum) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            document.body.classList.remove('is-dragging');
+
+            if (!canEditParties || !draggedMember) return;
+
+            const targetCurrentMember = partyAssignments[targetPartyKey][`slot${targetSlotNum}`];
+
+            // If dropping onto the exact same slot, do nothing
+            if (draggedMember.source === targetPartyKey && draggedMember.slot === targetSlotNum) {
+                draggedMember = null;
+                return;
+            }
+
+            // 1. If dragging from another party slot
+            if (draggedMember.source.startsWith('p')) {
+                // Swap target's member into source slot (or empty if target was empty)
+                partyAssignments[draggedMember.source][`slot${draggedMember.slot}`] = targetCurrentMember || null;
+            } 
+            // 2. If dragging from leave
+            else if (draggedMember.source === 'leave') {
+                leaveMembers = leaveMembers.filter(n => n !== draggedMember.name);
+                if (targetCurrentMember) {
+                    // Send replaced member to waitlist
+                }
+            }
+
+            // Put dragged member into target party slot
+            partyAssignments[targetPartyKey][`slot${targetSlotNum}`] = draggedMember.name;
+
+            draggedMember = null;
+            saveAndRender();
+        }
+
+        // Drop into Waitlist
+        function handleDropWaitlist(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            document.body.classList.remove('is-dragging');
+
+            if (!canEditParties || !draggedMember) return;
+
+            if (draggedMember.source.startsWith('p')) {
+                partyAssignments[draggedMember.source][`slot${draggedMember.slot}`] = null;
+            } else if (draggedMember.source === 'leave') {
+                leaveMembers = leaveMembers.filter(n => n !== draggedMember.name);
+            }
+
+            draggedMember = null;
+            saveAndRender();
+        }
+
+        // Drop into Leave
+        function handleDropLeave(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            document.body.classList.remove('is-dragging');
+
+            if (!canEditParties || !draggedMember) return;
+
+            if (draggedMember.source.startsWith('p')) {
+                partyAssignments[draggedMember.source][`slot${draggedMember.slot}`] = null;
+            }
+
+            if (!leaveMembers.includes(draggedMember.name)) {
+                leaveMembers.push(draggedMember.name);
+            }
+
+            draggedMember = null;
+            saveAndRender();
+        }
+
+        function removeFromParty(pKey, sNum) {
+            if (!canEditParties) return;
+            partyAssignments[pKey][`slot${sNum}`] = null;
+            saveAndRender();
+        }
+
+        function returnFromLeave(memberName) {
+            if (!canEditParties) return;
+            leaveMembers = leaveMembers.filter(n => n !== memberName);
+            saveAndRender();
+        }
+
+        function clearAllParties() {
+            if (!canEditParties) return;
+            if (confirm('คุณต้องการล้างการจัดปาร์ตี้ทั้งหมดและย้ายสมาชิกกลับไปที่ Waitlist ใช่หรือไม่?')) {
+                partyAssignments = initEmptyParties();
+                saveAndRender();
+            }
+        }
+
+        function autoFillParties() {
+            if (!canEditParties) return;
+            
+            const leaveNames = new Set(leaveMembers);
+            const candidates = allGuildMembers.filter(m => !leaveNames.has(m.name));
+
+            if (candidates.length === 0) {
+                alert('ไม่มีสมาชิกที่พร้อมจัดปาร์ตี้');
+                return;
+            }
+
+            partyAssignments = initEmptyParties();
+
+            let candIndex = 0;
+            for (let s = 1; s <= 5; s++) {
+                for (let p = 1; p <= 8; p++) {
+                    if (candIndex < candidates.length) {
+                        partyAssignments[`p${p}`][`slot${s}`] = candidates[candIndex].name;
+                        candIndex++;
+                    }
+                }
+            }
+
+            saveAndRender();
+            alert('✨ จัดปาร์ตี้อัตโนมัติเรียบร้อยแล้ว!');
+        }
+
+        // 7. Save to Firebase Realtime Database
+        function saveAndRender() {
+            renderPartiesGrid();
+            renderWaitlistAndLeave();
+
+            if (canEditParties) {
+                const indicator = document.getElementById('saveStatusIndicator');
+                indicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> กำลังบันทึก...';
+
+                db.ref(`partyLineups/${currentMode}`).set({
+                    parties: partyAssignments,
+                    leave: leaveMembers,
+                    lastUpdated: new Date().toISOString(),
+                    updatedBy: currentUser
+                }).then(() => {
+                    indicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span> บันทึก Cloud เรียบร้อย';
+                }).catch(err => {
+                    indicator.innerHTML = `<span class="text-red-500 font-bold">บันทึกไม่สำเร็จ: ${err.message}</span>`;
+                });
+            }
+        }
+
+        // 8. Mode Switch
+        function switchTab(mode) {
+            currentMode = mode;
+            if (mode === 'guildLeague') {
+                document.getElementById('tabGuildLeague').className = 'roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0';
+                document.getElementById('tabEmperiumOverrun').className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0';
+            } else {
+                document.getElementById('tabGuildLeague').className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0';
+                document.getElementById('tabEmperiumOverrun').className = 'roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0';
+            }
+            
+            listenPartyData();
+        }
+
+        function listenPartyData() {
+            db.ref(`partyLineups/${currentMode}`).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.parties) {
+                    partyAssignments = data.parties;
+                    leaveMembers = data.leave || [];
+                } else {
+                    partyAssignments = initEmptyParties();
+                    leaveMembers = [];
+                }
+                renderPartiesGrid();
+                renderWaitlistAndLeave();
+            });
+        }
+
+        // 9. Load Master Members from Firebase
+        db.ref('members').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                let list = Object.values(data).filter(m => m.active !== false);
+                allGuildMembers = list;
+            } else {
+                allGuildMembers = [];
+            }
+            renderPartiesGrid();
+            renderWaitlistAndLeave();
+        });
+
+        listenPartyData();
+
+        document.getElementById('waitlistSearch').addEventListener('input', renderWaitlistAndLeave);
+
+        // 10. Export Functions
+        function exportPartyLineup() {
+            const modeName = currentMode === 'guildLeague' ? '🏆 Guild League (40v40)' : '🏰 Emperium Overrun';
+            let text = `📢 ผังจัดปาร์ตี้กิลด์ ETERNITY - ${modeName}\n`;
+            text += `=========================================\n\n`;
+
+            for (let pNum = 1; pNum <= 8; pNum++) {
+                const pKey = `p${pNum}`;
+                const pData = partyAssignments[pKey] || {};
+                text += `🛡️ Party ${pNum}:\n`;
+                for (let s = 1; s <= 5; s++) {
+                    const memberName = pData[`slot${s}`];
+                    if (memberName) {
+                        const m = allGuildMembers.find(x => x.name === memberName);
+                        const cName = m ? m.charClass || '' : '';
+                        const icon = m ? (CLASS_ICONS[m.charClass] || '👤') : '👤';
+                        text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
+                    } else {
+                        text += `  Slot ${s}: [ว่าง]\n`;
+                    }
+                }
+                text += `\n`;
+            }
+
+            if (leaveMembers.length > 0) {
+                text += `🏖️ ลากิจกรรม (${leaveMembers.length} คน): ${leaveMembers.join(', ')}\n`;
+            }
+
+            document.getElementById('exportTextarea').value = text;
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+        }
+
+        function copyExportText() {
+            const textarea = document.getElementById('exportTextarea');
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                alert('📋 คัดลอกผังจัดปาร์ตี้เรียบร้อยแล้ว! สามารถนำไปวางลง Discord หรือ LINE กลุ่มกิลด์ได้เลยครับ');
+            }).catch(err => {
+                alert('คัดลอกไม่สำเร็จ: ' + err.message);
+            });
+        }
+    </script>
+</body>
+</html>

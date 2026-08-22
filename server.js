@@ -19,6 +19,9 @@ app.get('/dashboard', (req, res) => {
 app.get('/members', (req, res) => {
     res.sendFile(path.join(__dirname, 'members.html'));
 });
+app.get('/party', (req, res) => {
+    res.sendFile(path.join(__dirname, 'party.html'));
+});
 app.get('/auction', (req, res) => {
     res.sendFile(path.join(__dirname, 'auction.html'));
 });

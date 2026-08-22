@@ -40,7 +40,7 @@
                         ETERNITY<span class="text-stone-700">Guild</span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
+                        <a href="party.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
                         <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ข้อมูลส่วนตัว</a>
@@ -102,13 +102,23 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-stone-700 mb-1.5">สายอาชีพ</label>
-                            <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all appearance-none cursor-pointer shadow-sm">
-                                <option>Sniper</option>
-                                <option>High Wizard</option>
-                                <option>Lord Knight</option>
-                                <option>High Priest</option>
-                                <option>Assassin Cross</option>
-                                <option>Whitesmith</option>
+                            <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all cursor-pointer shadow-sm">
+                                <option value="">-- เลือกอาชีพ --</option>
+                                <option value="Lord Knight">Lord Knight</option>
+                                <option value="Paladin">Paladin</option>
+                                <option value="Biochemist">Biochemist</option>
+                                <option value="Mastersmith">Mastersmith</option>
+                                <option value="Bard">Bard</option>
+                                <option value="Gypsy">Gypsy</option>
+                                <option value="Sniper">Sniper</option>
+                                <option value="Champion">Champion</option>
+                                <option value="Priest">Priest</option>
+                                <option value="Assassin">Assassin</option>
+                                <option value="Rogue">Rogue</option>
+                                <option value="Wizard">Wizard</option>
+                                <option value="Sage">Sage</option>
+                                <option value="Summoner">Summoner</option>
+                                <option value="Rebellion">Rebellion</option>
                             </select>
                         </div>
                     </div>
@@ -230,7 +240,7 @@
 
         // 2. ดึงค่า User จาก URL หรือ Session
         const urlParams = new URLSearchParams(window.location.search);
-        let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil160263';
+        let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil2693';
         sessionStorage.setItem('discord_user', currentUser);
 
         const charUidInput = document.getElementById('charUid');
@@ -238,6 +248,8 @@
         const charClassSelect = document.getElementById('charClass');
 
         charUidInput.value = currentUser;
+
+        let currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
 
         // 3. โหลดข้อมูลเดิมของ User
         function loadExistingData(uid) {
@@ -247,6 +259,7 @@
                 if (data) {
                     charNameInput.value = data.name || '';
                     charClassSelect.value = data.charClass || 'Sniper';
+                    currentUserRole = data.role || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
                     if (data.stats) {
                         document.getElementById('statCP').value = data.stats.cp || '';
                         document.getElementById('statSTR').value = data.stats.str || '';
@@ -256,9 +269,10 @@
                         document.getElementById('statDEX').value = data.stats.dex || '';
                         document.getElementById('statLUK').value = data.stats.luk || '';
                     }
-                    document.getElementById('navUsername').innerText = data.name ? `${data.name} (${uid})` : uid;
+                    document.getElementById('navUsername').innerText = data.name ? `${data.name} (${uid}) [${currentUserRole}]` : `${uid} [${currentUserRole}]`;
                 } else {
-                    document.getElementById('navUsername').innerText = uid;
+                    currentUserRole = (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
+                    document.getElementById('navUsername').innerText = `${uid} [${currentUserRole}]`;
                 }
             }).catch(err => {
                 console.error("Firebase Error:", err);
@@ -284,17 +298,18 @@
             }
 
             const updateTime = getFormattedDate();
+            const roleToSave = currentUserRole || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
 
             db.ref('members/' + uid).update({
                 uid: uid,
                 name: name,
                 charClass: charClass,
-                role: 'member',
+                role: roleToSave,
                 active: true,
                 lastUpdate: updateTime
             }).then(() => {
                 alert('💾 บันทึกข้อมูลขึ้นกิลด์เรียบร้อยแล้ว!\nคุณสามารถเปิดหน้า "สมาชิก" เพื่อดูข้อมูลได้ทันที');
-                document.getElementById('navUsername').innerText = `${name} (${uid})`;
+                document.getElementById('navUsername').innerText = `${name} (${uid}) [${roleToSave}]`;
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });

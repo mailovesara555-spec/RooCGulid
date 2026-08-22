@@ -24,6 +24,10 @@
       "dest": "/members.html"
     },
     {
+      "src": "/party",
+      "dest": "/party.html"
+    },
+    {
       "src": "/auction",
       "dest": "/auction.html"
     },

@@ -40,7 +40,7 @@
                         ETERNITY<span class="text-stone-700">Guild</span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
+                        <a href="party.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
                         <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ข้อมูลส่วนตัว</a>
@@ -68,13 +68,16 @@
             <!-- Header Section -->
             <div class="p-6 sm:p-8 border-b border-amber-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm flex items-center gap-2 flex-wrap">
                         จัดการสมาชิกในกิลด์ 
                         <span id="syncBadge" class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full border border-amber-300">
                             Connecting...
                         </span>
+                        <span id="adminBadge" class="hidden text-xs bg-red-100 text-red-800 font-bold px-2.5 py-0.5 rounded-full border border-red-300">
+                            ⚡ Admin (daffodil2693)
+                        </span>
                     </h2>
-                    <p class="text-xs text-stone-500 mt-1">รายชื่อและข้อมูลสมาชิกทุกคนในกิลด์ (อัปเดตแบบเรียลไทม์)</p>
+                    <p class="text-xs text-stone-500 mt-1">เรียงลำดับ: ⚡ Admin &rarr; 👑 หัวหน้ากิลด์ &rarr; ⚔️ รองหัวหน้ากิลด์ &rarr; 📋 ผู้จัดการ &rarr; 🛡️ สมาชิกกิลด์</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-4 w-full sm:w-auto">
@@ -83,7 +86,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-4 w-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อหรืออาชีพ..." class="w-full bg-white border border-amber-200 rounded-xl pl-10 pr-4 py-2 text-sm text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100 transition-all shadow-sm">
+                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรืออาชีพ..." class="w-full bg-white border border-amber-200 rounded-xl pl-10 pr-4 py-2 text-sm text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100 transition-all shadow-sm">
                     </div>
                 </div>
             </div>
@@ -93,8 +96,10 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-amber-50/50 border-b border-amber-200/60">
+                            <th class="py-4 px-4 text-xs font-bold text-amber-800 uppercase tracking-wider text-center w-14">ลำดับ</th>
                             <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">Discord UID</th>
-                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">ชื่อตัวละคร</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
+                            <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider text-center">ตำแหน่ง (ROLE)</th>
                             <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider">อาชีพ</th>
                             <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider text-center">CP</th>
                             <th class="py-4 px-6 text-xs font-bold text-amber-800 uppercase tracking-wider text-center">สถานะ</th>
@@ -104,7 +109,7 @@
                     </thead>
                     <tbody id="memberTableBody" class="divide-y divide-amber-100/50">
                         <tr>
-                            <td colspan="7" class="py-12 text-center text-stone-400 text-sm animate-pulse">
+                            <td colspan="9" class="py-12 text-center text-stone-400 text-sm animate-pulse">
                                 กำลังโหลดข้อมูลสมาชิกจาก Cloud...
                             </td>
                         </tr>
@@ -115,8 +120,82 @@
 
     </main>
 
+    <!-- Modal สำหรับ Edit ตำแหน่งและข้อมูลสมาชิก -->
+    <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-8 relative bg-white/95 border-2 border-amber-300 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-6">
+                <h3 class="text-lg font-bold text-amber-900 flex items-center gap-2">
+                    <span>✏️</span> แก้ไขข้อมูล & กำหนดตำแหน่งสมาชิก
+                </h3>
+                <button onclick="closeEditModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">Discord UID</label>
+                    <input type="text" id="editUid" readonly class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-2.5 text-sm text-stone-600 font-bold cursor-not-allowed">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-stone-700 mb-1">ชื่อตัวละครในเกม</label>
+                    <input type="text" id="editName" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 shadow-sm">
+                </div>
+
+                <!-- ตำแหน่งกิลด์ (หัวใจสำคัญ) -->
+                <div>
+                    <label class="block text-xs font-bold text-amber-900 mb-1 flex items-center justify-between">
+                        <span>👑 ตำแหน่งในกิลด์ (Role)</span>
+                        <span id="roleAdminHint" class="text-xs text-amber-600 font-normal">เฉพาะ Admin (daffodil2693) มีสิทธิ์เปลี่ยน</span>
+                    </label>
+                    <select id="editRole" class="w-full bg-amber-50/50 border-2 border-amber-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-900 shadow-sm cursor-pointer">
+                        <option value="หัวหน้ากิลด์">👑 หัวหน้ากิลด์</option>
+                        <option value="รองหัวหน้ากิลด์">⚔️ รองหัวหน้ากิลด์</option>
+                        <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
+                        <option value="สมาชิกกิลด์">🛡️ สมาชิกกิลด์</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-stone-700 mb-1">สายอาชีพ</label>
+                    <select id="editClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 shadow-sm cursor-pointer">
+                        <option value="">-- เลือกอาชีพ --</option>
+                        <option value="Lord Knight">Lord Knight</option>
+                        <option value="Paladin">Paladin</option>
+                        <option value="Biochemist">Biochemist</option>
+                        <option value="Mastersmith">Mastersmith</option>
+                        <option value="Bard">Bard</option>
+                        <option value="Gypsy">Gypsy</option>
+                        <option value="Sniper">Sniper</option>
+                        <option value="Champion">Champion</option>
+                        <option value="Priest">Priest</option>
+                        <option value="Assassin">Assassin</option>
+                        <option value="Rogue">Rogue</option>
+                        <option value="Wizard">Wizard</option>
+                        <option value="Sage">Sage</option>
+                        <option value="Summoner">Summoner</option>
+                        <option value="Rebellion">Rebellion</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <input type="checkbox" id="editActive" class="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer">
+                    <label for="editActive" class="text-sm font-medium text-stone-700 cursor-pointer">สถานะเข้าร่วมกิจกรรม (Active)</label>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-amber-200">
+                <button onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 font-semibold text-sm transition">
+                    ยกเลิก
+                </button>
+                <button onclick="saveEditMember()" class="roo-button px-6 py-2.5 rounded-xl text-white font-bold text-sm tracking-wide transition flex items-center gap-2">
+                    💾 บันทึกการเปลี่ยนแปลง
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 1. Firebase Initializer (Direct Embed)
+        // 1. Firebase Initializer
         const firebaseConfig = {
             apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
             authDomain: "rooc-guild.firebaseapp.com",
@@ -133,8 +212,42 @@
         }
         const db = firebase.database();
 
+        // 2. ดึงสถานะผู้ใช้งานปัจจุบัน
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil2693';
+        sessionStorage.setItem('discord_user', currentUser);
+
+        const isAdmin = currentUser.toLowerCase() === 'daffodil2693';
+        
+        if (isAdmin) {
+            document.getElementById('adminBadge').classList.remove('hidden');
+        }
+
+        document.getElementById('navUsername').innerText = `${currentUser} ${isAdmin ? '(Admin)' : ''}`;
+
         let allMembersData = [];
-        let currentAuctionResults = {};
+        let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
+
+        // ลำดับความสำคัญของตำแหน่ง (Admin = 1 สูงสุด)
+        function getRolePriority(role) {
+            switch (role) {
+                case 'Admin':
+                case 'admin':
+                    return 1;
+                case 'หัวหน้ากิลด์':
+                case 'หัวหน้ากิล':
+                    return 2;
+                case 'รองหัวหน้ากิลด์':
+                case 'รองหัวหน้ากิล':
+                    return 3;
+                case 'ผู้จัดการ':
+                    return 4;
+                case 'สมาชิกกิลด์':
+                case 'สมาชิกกิล':
+                default:
+                    return 5;
+            }
+        }
 
         // สถานะการเชื่อมต่อ
         const syncBadge = document.getElementById('syncBadge');
@@ -148,29 +261,52 @@
             }
         });
 
-        // 2. Render Table
+        // Badge ตำแหน่ง (Role Badge)
+        function getRoleBadge(role) {
+            const r = role || 'สมาชิกกิลด์';
+            switch (r) {
+                case 'Admin':
+                case 'admin':
+                    return `<span class="bg-red-100 text-red-900 border border-red-400 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">⚡ Admin</span>`;
+                case 'หัวหน้ากิลด์':
+                case 'หัวหน้ากิล':
+                    return `<span class="bg-amber-100 text-amber-900 border border-amber-400 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">👑 หัวหน้ากิลด์</span>`;
+                case 'รองหัวหน้ากิลด์':
+                case 'รองหัวหน้ากิล':
+                    return `<span class="bg-purple-100 text-purple-900 border border-purple-300 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
+                case 'ผู้จัดการ':
+                    return `<span class="bg-sky-100 text-sky-900 border border-sky-300 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
+                case 'สมาชิกกิลด์':
+                case 'สมาชิกกิล':
+                default:
+                    return `<span class="bg-stone-100 text-stone-700 border border-stone-300 px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1">🛡️ สมาชิกกิลด์</span>`;
+            }
+        }
+
+        // 3. Render Table
         function renderTable() {
             const tbody = document.getElementById('memberTableBody');
             const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
 
-            const cardReceivers = currentAuctionResults.cardCurrentRound || [];
-            const whiteReceivers = currentAuctionResults.whiteCurrentRound || [];
-            const blackReceivers = currentAuctionResults.blackCurrentRound || [];
+            const cardHolders = currentAuctionState.cardHolders || [];
+            const whiteHolders = currentAuctionState.whiteHolders || [];
+            const blackHolders = currentAuctionState.blackHolders || [];
 
             tbody.innerHTML = '';
 
             const filteredMembers = allMembersData.filter(m => {
                 return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
                        (m.charClass && m.charClass.toLowerCase().includes(searchKeyword)) ||
+                       (m.role && m.role.toLowerCase().includes(searchKeyword)) ||
                        (m.uid && m.uid.toLowerCase().includes(searchKeyword));
             });
 
             if (filteredMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-stone-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="py-10 text-center text-stone-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
                 return;
             }
 
-            filteredMembers.forEach(member => {
+            filteredMembers.forEach((member, index) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-amber-50/30 transition-colors';
                 
@@ -178,21 +314,26 @@
                     ? `<div class="w-10 h-5 bg-amber-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
                     : `<div class="w-10 h-5 bg-stone-300 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`;
                 
-                let icons = '';
-                if (cardReceivers.includes(member.name)) icons += '🃏';
-                if (whiteReceivers.includes(member.name)) icons += '🕊️';
-                if (blackReceivers.includes(member.name)) icons += '🦅';
+                // เช็คไอคอนประมูลของรอบปัจจุบัน
+                let icons = [];
+                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 text-xs">🃏</span>');
+                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="bg-sky-100 text-sky-900 px-1.5 py-0.5 rounded border border-sky-300 text-xs">🕊️</span>');
+                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="bg-stone-200 text-stone-900 px-1.5 py-0.5 rounded border border-stone-400 text-xs">🦅</span>');
                 
                 let displayName = member.name || '-';
-                if (icons !== '') {
-                    displayName += ` <span class="text-sm ml-1 bg-amber-100 px-1 py-0.5 rounded border border-amber-200">${icons}</span>`;
-                }
+                let iconDisplay = icons.length > 0 ? `<div class="flex items-center gap-1 mt-1">${icons.join(' ')}</div>` : '';
 
                 const cp = (member.stats && member.stats.cp) ? Number(member.stats.cp).toLocaleString() : '-';
+                const roleBadge = getRoleBadge(member.role);
 
                 tr.innerHTML = `
+                    <td class="py-4 px-4 text-center font-bold text-stone-400 text-xs">#${index + 1}</td>
                     <td class="py-4 px-6 text-sm text-stone-700 font-medium">${member.uid}</td>
-                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold">${displayName}</td>
+                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold">
+                        <div>${displayName}</div>
+                        ${iconDisplay}
+                    </td>
+                    <td class="py-4 px-6 text-center">${roleBadge}</td>
                     <td class="py-4 px-6 text-sm text-amber-700 font-medium">${member.charClass || '-'}</td>
                     <td class="py-4 px-6 text-sm text-center font-bold text-amber-900">${cp}</td>
                     <td class="py-4 px-6 cursor-pointer text-center">
@@ -206,7 +347,12 @@
                     </td>
                     <td class="py-4 px-6">
                         <div class="flex items-center justify-center gap-2">
-                            <button onclick="deleteMember('${member.uid}')" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition shadow-sm">Delete</button>
+                            <button onclick="openEditModal('${member.uid}')" class="px-3 py-1.5 bg-amber-100 border border-amber-300 text-amber-900 hover:bg-amber-200 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="deleteMember('${member.uid}')" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition shadow-sm">
+                                🗑️ Delete
+                            </button>
                         </div>
                     </td>
                 `;
@@ -214,8 +360,91 @@
             });
         }
 
+        // 4. Modal Functions
+        function openEditModal(uid) {
+            const member = allMembersData.find(m => m.uid === uid);
+            if (!member) return;
+
+            document.getElementById('editUid').value = member.uid;
+            document.getElementById('editName').value = member.name || '';
+            document.getElementById('editClass').value = member.charClass || 'Sniper';
+            document.getElementById('editActive').checked = (member.active !== false);
+
+            const roleSelect = document.getElementById('editRole');
+            const roleHint = document.getElementById('roleAdminHint');
+
+            // จัดการ Dropdown สำหรับ daffodil2693 เท่านั้นที่เป็น Admin
+            if (uid.toLowerCase() === 'daffodil2693') {
+                roleSelect.innerHTML = `<option value="Admin">⚡ Admin (ยศพิเศษเฉพาะ daffodil2693)</option>`;
+                roleSelect.disabled = true;
+                roleHint.innerText = "⚡ ยศ Admin เป็นยศพิเศษเฉพาะ daffodil2693";
+                roleHint.className = "text-xs text-red-600 font-bold";
+            } else {
+                roleSelect.innerHTML = `
+                    <option value="หัวหน้ากิลด์">👑 หัวหน้ากิลด์</option>
+                    <option value="รองหัวหน้ากิลด์">⚔️ รองหัวหน้ากิลด์</option>
+                    <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
+                    <option value="สมาชิกกิลด์">🛡️ สมาชิกกิลด์</option>
+                `;
+                roleSelect.value = member.role || 'สมาชิกกิลด์';
+
+                if (isAdmin) {
+                    roleSelect.disabled = false;
+                    roleSelect.classList.remove('opacity-60', 'cursor-not-allowed');
+                    roleHint.innerText = "👑 คุณมีสิทธิ์เปลี่ยนตำแหน่งในฐานะ Admin";
+                    roleHint.className = "text-xs text-emerald-600 font-semibold";
+                } else {
+                    roleSelect.disabled = true;
+                    roleSelect.classList.add('opacity-60', 'cursor-not-allowed');
+                    roleHint.innerText = "⚠️ เฉพาะ Admin (daffodil2693) เท่านั้นที่สามารถเปลี่ยนตำแหน่งได้";
+                    roleHint.className = "text-xs text-amber-600 font-normal";
+                }
+            }
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function saveEditMember() {
+            const uid = document.getElementById('editUid').value;
+            const name = document.getElementById('editName').value.trim();
+            const charClass = document.getElementById('editClass').value;
+            const role = document.getElementById('editRole').value;
+            const active = document.getElementById('editActive').checked;
+
+            if (!name) {
+                alert('กรุณากรอกชื่อตัวละคร');
+                return;
+            }
+
+            const updates = {
+                name: name,
+                charClass: charClass,
+                active: active
+            };
+
+            if (isAdmin && uid.toLowerCase() !== 'daffodil2693') {
+                updates.role = role;
+            }
+
+            db.ref('members/' + uid).update(updates).then(() => {
+                alert('✨ บันทึกการแก้ไขข้อมูลเรียบร้อยแล้ว!');
+                closeEditModal();
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
         // ลบสมาชิก
         function deleteMember(uid) {
+            if (!isAdmin && currentUser.toLowerCase() !== uid.toLowerCase()) {
+                alert('⚠️ คุณไม่มีสิทธิ์ลบข้อมูลของสมาชิกท่านอื่น (เฉพาะ Admin daffodil2693)');
+                return;
+            }
+
             if (confirm(`คุณต้องการลบข้อมูลของ ${uid} ใช่หรือไม่?`)) {
                 db.ref('members/' + uid).remove().then(() => {
                     alert('ลบสมาชิกเรียบร้อยแล้ว');
@@ -223,22 +452,33 @@
             }
         }
 
-        // 3. Real-time Listeners
+        // 5. Real-time Listeners with Role-based Sorting
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                allMembersData = Object.values(data);
+                let list = Object.values(data);
+                
+                // เรียงลำดับ: Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกกิลด์
+                list.sort((a, b) => {
+                    const pA = getRolePriority(a.role);
+                    const pB = getRolePriority(b.role);
+                    if (pA !== pB) return pA - pB;
+                    return (a.createdAt || 0) - (b.createdAt || 0);
+                });
+                
+                allMembersData = list;
             } else {
                 allMembersData = [];
             }
             renderTable();
         }, (error) => {
             console.error("Firebase Read Error:", error);
-            document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="7" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
+            document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="9" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
         });
 
-        db.ref('auctionResults').on('value', (snapshot) => {
-            currentAuctionResults = snapshot.val() || {};
+        // ฟังผลและสถานะรอบการประมูลล่าสุด
+        db.ref('auctionState').on('value', (snapshot) => {
+            currentAuctionState = snapshot.val() || { cardHolders: [], whiteHolders: [], blackHolders: [] };
             renderTable();
         });
 
