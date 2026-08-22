@@ -556,7 +556,30 @@
             return Math.max(0, endIndex - startIndex + 1);
         }
 
-        // ระบบแจกแบบต่อเนื่อง
+        // รวม Chunks ที่อยู่หน้าเดียวกันและติดกันให้เป็นก้อนเดียวอย่างสวยงาม
+        function mergeChunks(chunks) {
+            if (!chunks || chunks.length === 0) return [];
+            // เรียงตามหน้า และ Slot เริ่มต้น
+            chunks.sort((a, b) => a.page !== b.page ? a.page - b.page : a.startSlot - b.startSlot);
+
+            let merged = [];
+            chunks.forEach(c => {
+                if (merged.length === 0) {
+                    merged.push({ ...c });
+                } else {
+                    let last = merged[merged.length - 1];
+                    if (last.page === c.page && last.endSlot + 1 === c.startSlot) {
+                        last.endSlot = c.endSlot;
+                        last.count += c.count;
+                    } else {
+                        merged.push({ ...c });
+                    }
+                }
+            });
+            return merged;
+        }
+
+        // ระบบแจกแบบต่อเนื่อง เรียงตามหน้าและ Slot ให้หมดทีละหน้า
         function allocatePersistentRound(allMembers, supply, amountPerPerson, startIndex, existingHolders) {
             if (allMembers.length === 0 || supply <= 0) {
                 return { allocations: {}, receivers: [], updatedHolders: existingHolders || [] };
@@ -610,6 +633,11 @@
 
             if (currentHolders.length >= allMembers.length) {
                 currentHolders = [];
+            }
+
+            // รวม Chunks ของแต่ละคนให้เรียงหน้าต่อเนื่อง ไม่แตกกระจาย
+            for (let name in allocations) {
+                allocations[name] = mergeChunks(allocations[name]);
             }
 
             return {
