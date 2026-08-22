@@ -377,6 +377,23 @@
             return parties;
         }
 
+        // รับประกันว่า Party 1 ถึง Party 8 จะมีโครงสร้าง Object ครบถ้วนเสมอ (ป้องกัน Firebase ลบ Object ว่างทิ้ง)
+        function ensureAllPartiesStructure(parties) {
+            const result = {};
+            for (let i = 1; i <= 8; i++) {
+                const pKey = `p${i}`;
+                const src = (parties && parties[pKey]) ? parties[pKey] : {};
+                result[pKey] = {
+                    slot1: src.slot1 || null,
+                    slot2: src.slot2 || null,
+                    slot3: src.slot3 || null,
+                    slot4: src.slot4 || null,
+                    slot5: src.slot5 || null
+                };
+            }
+            return result;
+        }
+
         partyAssignments = initEmptyParties();
 
         // Listen for user role permissions
@@ -645,6 +662,11 @@
             const activeM = draggedMember || selectedMember;
             if (!canEditParties || !activeM) return;
 
+            // Ensure destination object always exists
+            if (!partyAssignments[targetPartyKey]) {
+                partyAssignments[targetPartyKey] = { slot1: null, slot2: null, slot3: null, slot4: null, slot5: null };
+            }
+
             const targetCurrentMember = partyAssignments[targetPartyKey][`slot${targetSlotNum}`];
 
             // If same slot, do nothing
@@ -658,6 +680,9 @@
 
             // 1. If dragging/moving from another party slot
             if (activeM.source.startsWith('p')) {
+                if (!partyAssignments[activeM.source]) {
+                    partyAssignments[activeM.source] = { slot1: null, slot2: null, slot3: null, slot4: null, slot5: null };
+                }
                 partyAssignments[activeM.source][`slot${activeM.slot}`] = targetCurrentMember || null;
             } 
             // 2. If from leave
@@ -844,7 +869,7 @@
             db.ref(`partyLineups/${currentMode}`).on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.parties) {
-                    partyAssignments = data.parties;
+                    partyAssignments = ensureAllPartiesStructure(data.parties);
                     leaveMembers = data.leave || [];
                 } else {
                     partyAssignments = initEmptyParties();
