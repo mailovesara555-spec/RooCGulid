@@ -484,14 +484,14 @@
                     ? `<div class="w-10 h-5 bg-amber-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
                     : `<div class="w-10 h-5 bg-stone-300 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`;
                 
-                // เช็คไอคอนประมูลของรอบปัจจุบัน
+                // เช็คไอคอนประมูลของรอบปัจจุบัน (ใช้รูปภาพไอเทมจริง)
                 let icons = [];
-                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 text-xs">🃏</span>');
-                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="bg-sky-100 text-sky-900 px-1.5 py-0.5 rounded border border-sky-300 text-xs">🕊️</span>');
-                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="bg-stone-200 text-stone-900 px-1.5 py-0.5 rounded border border-stone-400 text-xs">🦅</span>');
+                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 text-xs inline-flex items-center gap-1"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
+                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="bg-sky-100 text-sky-900 px-1.5 py-0.5 rounded border border-sky-300 text-xs inline-flex items-center gap-1"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
+                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="bg-stone-200 text-stone-900 px-1.5 py-0.5 rounded border border-stone-400 text-xs inline-flex items-center gap-1"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
                 
                 let displayName = member.name || '-';
-                let iconDisplay = icons.length > 0 ? `<div class="flex items-center gap-1 mt-1">${icons.join(' ')}</div>` : '';
+                let iconDisplay = icons.length > 0 ? `<div class="flex items-center gap-1.5 mt-1 flex-wrap">${icons.join(' ')}</div>` : '';
 
                 const cp = (member.stats && member.stats.cp) ? Number(member.stats.cp).toLocaleString() : '-';
                 const roleBadge = getRoleBadge(member.role);

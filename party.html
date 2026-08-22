@@ -476,6 +476,7 @@
         function renderSlotHtml(pKey, sNum, assignedMemberName) {
             const member = allGuildMembers.find(m => m.name === assignedMemberName);
             const isSelected = selectedMember && selectedMember.source === pKey && selectedMember.slot === sNum;
+            const hasActiveSelection = !!selectedMember || !!draggedMember;
 
             if (member) {
                 const icon = CLASS_ICONS[member.charClass] || '👤';
@@ -488,7 +489,7 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box filled ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group">
+                         class="slot-box filled ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="text-base">${icon}</span>
                             <div class="min-w-0">
@@ -510,8 +511,10 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box rounded-xl p-2 text-center text-stone-400 text-[11px] font-medium min-h-[42px] flex items-center justify-center hover:border-amber-400">
-                        <span>${selectedMember ? '➕ วางที่นี่' : `Slot ${sNum}`}</span>
+                         class="slot-box rounded-xl p-2 text-center text-stone-400 text-[11px] font-medium min-h-[42px] flex items-center justify-center transition-all ${hasActiveSelection ? 'bg-amber-50/90 border-amber-400 hover:bg-amber-100 hover:scale-105' : 'hover:border-amber-400 hover:bg-amber-50/50'}">
+                        <span class="${hasActiveSelection ? 'text-amber-800 font-bold text-xs' : 'text-stone-400'}">
+                            ${hasActiveSelection ? '➕ วางที่นี่' : `Slot ${sNum}`}
+                        </span>
                     </div>
                 `;
             }

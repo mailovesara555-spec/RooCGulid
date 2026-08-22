@@ -113,7 +113,10 @@
                         <!-- การ์ด -->
                         <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-200 shadow-sm">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-bold text-amber-900 flex items-center gap-1.5 text-sm">🃏 การ์ด</h4>
+                                <h4 class="font-bold text-amber-900 flex items-center gap-2 text-sm">
+                                    <img src="images/item_card.png" class="w-6 h-6 object-contain drop-shadow-sm" alt="การ์ด">
+                                    การ์ด
+                                </h4>
                                 <span id="cardRoundProgress" class="text-[11px] bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full font-bold">
                                     โหลดสถานะรอบ...
                                 </span>
@@ -143,7 +146,10 @@
                         <!-- ขนขาว -->
                         <div class="p-4 bg-sky-50/50 rounded-2xl border border-sky-200 shadow-sm">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-bold text-sky-900 flex items-center gap-1.5 text-sm">🕊️ ขนขาว</h4>
+                                <h4 class="font-bold text-sky-900 flex items-center gap-2 text-sm">
+                                    <img src="images/item_white.png" class="w-6 h-6 object-contain drop-shadow-sm" alt="ขนขาว">
+                                    ขนขาว
+                                </h4>
                                 <span id="whiteRoundProgress" class="text-[11px] bg-sky-200/80 text-sky-900 px-2 py-0.5 rounded-full font-bold">
                                     โหลดสถานะรอบ...
                                 </span>
@@ -173,7 +179,10 @@
                         <!-- ขนดำ -->
                         <div class="p-4 bg-stone-100/70 rounded-2xl border border-stone-300 shadow-sm">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-bold text-stone-900 flex items-center gap-1.5 text-sm">🦅 ขนดำ</h4>
+                                <h4 class="font-bold text-stone-900 flex items-center gap-2 text-sm">
+                                    <img src="images/item_black.png" class="w-6 h-6 object-contain drop-shadow-sm" alt="ขนดำ">
+                                    ขนดำ
+                                </h4>
                                 <span id="blackRoundProgress" class="text-[11px] bg-stone-300 text-stone-900 px-2 py-0.5 rounded-full font-bold">
                                     โหลดสถานะรอบ...
                                 </span>
@@ -210,7 +219,7 @@
                     <div id="memberPreview" class="mb-3 p-3 bg-white/80 rounded-xl border border-amber-200 text-xs text-stone-600 max-h-32 overflow-y-auto shadow-inner leading-relaxed">
                         กำลังโหลดรายชื่อสมาชิกจาก Cloud...
                     </div>
-                    <button id="btnCalculateAuction" onclick="calculateAuction()" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 tracking-wide text-sm">
+                    <button id="btnCalculateAuction" onclick="calculateAuction()" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 tracking-wide text-sm shadow-md">
                         🧮 คำนวณ & อัปเดตผลขึ้นกิลด์
                     </button>
                 </div>
@@ -246,9 +255,21 @@
                                 <tr class="bg-amber-100/60 border-b border-amber-200">
                                     <th class="py-4 px-4 text-xs font-extrabold text-amber-900 uppercase tracking-wider w-16 text-center">ลำดับ</th>
                                     <th class="py-4 px-4 text-xs font-extrabold text-amber-900 uppercase tracking-wider w-44">ชื่อสมาชิก</th>
-                                    <th class="py-4 px-4 text-xs font-extrabold text-amber-900 uppercase tracking-wider">🃏 การ์ด</th>
-                                    <th class="py-4 px-4 text-xs font-extrabold text-sky-900 uppercase tracking-wider">🕊️ ขนขาว</th>
-                                    <th class="py-4 px-4 text-xs font-extrabold text-stone-800 uppercase tracking-wider">🦅 ขนดำ</th>
+                                    <th class="py-4 px-4 text-xs font-extrabold text-amber-900 uppercase tracking-wider">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <img src="images/item_card.png" class="w-5 h-5 object-contain" alt="การ์ด"> การ์ด
+                                        </span>
+                                    </th>
+                                    <th class="py-4 px-4 text-xs font-extrabold text-sky-900 uppercase tracking-wider">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <img src="images/item_white.png" class="w-5 h-5 object-contain" alt="ขนขาว"> ขนขาว
+                                        </span>
+                                    </th>
+                                    <th class="py-4 px-4 text-xs font-extrabold text-stone-800 uppercase tracking-wider">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <img src="images/item_black.png" class="w-5 h-5 object-contain" alt="ขนดำ"> ขนดำ
+                                        </span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="resultTableBody" class="divide-y divide-amber-100">
@@ -267,10 +288,10 @@
                             <span class="font-bold text-amber-900">💡 วิธีดูผล:</span>
                             <span>ดูป้าย <b class="bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded text-[11px]">หน้า X</b> แล้วกดรับ <b class="text-stone-800">ใบที่ระบุ</b> ตามลำดับในเกม</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> การ์ด</span>
-                            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span> ขนขาว</span>
-                            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span> ขนดำ</span>
+                        <div class="flex items-center gap-3 font-semibold">
+                            <span class="inline-flex items-center gap-1.5"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>
+                            <span class="inline-flex items-center gap-1.5"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>
+                            <span class="inline-flex items-center gap-1.5"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>
                         </div>
                     </div>
 
