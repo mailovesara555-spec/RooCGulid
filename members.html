@@ -80,7 +80,12 @@
                     <p class="text-xs text-stone-500 mt-1">เรียงลำดับ: ⚡ Admin &rarr; 👑 หัวหน้ากิลด์ &rarr; ⚔️ รองหัวหน้ากิลด์ &rarr; 📋 ผู้จัดการ &rarr; 🛡️ สมาชิกกิลด์</p>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                    <!-- Whitelist Button (Admin Only) -->
+                    <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 border border-amber-600">
+                        🔑 อนุญาตเข้าเว็บ (Whitelist)
+                    </button>
+
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -194,6 +199,169 @@
         </div>
     </div>
 
+    <!-- Modal ดูรายละเอียดสเตตัสตัวละคร (Stats Detail Modal) -->
+    <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-white border-2 border-amber-300 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-xl overflow-hidden shadow-inner">
+                        <span id="modalAvatarIcon">👤</span>
+                        <img id="modalAvatarImg" class="hidden w-full h-full object-cover" alt="Avatar">
+                    </div>
+                    <div>
+                        <h3 id="modalMemberName" class="text-lg font-extrabold text-amber-950">ชื่อตัวละคร</h3>
+                        <p id="modalMemberSub" class="text-xs text-amber-800 font-medium">Sniper • สมาชิกกิลด์</p>
+                    </div>
+                </div>
+                <button onclick="closeStatsModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-xs font-extrabold text-amber-900 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
+                
+                <!-- Primary Stats -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-xs">
+                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-300">
+                        <div class="text-[10px] text-amber-900 font-extrabold uppercase">CP</div>
+                        <div id="mStat_cp" class="font-extrabold text-amber-900 text-sm mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">MAX HP</div>
+                        <div id="mStat_maxHp" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">MAX SP</div>
+                        <div id="mStat_maxSp" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">P.ATK</div>
+                        <div id="mStat_pAtk" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">M.ATK</div>
+                        <div id="mStat_mAtk" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">P.DEF</div>
+                        <div id="mStat_pDef" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">M.DEF</div>
+                        <div id="mStat_mDef" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">IGN P.DEF</div>
+                        <div id="mStat_ignorePDef" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">IGN M.DEF</div>
+                        <div id="mStat_ignoreMDef" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                </div>
+
+                <!-- PVP & Crit Stats -->
+                <h4 class="text-xs font-extrabold text-amber-900 uppercase tracking-wider pt-2">⚔️ สเตตัส PVP & CRITICAL</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">P.DMG (%)</div>
+                        <div id="mStat_pDmg" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">M.DMG (%)</div>
+                        <div id="mStat_mDmg" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">P.REDUC (%)</div>
+                        <div id="mStat_pReduc" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">M.REDUC (%)</div>
+                        <div id="mStat_mReduc" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">PVP DMG</div>
+                        <div id="mStat_pvpDmg" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">PVP REDUC</div>
+                        <div id="mStat_pvpReduc" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">CRI</div>
+                        <div id="mStat_cri" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <div class="text-[10px] text-stone-500 font-bold uppercase">CRI DAM (%)</div>
+                        <div id="mStat_criDam" class="font-bold text-stone-800 mt-0.5">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end pt-4 border-t border-amber-200">
+                <button onclick="closeStatsModal()" class="roo-button px-6 py-2 rounded-xl text-white font-bold text-xs">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal จัดการสิทธิ์เข้าเว็บ (Whitelist Modal - Admin Only) -->
+    <div id="whitelistModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-xl rounded-3xl p-6 sm:p-8 relative bg-white border-2 border-amber-400 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-5">
+                <h3 class="text-lg font-extrabold text-amber-950 flex items-center gap-2">
+                    <span>🔑</span> จัดการสิทธิ์เข้าสู่ระบบ (Whitelist)
+                </h3>
+                <button onclick="closeWhitelistModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <!-- Form เพิ่ม Username ใหม่ -->
+            <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200 mb-6 space-y-3 shadow-inner">
+                <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                    <span>➕</span> เพิ่ม Discord Username ที่อนุญาต
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-stone-600 mb-1">Discord Username (ไม่มี #)</label>
+                        <input type="text" id="newWhitelistUser" placeholder="เช่น amooma_aom" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:outline-none focus:border-amber-500 shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-stone-600 mb-1">หมายเหตุ / ชื่อเล่น</label>
+                        <input type="text" id="newWhitelistNote" placeholder="เช่น น้องออม รองหัวกิลด์" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-500 shadow-sm">
+                    </div>
+                </div>
+                <div class="flex justify-end pt-1">
+                    <button onclick="addWhitelistUser()" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                        ➕ อนุญาตสิทธิ์เข้าใช้งาน
+                    </button>
+                </div>
+            </div>
+
+            <!-- List of Allowed Users -->
+            <div>
+                <h4 class="text-xs font-extrabold text-stone-700 mb-2 flex items-center justify-between">
+                    <span>📋 รายชื่อที่ได้รับอนุญาตในปัจจุบัน (<span id="whitelistCount">0</span> คน)</span>
+                    <span class="text-[11px] text-amber-700 font-medium">บันทึกอัตโนมัติลง Server</span>
+                </h4>
+                
+                <div class="max-h-60 overflow-y-auto rounded-2xl border border-amber-200 divide-y divide-amber-100 bg-white/80">
+                    <div id="whitelistTableBody" class="p-2 space-y-1.5">
+                        <div class="text-center py-6 text-xs text-stone-400">กำลังโหลดรายชื่อ...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-5 mt-4 border-t border-amber-200">
+                <p class="text-[11px] text-stone-400">
+                    * ผู้ที่ไม่มีรายชื่อในนี้จะไม่สามารถล็อกอินเข้าเว็บได้
+                </p>
+                <button onclick="closeWhitelistModal()" class="px-5 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 font-bold text-xs transition">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 1. Firebase Initializer
         const firebaseConfig = {
@@ -221,6 +389,8 @@
         
         if (isAdmin) {
             document.getElementById('adminBadge').classList.remove('hidden');
+            const btnWhitelist = document.getElementById('btnManageWhitelist');
+            if (btnWhitelist) btnWhitelist.classList.remove('hidden');
         }
 
         document.getElementById('navUsername').innerText = `${currentUser} ${isAdmin ? '(Admin)' : ''}`;
@@ -329,13 +499,15 @@
                 tr.innerHTML = `
                     <td class="py-4 px-4 text-center font-bold text-stone-400 text-xs">#${index + 1}</td>
                     <td class="py-4 px-6 text-sm text-stone-700 font-medium">${member.uid}</td>
-                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold">
-                        <div>${displayName}</div>
+                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                        <div class="hover:text-amber-700 transition flex items-center gap-1.5">${displayName} <span class="text-xs text-amber-500">🔍</span></div>
                         ${iconDisplay}
                     </td>
                     <td class="py-4 px-6 text-center">${roleBadge}</td>
                     <td class="py-4 px-6 text-sm text-amber-700 font-medium">${member.charClass || '-'}</td>
-                    <td class="py-4 px-6 text-sm text-center font-bold text-amber-900">${cp}</td>
+                    <td class="py-4 px-6 text-sm text-center font-bold text-amber-900 cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                        <span class="hover:underline">${cp}</span>
+                    </td>
                     <td class="py-4 px-6 cursor-pointer text-center">
                         ${toggleHtml}
                     </td>
@@ -347,6 +519,9 @@
                     </td>
                     <td class="py-4 px-6">
                         <div class="flex items-center justify-center gap-2">
+                            <button onclick="openStatsModal('${member.uid}')" class="px-2.5 py-1.5 bg-stone-100 border border-stone-300 text-stone-700 hover:bg-stone-200 rounded-lg text-xs font-bold transition shadow-sm" title="ดูสเตตัส">
+                                📊 สเตตัส
+                            </button>
                             <button onclick="openEditModal('${member.uid}')" class="px-3 py-1.5 bg-amber-100 border border-amber-300 text-amber-900 hover:bg-amber-200 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1">
                                 ✏️ Edit
                             </button>
@@ -406,6 +581,52 @@
 
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Modal Stats Detail View
+        function openStatsModal(uid) {
+            const member = allMembersData.find(m => m.uid === uid);
+            if (!member) return;
+
+            document.getElementById('modalMemberName').innerText = member.name || member.uid;
+            document.getElementById('modalMemberSub').innerText = `${member.charClass || 'ไม่ระบุอาชีพ'} • ${member.role || 'สมาชิกกิลด์'}`;
+
+            const avatarImg = document.getElementById('modalAvatarImg');
+            const avatarIcon = document.getElementById('modalAvatarIcon');
+            if (member.avatarUrl) {
+                avatarImg.src = member.avatarUrl;
+                avatarImg.classList.remove('hidden');
+                avatarIcon.classList.add('hidden');
+            } else {
+                avatarImg.classList.add('hidden');
+                avatarIcon.classList.remove('hidden');
+            }
+
+            const stats = member.stats || {};
+            document.getElementById('mStat_cp').innerText = stats.cp ? Number(stats.cp).toLocaleString() : '-';
+            document.getElementById('mStat_maxHp').innerText = stats.maxHp ? Number(stats.maxHp).toLocaleString() : '-';
+            document.getElementById('mStat_maxSp').innerText = stats.maxSp ? Number(stats.maxSp).toLocaleString() : '-';
+            document.getElementById('mStat_pAtk').innerText = stats.pAtk ? Number(stats.pAtk).toLocaleString() : '-';
+            document.getElementById('mStat_mAtk').innerText = stats.mAtk ? Number(stats.mAtk).toLocaleString() : '-';
+            document.getElementById('mStat_pDef').innerText = stats.pDef ? Number(stats.pDef).toLocaleString() : '-';
+            document.getElementById('mStat_mDef').innerText = stats.mDef ? Number(stats.mDef).toLocaleString() : '-';
+            document.getElementById('mStat_ignorePDef').innerText = stats.ignorePDef ? Number(stats.ignorePDef).toLocaleString() : '-';
+            document.getElementById('mStat_ignoreMDef').innerText = stats.ignoreMDef ? Number(stats.ignoreMDef).toLocaleString() : '-';
+            
+            document.getElementById('mStat_pDmg').innerText = stats.pDmg !== undefined && stats.pDmg !== null ? `${stats.pDmg}%` : '-';
+            document.getElementById('mStat_mDmg').innerText = stats.mDmg !== undefined && stats.mDmg !== null ? `${stats.mDmg}%` : '-';
+            document.getElementById('mStat_pReduc').innerText = stats.pReduc !== undefined && stats.pReduc !== null ? `${stats.pReduc}%` : '-';
+            document.getElementById('mStat_mReduc').innerText = stats.mReduc !== undefined && stats.mReduc !== null ? `${stats.mReduc}%` : '-';
+            document.getElementById('mStat_pvpDmg').innerText = stats.pvpDmg !== undefined && stats.pvpDmg !== null ? `${stats.pvpDmg}%` : '-';
+            document.getElementById('mStat_pvpReduc').innerText = stats.pvpReduc !== undefined && stats.pvpReduc !== null ? `${stats.pvpReduc}%` : '-';
+            document.getElementById('mStat_cri').innerText = stats.cri ? Number(stats.cri).toLocaleString() : '-';
+            document.getElementById('mStat_criDam').innerText = stats.criDam !== undefined && stats.criDam !== null ? `${stats.criDam}%` : '-';
+
+            document.getElementById('statsDetailModal').classList.remove('hidden');
+        }
+
+        function closeStatsModal() {
+            document.getElementById('statsDetailModal').classList.add('hidden');
         }
 
         function saveEditMember() {
@@ -483,6 +704,107 @@
         });
 
         document.getElementById('searchInput').addEventListener('input', renderTable);
+
+        // ==========================================
+        // 6. Whitelist Management Functions (Admin)
+        // ==========================================
+        let currentWhitelist = {};
+
+        function openWhitelistModal() {
+            if (!isAdmin) {
+                alert('⚠️ เฉพาะ Admin (daffodil2693) เท่านั้นที่สามารถจัดการสิทธิ์การเข้าใช้งานเว็บได้');
+                return;
+            }
+            document.getElementById('whitelistModal').classList.remove('hidden');
+        }
+
+        function closeWhitelistModal() {
+            document.getElementById('whitelistModal').classList.add('hidden');
+        }
+
+        function addWhitelistUser() {
+            const rawUser = document.getElementById('newWhitelistUser').value.trim();
+            const note = document.getElementById('newWhitelistNote').value.trim();
+
+            if (!rawUser) {
+                alert('กรุณากรอก Discord Username');
+                return;
+            }
+
+            const username = rawUser.toLowerCase().replace(/#/g, '');
+
+            db.ref('whitelist/' + username).set({
+                addedAt: new Date().toISOString(),
+                addedBy: currentUser,
+                note: note || '-'
+            }).then(() => {
+                alert(`✨ อนุญาตสิทธิ์ให้ "${username}" เข้าใช้งานเว็บเรียบร้อยแล้ว!`);
+                document.getElementById('newWhitelistUser').value = '';
+                document.getElementById('newWhitelistNote').value = '';
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
+        function deleteWhitelistUser(username) {
+            if (username.toLowerCase() === 'daffodil2693') {
+                alert('⚠️ ไม่สามารถลบสิทธิ์ Super Admin (daffodil2693) ได้');
+                return;
+            }
+
+            if (confirm(`คุณต้องการยกเลิกสิทธิ์เข้าใช้งานของ "${username}" ใช่หรือไม่?`)) {
+                db.ref('whitelist/' + username).remove().then(() => {
+                    alert(`ลบสิทธิ์ของ "${username}" เรียบร้อยแล้ว`);
+                }).catch(err => {
+                    alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+                });
+            }
+        }
+
+        // ฟังการเปลี่ยนแปลง Whitelist แบบ Real-time
+        db.ref('whitelist').on('value', (snapshot) => {
+            const data = snapshot.val() || {};
+            currentWhitelist = data;
+
+            const tbody = document.getElementById('whitelistTableBody');
+            const countBadge = document.getElementById('whitelistCount');
+            const keys = Object.keys(data);
+
+            if (countBadge) countBadge.innerText = keys.length;
+
+            if (keys.length === 0) {
+                tbody.innerHTML = `<div class="text-center py-6 text-xs text-stone-400">ยังไม่มีรายชื่อ Whitelist</div>`;
+                return;
+            }
+
+            tbody.innerHTML = keys.map((u) => {
+                const item = data[u] || {};
+                const note = (typeof item === 'object' && item.note) ? item.note : '-';
+                const isSuper = (u.toLowerCase() === 'daffodil2693');
+
+                return `
+                    <div class="flex items-center justify-between p-2.5 bg-amber-50/50 hover:bg-amber-100/60 rounded-xl border border-amber-200 transition">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-6 h-6 rounded-full ${isSuper ? 'bg-red-100 text-red-700 border-red-300' : 'bg-amber-200 text-amber-900 border-amber-300'} border flex items-center justify-center text-xs font-extrabold">
+                                ${isSuper ? '⚡' : '👤'}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-stone-900 truncate flex items-center gap-1.5">
+                                    ${u}
+                                    ${isSuper ? '<span class="text-[10px] bg-red-100 text-red-800 font-extrabold px-1.5 py-0.5 rounded border border-red-300">Admin</span>' : ''}
+                                </p>
+                                <p class="text-[10px] text-stone-500 truncate">${note}</p>
+                            </div>
+                        </div>
+                        ${!isSuper ? `
+                            <button onclick="deleteWhitelistUser('${u}')" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold transition shadow-sm" title="ลบสิทธิ์">
+                                🗑️ ลบสิทธิ์
+                            </button>
+                        ` : '<span class="text-[10px] text-stone-400 font-bold mr-2">ถาวร</span>'}
+                    </div>
+                `;
+            }).join('');
+        });
     </script>
 </body>
 </html>

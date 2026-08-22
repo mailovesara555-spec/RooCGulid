@@ -29,7 +29,8 @@ app.get('/auction', (req, res) => {
 // รายชื่อ Discord Username ที่อนุญาตให้เข้าถึง
 // (ใช้ชื่อ username ปัจจุบันของ Discord ที่ไม่มี # ตัวเลขแล้ว เช่น 'admin_user')
 const ALLOWED_USERS = [
-    'admin_user','daffodil2693','amooma_aom',
+    'admin_user','daffodil2693','amooma_aom','zinchess
+',
     'guild_leader',
     'player123'
 ];
@@ -83,8 +84,27 @@ app.get('/auth/discord/callback', async (req, res) => {
         const discordUser = userResponse.data;
         const username = discordUser.username.toLowerCase(); // ชื่อ Username ของ Discord
 
-        // 3. ตรวจสอบว่าชื่อ Username อยู่ในรายชื่ออนุญาตหรือไม่
-        if (ALLOWED_USERS.includes(username)) {
+        // 3. ตรวจสอบว่าชื่อ Username อยู่ในรายชื่ออนุญาตหรือไม่ (ตรวจสอบทั้งจาก Firebase Realtime Database และ Admin)
+        let isAllowed = (username === 'daffodil2693') || ALLOWED_USERS.map(u => u.toLowerCase()).includes(username);
+
+        if (!isAllowed) {
+            try {
+                const fbRes = await axios.get('https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app/whitelist.json');
+                const whitelistData = fbRes.data;
+                if (whitelistData) {
+                    if (Array.isArray(whitelistData)) {
+                        isAllowed = whitelistData.map(u => String(u).toLowerCase()).includes(username);
+                    } else if (typeof whitelistData === 'object') {
+                        const keys = Object.keys(whitelistData).map(k => k.toLowerCase());
+                        isAllowed = keys.includes(username);
+                    }
+                }
+            } catch (fbErr) {
+                console.warn('Firebase whitelist check fallback:', fbErr.message);
+            }
+        }
+
+        if (isAllowed) {
             // อนุญาตให้เข้าถึง: ส่งต่อไปยังหน้า Dashboard พร้อมแนบ Discord Username
             res.redirect(`/dashboard.html?user=${encodeURIComponent(discordUser.username)}`);
         } else {

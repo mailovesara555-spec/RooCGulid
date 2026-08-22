@@ -11,24 +11,56 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+    <!-- Tesseract.js for Real AI OCR directly in Browser -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
             background-color: #fdf6e3;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #292524;
         }
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #fdf6e3; }
         ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
-        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
-        .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
-        .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .roo-card { 
+            background: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(8px); 
+            border: 1px solid #e5d3b3; 
+            box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); 
+        }
+        .roo-button { 
+            background: linear-gradient(to bottom, #fbbf24, #d97706); 
+            box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); 
+            border: 1px solid #b45309; 
+            text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); 
+        }
+        .roo-button:hover { 
+            background: linear-gradient(to bottom, #fcd34d, #ea580c); 
+        }
+        
+        .stat-input-card {
+            background: #ffffff;
+            border: 1px solid #e5d3b3;
+            transition: all 0.2s ease;
+        }
+        .stat-input-card:focus-within {
+            border-color: #d97706;
+            box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+        }
+        .stat-input-card.highlight {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="min-h-screen text-stone-800">
+<body class="min-h-screen flex flex-col">
 
     <!-- Navbar -->
     <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
@@ -36,14 +68,14 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Links -->
                 <div class="flex items-center gap-8">
-                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm">
-                        ETERNITY<span class="text-stone-700">Guild</span>
+                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm flex items-center gap-2">
+                        ETERNITY<span class="text-stone-700 font-bold">Guild</span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
                         <a href="party.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
                         <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ข้อมูลส่วนตัว</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ข้อมูลส่วนตัว</a>
                         <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">สมาชิก</a>
                         <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ประมูล</a>
                     </div>
@@ -62,146 +94,276 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
+        <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
             <div>
-                <h2 class="text-2xl font-bold text-amber-900 drop-shadow-sm">จัดการข้อมูลส่วนตัว</h2>
-                <p class="text-sm text-stone-600 mt-1">อัปเดตสเตตัสตัวละครและข้อมูลพื้นฐาน (บันทึกลงระบบกิลด์แบบ Real-time)</p>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-900 drop-shadow-sm">จัดการข้อมูลส่วนตัว</h2>
+                <p class="text-sm text-stone-600 mt-1">อัปเดตข้อมูลตัวละครและสเตตัส (รองรับระบบ AI อ่านภาพหลายรูปพร้อมกัน)</p>
             </div>
             <div class="flex items-center gap-2">
-                <span id="dbStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
+                <span id="dbStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
                     🟡 กำลังเชื่อมต่อ Cloud...
                 </span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Top Row: Information & Avatar Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
             
-            <!-- Left Column: ข้อมูลพื้นฐาน -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="roo-card rounded-3xl p-6 sm:p-8 animate-fade-in" style="animation-delay: 0.1s;">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-16 h-16 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-2xl shadow-inner">
-                            <span class="text-amber-600">🎯</span>
+            <!-- Left Card: Character Info & Leave Activity -->
+            <div class="lg:col-span-7 roo-card rounded-3xl p-6 sm:p-7 space-y-5">
+                
+                <!-- ลากิจกรรม Toggle -->
+                <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl flex items-center justify-between shadow-inner">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="leaveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <h4 id="leaveStatusText" class="text-xs font-extrabold text-emerald-800">สะดวกเข้าร่วมกิจกรรม</h4>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
+                            *หากเปิดลากิจกรรม ระบบจะแสดงกรอบสีแดงในระบบ และหัวหน้ากิลด์จะไม่สามารถจัดคุณเข้าปาร์ตี้กิจกรรมได้
+                        </p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                        <input type="checkbox" id="toggleLeave" class="sr-only peer">
+                        <div class="w-11 h-6 bg-emerald-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500 shadow-inner"></div>
+                    </label>
+                </div>
+
+                <!-- ข้อมูลตัวละคร Form -->
+                <div>
+                    <h3 class="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
+                        <span>👤</span> ข้อมูลตัวละคร
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-500 mb-1">UID (อ้างอิงระบบ)</label>
+                            <input type="text" id="charUid" readonly class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-600 font-bold cursor-not-allowed select-none shadow-inner">
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-stone-800">ข้อมูลตัวละคร</h3>
-                            <p class="text-xs text-stone-500">ข้อมูลสำหรับระบบกิลด์กลาง</p>
+                            <label class="block text-xs font-semibold text-stone-700 mb-1">ชื่อตัวละคร <span class="text-red-500">*</span></label>
+                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-3.5 py-2 text-xs font-bold text-stone-800 transition shadow-sm">
                         </div>
                     </div>
 
-                    <div class="space-y-4 mb-8">
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5">Discord ID / UID (ล็อกตามที่เข้าสู่ระบบ)</label>
-                            <input type="text" id="charUid" readonly class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-2.5 text-sm text-stone-600 font-bold cursor-not-allowed select-none shadow-inner">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1.5">ชื่อตัวละครในเกม <span class="text-red-500">*</span></label>
-                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1.5">สายอาชีพ</label>
-                            <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2.5 text-sm text-stone-800 transition-all cursor-pointer shadow-sm">
-                                <option value="">-- เลือกอาชีพ --</option>
-                                <option value="Lord Knight">Lord Knight</option>
-                                <option value="Paladin">Paladin</option>
-                                <option value="Biochemist">Biochemist</option>
-                                <option value="Mastersmith">Mastersmith</option>
-                                <option value="Bard">Bard</option>
-                                <option value="Gypsy">Gypsy</option>
-                                <option value="Sniper">Sniper</option>
-                                <option value="Champion">Champion</option>
-                                <option value="Priest">Priest</option>
-                                <option value="Assassin">Assassin</option>
-                                <option value="Rogue">Rogue</option>
-                                <option value="Wizard">Wizard</option>
-                                <option value="Sage">Sage</option>
-                                <option value="Summoner">Summoner</option>
-                                <option value="Rebellion">Rebellion</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-700 mb-1">สายอาชีพ</label>
+                        <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-3.5 py-2 text-xs font-bold text-stone-800 transition cursor-pointer shadow-sm">
+                            <option value="">-- เลือกอาชีพ --</option>
+                            <option value="Lord Knight">Lord Knight</option>
+                            <option value="Paladin">Paladin</option>
+                            <option value="Biochemist">Biochemist</option>
+                            <option value="Mastersmith">Mastersmith</option>
+                            <option value="Bard">Bard</option>
+                            <option value="Gypsy">Gypsy</option>
+                            <option value="Sniper">Sniper</option>
+                            <option value="Champion">Champion</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Rogue">Rogue</option>
+                            <option value="Wizard">Wizard</option>
+                            <option value="Sage">Sage</option>
+                            <option value="Summoner">Summoner</option>
+                            <option value="Rebellion">Rebellion</option>
+                        </select>
                     </div>
+                </div>
 
-                    <button id="btnSaveInfo" class="roo-button w-full text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
-                        💾 บันทึกข้อมูลตัวละครขึ้นกิลด์
+                <div class="pt-2 flex justify-end">
+                    <button id="btnSaveInfo" class="roo-button text-white font-bold py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md">
+                        💾 บันทึกข้อมูลตัวละคร
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Card: Avatar / Character Image Upload -->
+            <div class="lg:col-span-5 roo-card rounded-3xl p-6 sm:p-7 space-y-4 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-amber-900 mb-1 flex items-center gap-2">
+                        <span>🖼️</span> รูปภาพสเตตัส / ตัวละคร
+                    </h3>
+                    <p class="text-[11px] text-stone-500 mb-3">
+                        💡 คำแนะนำ: เพื่อให้ภาพตัวละครแสดงผลได้สวยงามที่สุด แนะนำให้ลบพื้นหลังออกให้เรียบร้อย และแนบเป็นไฟล์ PNG (พื้นหลังโปร่งใส) ครับ
+                    </p>
+                    
+                    <div class="relative mb-3">
+                        <input type="file" id="avatarFileInput" accept="image/*" class="w-full text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-amber-300 file:text-xs file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100 cursor-pointer">
+                    </div>
+                </div>
+
+                <div id="avatarPreviewContainer" class="min-h-[140px] max-h-[180px] bg-amber-50/40 border-2 border-dashed border-amber-300 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden">
+                    <img id="avatarPreviewImg" class="hidden max-h-[140px] object-contain drop-shadow-md rounded-lg" alt="Avatar">
+                    <div id="avatarPlaceholder" class="text-stone-400 text-xs">
+                        <span class="text-2xl block mb-1">👤</span>
+                        ยังไม่มีรูปภาพ<br>กดเลือกไฟล์เพื่ออัปโหลด
+                    </div>
+                </div>
+
+                <p class="text-[10px] text-stone-400 text-center">
+                    * ขนาดไม่เกิน 5MB (png, jpg, jpeg, webp) รูปนี้จะโชว์ที่ภาพตัวละครของคุณในทำเนียบสมาชิก
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Bottom Card: Comprehensive Character Stats (17 Fields + Multi-Image AI OCR) -->
+        <div class="roo-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-fade-in" style="animation-delay: 0.1s;">
+            
+            <!-- AI Scanning Progress Overlay -->
+            <div id="aiOverlay" class="hidden absolute inset-0 bg-white/90 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+                <div class="relative w-20 h-20 mb-4">
+                    <div class="absolute inset-0 border-4 border-amber-200 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-amber-600 rounded-full border-t-transparent animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
+                </div>
+                <h4 id="aiStatusTitle" class="text-base font-extrabold text-amber-950">AI กำลังวิเคราะห์สเตตัสจากภาพ...</h4>
+                <p id="aiStatusDesc" class="text-xs text-stone-600 mt-1 max-w-sm">กำลังอ่านค่า CP, HP, ATK, DEF, Penetration และสเตตัส PVP จากภาพที่คุณอัปโหลด</p>
+                <div id="aiProgressBarContainer" class="w-64 bg-stone-200 rounded-full h-2 mt-4 overflow-hidden">
+                    <div id="aiProgressBar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 15%"></div>
+                </div>
+            </div>
+
+            <!-- Header of Stats Section -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-amber-200 pb-4">
+                <div>
+                    <h3 class="text-lg font-extrabold text-amber-900 flex items-center gap-2">
+                        <span>⚔️</span> ข้อมูลสเตตัสตัวละคร
+                    </h3>
+                    <p class="text-xs text-stone-500 mt-0.5">กรอกข้อมูล หรือกดอัปโหลดรูปภาพสเตตัสด้วย AI (เลือกได้ 1 รูปหรือหลายรูปพร้อมกัน)</p>
+                </div>
+                
+                <div class="flex items-center gap-3 flex-wrap">
+                    <!-- Hidden Multi-file input for AI -->
+                    <input type="file" id="aiMultiFileInput" accept="image/*" multiple class="hidden">
+                    
+                    <button onclick="document.getElementById('aiMultiFileInput').click()" class="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-amber-300 font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 border border-stone-700">
+                        🤖 อัปโหลดสเตตัส ด้วย AI
+                    </button>
+                    <button id="btnSaveStats" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                        💾 บันทึกค่าสเตตัส
                     </button>
                 </div>
             </div>
 
-            <!-- Right Column: ข้อมูลสเตตัสตัวละคร (AI OCR) -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="roo-card rounded-3xl p-6 sm:p-8 min-h-[500px] flex flex-col animate-fade-in" style="animation-delay: 0.2s;">
+            <!-- 17 Character Stats Grid -->
+            <div class="space-y-4">
+                
+                <!-- Row 1: Primary Combat Stats (9 Fields) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                        <div>
-                            <h3 class="text-lg font-bold text-stone-800 flex items-center gap-2">
-                                <span class="text-sky-500 text-xl">✨</span> ระบบอ่านค่าสเตตัส (AI)
-                            </h3>
-                            <p class="text-xs text-stone-500 mt-1">อัปโหลดรูปภาพสเตตัสเพื่อกรอกอัตโนมัติ</p>
-                        </div>
-                        
-                        <div class="relative w-full sm:w-auto overflow-hidden">
-                            <input type="file" id="aiFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                            <button class="w-full sm:w-auto bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 font-semibold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-                                📸 อัปโหลดรูปภาพ (AI)
-                            </button>
-                        </div>
+                    <!-- CP (Highlight) -->
+                    <div class="stat-input-card highlight rounded-xl p-2.5">
+                        <label class="block text-[10px] font-extrabold text-amber-900 uppercase">CP</label>
+                        <input type="number" id="stat_cp" placeholder="0" class="w-full bg-transparent text-sm font-extrabold text-amber-900 focus:outline-none mt-0.5">
                     </div>
 
-                    <!-- AI Loading Overlay (Hidden by default) -->
-                    <div id="aiLoading" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm z-20 rounded-3xl flex flex-col items-center justify-center">
-                        <div class="relative w-20 h-20">
-                            <div class="absolute inset-0 border-4 border-amber-100 rounded-full"></div>
-                            <div class="absolute inset-0 border-4 border-amber-500 rounded-full border-t-transparent animate-spin"></div>
-                            <div class="absolute inset-0 flex items-center justify-center text-2xl">✨</div>
-                        </div>
-                        <p class="mt-4 text-amber-700 font-bold animate-pulse">AI กำลังวิเคราะห์สเตตัส...</p>
-                        <p class="text-xs text-stone-500 mt-1">กรุณารอสักครู่ (Poring is working)</p>
+                    <!-- MAX HP -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">MAX HP</label>
+                        <input type="number" id="stat_maxHp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
                     </div>
 
-                    <!-- Form Stats -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 flex-1 relative">
-                        
-                        <!-- CP (Full width highlight) -->
-                        <div class="sm:col-span-2 p-5 bg-amber-50 border border-amber-200 rounded-2xl">
-                            <label class="block text-sm font-extrabold text-amber-800 mb-2 uppercase tracking-wider">Combat Power (CP)</label>
-                            <input type="number" id="statCP" placeholder="0" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-3 text-lg font-bold text-stone-800 shadow-sm transition-all text-center">
-                        </div>
-
-                        <!-- Basic Stats -->
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">STR</label>
-                            <input type="number" id="statSTR" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">AGI</label>
-                            <input type="number" id="statAGI" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">VIT</label>
-                            <input type="number" id="statVIT" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">INT</label>
-                            <input type="number" id="statINT" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">DEX</label>
-                            <input type="number" id="statDEX" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1.5 uppercase">LUK</label>
-                            <input type="number" id="statLUK" placeholder="0" class="w-full bg-white border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-4 py-2 text-sm text-stone-800 transition-all shadow-sm">
-                        </div>
+                    <!-- MAX SP -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">MAX SP</label>
+                        <input type="number" id="stat_maxSp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
                     </div>
 
-                    <div class="mt-8 pt-6 border-t border-stone-100 flex justify-end">
-                        <button id="btnSaveStats" class="roo-button text-white font-bold py-2.5 px-8 rounded-xl transition-all shadow-md flex items-center gap-2 text-sm tracking-wide">
-                            อัปเดตสเตตัสขึ้นกิลด์
-                        </button>
+                    <!-- P.ATK -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.ATK</label>
+                        <input type="number" id="stat_pAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
                     </div>
+
+                    <!-- M.ATK -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.ATK</label>
+                        <input type="number" id="stat_mAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- P.DEF -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.DEF</label>
+                        <input type="number" id="stat_pDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- M.DEF -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.DEF</label>
+                        <input type="number" id="stat_mDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- IGNORE P.DEF -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">IGNORE P.DEF</label>
+                        <input type="number" id="stat_ignorePDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- IGNORE M.DEF -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">IGNORE M.DEF</label>
+                        <input type="number" id="stat_ignoreMDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
                 </div>
+
+                <!-- Row 2: Secondary / PVP & Critical Stats (8 Fields) -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
+                    
+                    <!-- P.DMG (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_pDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- M.DMG (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_mDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- P.REDUC (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_pReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- M.REDUC (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_mReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- PVP DMG -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">PVP DMG</label>
+                        <input type="number" step="0.1" id="stat_pvpDmg" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- PVP REDUC -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">PVP REDUC</label>
+                        <input type="number" step="0.1" id="stat_pvpReduc" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- CRI -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">CRI</label>
+                        <input type="number" id="stat_cri" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                    <!-- CRI DAM (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-stone-500 uppercase">CRI DAM (%)</label>
+                        <input type="number" step="0.1" id="stat_criDam" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
@@ -209,7 +371,7 @@
     </main>
 
     <script>
-        // 1. Firebase Initializer (Direct Embed)
+        // 1. Firebase Initializer
         const firebaseConfig = {
             apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
             authDomain: "rooc-guild.firebaseapp.com",
@@ -226,19 +388,19 @@
         }
         const db = firebase.database();
 
-        // ตรวจสอบการเชื่อมต่อ
+        // Check Connection
         const dbStatus = document.getElementById('dbStatus');
         db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
-                dbStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300";
+                dbStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
                 dbStatus.innerText = "🟢 Cloud Connected";
             } else {
-                dbStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300";
+                dbStatus.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
                 dbStatus.innerText = "🟡 Connecting...";
             }
         });
 
-        // 2. ดึงค่า User จาก URL หรือ Session
+        // 2. User & Session
         const urlParams = new URLSearchParams(window.location.search);
         let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil2693';
         sessionStorage.setItem('discord_user', currentUser);
@@ -246,28 +408,70 @@
         const charUidInput = document.getElementById('charUid');
         const charNameInput = document.getElementById('charName');
         const charClassSelect = document.getElementById('charClass');
+        const toggleLeave = document.getElementById('toggleLeave');
 
         charUidInput.value = currentUser;
 
         let currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
+        let currentAvatarBase64 = '';
 
-        // 3. โหลดข้อมูลเดิมของ User
+        // Handle Leave UI
+        toggleLeave.addEventListener('change', () => {
+            const isLeave = toggleLeave.checked;
+            const dot = document.getElementById('leaveStatusDot');
+            const text = document.getElementById('leaveStatusText');
+            if (isLeave) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+                text.className = "text-xs font-extrabold text-rose-700";
+                text.innerText = "ลากิจกรรม (ไม่พร้อมร่วมกิจกรรม)";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+                text.className = "text-xs font-extrabold text-emerald-800";
+                text.innerText = "สะดวกเข้าร่วมกิจกรรม";
+            }
+        });
+
+        // 3. Load Existing Member Data
         function loadExistingData(uid) {
             if (!uid) return;
             db.ref('members/' + uid).once('value').then((snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     charNameInput.value = data.name || '';
-                    charClassSelect.value = data.charClass || 'Sniper';
+                    charClassSelect.value = data.charClass || '';
                     currentUserRole = data.role || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
+                    
+                    // Active/Leave Status (active === false means on leave)
+                    toggleLeave.checked = (data.active === false);
+                    toggleLeave.dispatchEvent(new Event('change'));
+
+                    // Avatar Image
+                    if (data.avatarUrl) {
+                        currentAvatarBase64 = data.avatarUrl;
+                        document.getElementById('avatarPreviewImg').src = data.avatarUrl;
+                        document.getElementById('avatarPreviewImg').classList.remove('hidden');
+                        document.getElementById('avatarPlaceholder').classList.add('hidden');
+                    }
+
+                    // Load All 17 Stats Fields
                     if (data.stats) {
-                        document.getElementById('statCP').value = data.stats.cp || '';
-                        document.getElementById('statSTR').value = data.stats.str || '';
-                        document.getElementById('statAGI').value = data.stats.agi || '';
-                        document.getElementById('statVIT').value = data.stats.vit || '';
-                        document.getElementById('statINT').value = data.stats.int || '';
-                        document.getElementById('statDEX').value = data.stats.dex || '';
-                        document.getElementById('statLUK').value = data.stats.luk || '';
+                        document.getElementById('stat_cp').value = data.stats.cp || '';
+                        document.getElementById('stat_maxHp').value = data.stats.maxHp || '';
+                        document.getElementById('stat_maxSp').value = data.stats.maxSp || '';
+                        document.getElementById('stat_pAtk').value = data.stats.pAtk || '';
+                        document.getElementById('stat_mAtk').value = data.stats.mAtk || '';
+                        document.getElementById('stat_pDef').value = data.stats.pDef || '';
+                        document.getElementById('stat_mDef').value = data.stats.mDef || '';
+                        document.getElementById('stat_ignorePDef').value = data.stats.ignorePDef || '';
+                        document.getElementById('stat_ignoreMDef').value = data.stats.ignoreMDef || '';
+                        document.getElementById('stat_pDmg').value = data.stats.pDmg || '';
+                        document.getElementById('stat_mDmg').value = data.stats.mDmg || '';
+                        document.getElementById('stat_pReduc').value = data.stats.pReduc || '';
+                        document.getElementById('stat_mReduc').value = data.stats.mReduc || '';
+                        document.getElementById('stat_pvpDmg').value = data.stats.pvpDmg || '';
+                        document.getElementById('stat_pvpReduc').value = data.stats.pvpReduc || '';
+                        document.getElementById('stat_cri').value = data.stats.cri || '';
+                        document.getElementById('stat_criDam').value = data.stats.criDam || '';
                     }
                     document.getElementById('navUsername').innerText = data.name ? `${data.name} (${uid}) [${currentUserRole}]` : `${uid} [${currentUserRole}]`;
                 } else {
@@ -281,16 +485,36 @@
 
         loadExistingData(currentUser);
 
-        // 4. บันทึกข้อมูลตัวละคร
         function getFormattedDate() {
             const now = new Date();
             return `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()+543} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         }
 
+        // Avatar Image File Upload
+        document.getElementById('avatarFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('ไฟล์ภาพมีขนาดเกิน 5MB กรุณาเลือกไฟล์ที่เล็กกว่า 5MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentAvatarBase64 = event.target.result;
+                    document.getElementById('avatarPreviewImg').src = currentAvatarBase64;
+                    document.getElementById('avatarPreviewImg').classList.remove('hidden');
+                    document.getElementById('avatarPlaceholder').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 4. Save Character Info
         document.getElementById('btnSaveInfo').addEventListener('click', () => {
             const uid = charUidInput.value.trim();
             const name = charNameInput.value.trim();
             const charClass = charClassSelect.value;
+            const active = !toggleLeave.checked;
             
             if (!uid || !name) {
                 alert('กรุณากรอกชื่อตัวละครในเกม');
@@ -300,64 +524,206 @@
             const updateTime = getFormattedDate();
             const roleToSave = currentUserRole || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
 
-            db.ref('members/' + uid).update({
+            const payload = {
                 uid: uid,
                 name: name,
                 charClass: charClass,
                 role: roleToSave,
-                active: true,
+                active: active,
                 lastUpdate: updateTime
-            }).then(() => {
-                alert('💾 บันทึกข้อมูลขึ้นกิลด์เรียบร้อยแล้ว!\nคุณสามารถเปิดหน้า "สมาชิก" เพื่อดูข้อมูลได้ทันที');
+            };
+
+            if (currentAvatarBase64) {
+                payload.avatarUrl = currentAvatarBase64;
+            }
+
+            db.ref('members/' + uid).update(payload).then(() => {
+                alert('💾 บันทึกข้อมูลตัวละครขึ้นกิลด์เรียบร้อยแล้ว!');
                 document.getElementById('navUsername').innerText = `${name} (${uid}) [${roleToSave}]`;
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });
         });
 
-        // 5. บันทึกสเตตัส
+        // 5. Save Character Stats
         document.getElementById('btnSaveStats').addEventListener('click', () => {
             const uid = charUidInput.value.trim();
             if (!uid) return;
 
             const stats = {
-                cp: parseInt(document.getElementById('statCP').value) || 0,
-                str: parseInt(document.getElementById('statSTR').value) || 0,
-                agi: parseInt(document.getElementById('statAGI').value) || 0,
-                vit: parseInt(document.getElementById('statVIT').value) || 0,
-                int: parseInt(document.getElementById('statINT').value) || 0,
-                dex: parseInt(document.getElementById('statDEX').value) || 0,
-                luk: parseInt(document.getElementById('statLUK').value) || 0
+                cp: parseInt(document.getElementById('stat_cp').value) || 0,
+                maxHp: parseInt(document.getElementById('stat_maxHp').value) || 0,
+                maxSp: parseInt(document.getElementById('stat_maxSp').value) || 0,
+                pAtk: parseInt(document.getElementById('stat_pAtk').value) || 0,
+                mAtk: parseInt(document.getElementById('stat_mAtk').value) || 0,
+                pDef: parseInt(document.getElementById('stat_pDef').value) || 0,
+                mDef: parseInt(document.getElementById('stat_mDef').value) || 0,
+                ignorePDef: parseInt(document.getElementById('stat_ignorePDef').value) || 0,
+                ignoreMDef: parseInt(document.getElementById('stat_ignoreMDef').value) || 0,
+                pDmg: parseFloat(document.getElementById('stat_pDmg').value) || 0,
+                mDmg: parseFloat(document.getElementById('stat_mDmg').value) || 0,
+                pReduc: parseFloat(document.getElementById('stat_pReduc').value) || 0,
+                mReduc: parseFloat(document.getElementById('stat_mReduc').value) || 0,
+                pvpDmg: parseFloat(document.getElementById('stat_pvpDmg').value) || 0,
+                pvpReduc: parseFloat(document.getElementById('stat_pvpReduc').value) || 0,
+                cri: parseInt(document.getElementById('stat_cri').value) || 0,
+                criDam: parseFloat(document.getElementById('stat_criDam').value) || 0
             };
 
             db.ref('members/' + uid + '/stats').set(stats).then(() => {
                 db.ref('members/' + uid + '/lastUpdate').set(getFormattedDate());
-                alert('✨ อัปเดตสเตตัสขึ้นระบบกิลด์เรียบร้อยแล้ว!');
+                alert('✨ บันทึกสเตตัสตัวละครขึ้นระบบกิลด์เรียบร้อยแล้ว!');
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });
         });
 
-        // จำลองโหลด AI
-        const aiFileInput = document.getElementById('aiFileInput');
-        const aiLoading = document.getElementById('aiLoading');
-        aiFileInput.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) {
-                aiLoading.classList.remove('hidden');
+        // 6. AI Multi-Image OCR Scanner (Tesseract.js Engine)
+        const aiMultiFileInput = document.getElementById('aiMultiFileInput');
+        const aiOverlay = document.getElementById('aiOverlay');
+        const aiProgressBar = document.getElementById('aiProgressBar');
+        const aiStatusTitle = document.getElementById('aiStatusTitle');
+        const aiStatusDesc = document.getElementById('aiStatusDesc');
+
+        aiMultiFileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (!files || files.length === 0) return;
+
+            aiOverlay.classList.remove('hidden');
+            aiProgressBar.style.width = '10%';
+            aiStatusTitle.innerText = `กำลังเริ่ม AI วิเคราะห์ ${files.length} รูปภาพ...`;
+
+            try {
+                let extractedTextCombined = '';
+
+                // Process each uploaded image with Tesseract OCR
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    aiStatusDesc.innerText = `กำลังอ่านรูปภาพที่ ${i + 1}/${files.length}: ${file.name}`;
+                    
+                    const progressVal = Math.floor(15 + ((i / files.length) * 75));
+                    aiProgressBar.style.width = `${progressVal}%`;
+
+                    try {
+                        const result = await Tesseract.recognize(
+                            file,
+                            'eng',
+                            { logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    const subProgress = Math.floor(progressVal + (m.progress * (75 / files.length)));
+                                    aiProgressBar.style.width = `${Math.min(90, subProgress)}%`;
+                                }
+                            }}
+                        );
+                        extractedTextCombined += '\n' + result.data.text;
+                    } catch (err) {
+                        console.warn('OCR error on image:', file.name, err);
+                    }
+                }
+
+                aiProgressBar.style.width = '95%';
+                aiStatusTitle.innerText = '✨ AI กำลังจับคู่ค่าสเตตัส...';
+
+                // Parse Stats from combined OCR text using smart patterns
+                parseStatsFromOCR(extractedTextCombined);
+
+                aiProgressBar.style.width = '100%';
                 setTimeout(() => {
-                    aiLoading.classList.add('hidden');
-                    document.getElementById('statCP').value = 45210;
-                    document.getElementById('statSTR').value = 12;
-                    document.getElementById('statAGI').value = 99;
-                    document.getElementById('statVIT').value = 40;
-                    document.getElementById('statINT').value = 1;
-                    document.getElementById('statDEX').value = 80;
-                    document.getElementById('statLUK').value = 30;
-                    alert('✨ วิเคราะห์สำเร็จ! (อย่าลืมกดปุ่มอัปเดตสเตตัส)');
-                    aiFileInput.value = '';
-                }, 2000);
+                    aiOverlay.classList.add('hidden');
+                    alert(`🎉 AI อ่านและกรอกค่าสเตตัสจาก ${files.length} รูปภาพเรียบร้อยแล้ว!\nกรุณาตรวจสอบความถูกต้องและกด "บันทึกค่าสเตตัส" ด้านบนครับ`);
+                    aiMultiFileInput.value = '';
+                }, 400);
+
+            } catch (error) {
+                console.error('AI Scan Error:', error);
+                aiOverlay.classList.add('hidden');
+                alert('เกิดข้อผิดพลาดในการวิเคราะห์ภาพ: ' + error.message);
+                aiMultiFileInput.value = '';
             }
         });
+
+        // Smart parser extracting all 17 Ragnarok Origin Stats
+        function parseStatsFromOCR(rawText) {
+            console.log("Raw OCR Text Output:\n", rawText);
+            const text = rawText.toUpperCase().replace(/,/g, '');
+
+            function extractNumber(regex) {
+                const match = text.match(regex);
+                if (match && match[1]) {
+                    const cleaned = match[1].replace(/[^0-9.]/g, '');
+                    return parseFloat(cleaned) || 0;
+                }
+                return null;
+            }
+
+            // 1. CP / Combat Power
+            const cp = extractNumber(/(?:CP|COMBAT|POWER)[:\s]+([0-9]+)/) || extractNumber(/CP[:\s]*([0-9]{4,7})/);
+            if (cp) document.getElementById('stat_cp').value = cp;
+
+            // 2. MAX HP
+            const hp = extractNumber(/(?:MAX\s*HP|HP)[:\s]+([0-9]+)/) || extractNumber(/HP[:\s]*([0-9]{4,8})/);
+            if (hp) document.getElementById('stat_maxHp').value = hp;
+
+            // 3. MAX SP
+            const sp = extractNumber(/(?:MAX\s*SP|SP)[:\s]+([0-9]+)/);
+            if (sp) document.getElementById('stat_maxSp').value = sp;
+
+            // 4. P.ATK
+            const pAtk = extractNumber(/(?:P\.?\s*ATK|PHYSICAL\s*ATK)[:\s]+([0-9]+)/);
+            if (pAtk) document.getElementById('stat_pAtk').value = pAtk;
+
+            // 5. M.ATK
+            const mAtk = extractNumber(/(?:M\.?\s*ATK|MAGIC\s*ATK)[:\s]+([0-9]+)/);
+            if (mAtk) document.getElementById('stat_mAtk').value = mAtk;
+
+            // 6. P.DEF
+            const pDef = extractNumber(/(?:P\.?\s*DEF|PHYSICAL\s*DEF)[:\s]+([0-9]+)/);
+            if (pDef) document.getElementById('stat_pDef').value = pDef;
+
+            // 7. M.DEF
+            const mDef = extractNumber(/(?:M\.?\s*DEF|MAGIC\s*DEF)[:\s]+([0-9]+)/);
+            if (mDef) document.getElementById('stat_mDef').value = mDef;
+
+            // 8. IGNORE P.DEF
+            const ignPDef = extractNumber(/(?:IGNORE\s*P\.?\s*DEF|IGN\s*P\.?DEF)[:\s]+([0-9.]+)/);
+            if (ignPDef) document.getElementById('stat_ignorePDef').value = ignPDef;
+
+            // 9. IGNORE M.DEF
+            const ignMDef = extractNumber(/(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?DEF)[:\s]+([0-9.]+)/);
+            if (ignMDef) document.getElementById('stat_ignoreMDef').value = ignMDef;
+
+            // 10. P.DMG
+            const pDmg = extractNumber(/(?:P\.?\s*DMG|PHYSICAL\s*DMG)[:\s]+([0-9.]+)%?/);
+            if (pDmg) document.getElementById('stat_pDmg').value = pDmg;
+
+            // 11. M.DMG
+            const mDmg = extractNumber(/(?:M\.?\s*DMG|MAGIC\s*DMG)[:\s]+([0-9.]+)%?/);
+            if (mDmg) document.getElementById('stat_mDmg').value = mDmg;
+
+            // 12. P.REDUC
+            const pReduc = extractNumber(/(?:P\.?\s*REDUC|PHYSICAL\s*REDUC)[:\s]+([0-9.]+)%?/);
+            if (pReduc) document.getElementById('stat_pReduc').value = pReduc;
+
+            // 13. M.REDUC
+            const mReduc = extractNumber(/(?:M\.?\s*REDUC|MAGIC\s*REDUC)[:\s]+([0-9.]+)%?/);
+            if (mReduc) document.getElementById('stat_mReduc').value = mReduc;
+
+            // 14. PVP DMG
+            const pvpDmg = extractNumber(/(?:PVP\s*DMG)[:\s]+([0-9.]+)%?/);
+            if (pvpDmg) document.getElementById('stat_pvpDmg').value = pvpDmg;
+
+            // 15. PVP REDUC
+            const pvpReduc = extractNumber(/(?:PVP\s*REDUC)[:\s]+([0-9.]+)%?/);
+            if (pvpReduc) document.getElementById('stat_pvpReduc').value = pvpReduc;
+
+            // 16. CRI
+            const cri = extractNumber(/(?:CRI|CRITICAL)[:\s]+([0-9]+)/);
+            if (cri) document.getElementById('stat_cri').value = cri;
+
+            // 17. CRI DAM
+            const criDam = extractNumber(/(?:CRI\s*DAM|CRITICAL\s*DAMAGE)[:\s]+([0-9.]+)%?/);
+            if (criDam) document.getElementById('stat_criDam').value = criDam;
+        }
     </script>
 </body>
 </html>
