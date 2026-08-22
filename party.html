@@ -296,10 +296,19 @@
         let currentUserRole = 'สมาชิกกิลด์';
         let canEditParties = false;
 
+        // Role hierarchy: Admin (1) > หัวหน้ากิลด์ (2) > รองหัวหน้ากิลด์ (3) > ผู้จัดการ (4) > สมาชิกกิลด์ (5)
+        const EDIT_ALLOWED_ROLES = [
+            'Admin', 'admin', 
+            'หัวหน้ากิลด์', 'หัวหน้ากิล', 
+            'รองหัวหน้ากิลด์', 'รองหัวหน้ากิล', 
+            'ผู้จัดการ'
+        ];
+
         function checkUserPermission() {
             const isSuperAdmin = currentUser.toLowerCase() === 'daffodil2693';
 
-            db.ref('members/' + currentUser).once('value').then((snapshot) => {
+            // Real-time listener for current user's role
+            db.ref('members/' + currentUser).on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.role) {
                     currentUserRole = data.role;
@@ -309,13 +318,11 @@
                     currentUserRole = 'สมาชิกกิลด์';
                 }
 
-                const allowedRoles = ['Admin', 'admin', 'หัวหน้ากิลด์', 'หัวหน้ากิล', 'รองหัวหน้ากิลด์', 'รองหัวหน้ากิล', 'ผู้จัดการ'];
-                canEditParties = isSuperAdmin || allowedRoles.includes(currentUserRole);
+                canEditParties = isSuperAdmin || EDIT_ALLOWED_ROLES.includes(currentUserRole);
 
                 applyPermissionUI();
-            }).catch(() => {
-                canEditParties = isSuperAdmin;
-                applyPermissionUI();
+                renderPartiesGrid();
+                renderWaitlistAndLeave();
             });
         }
 
@@ -326,15 +333,15 @@
             document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
 
             if (canEditParties) {
-                badge.className = "text-xs bg-emerald-100 text-emerald-900 font-bold px-3 py-1 rounded-full border border-emerald-300";
-                badge.innerText = `⚡ สิทธิ์: ${currentUserRole} (แก้ไขได้)`;
-                btnAuto.classList.remove('hidden');
-                btnClear.classList.remove('hidden');
+                badge.className = "text-xs bg-emerald-100 text-emerald-900 font-bold px-3 py-1 rounded-full border border-emerald-300 shadow-sm";
+                badge.innerText = `⚡ สิทธิ์: ${currentUserRole} (จัดปาร์ตี้/ย้ายสมาชิกได้)`;
+                if (btnAuto) btnAuto.classList.remove('hidden');
+                if (btnClear) btnClear.classList.remove('hidden');
             } else {
                 badge.className = "text-xs bg-stone-100 text-stone-700 font-bold px-3 py-1 rounded-full border border-stone-300";
                 badge.innerText = `🛡️ สิทธิ์: สมาชิกกิลด์ (ดูเท่านั้น)`;
-                btnAuto.classList.add('hidden');
-                btnClear.classList.add('hidden');
+                if (btnAuto) btnAuto.classList.add('hidden');
+                if (btnClear) btnClear.classList.add('hidden');
             }
         }
 
