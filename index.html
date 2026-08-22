@@ -56,9 +56,22 @@
     </div>
 
     <script>
-        // Check for error in URL parameters
+        // Check for error or logout in URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
+        const isLogout = urlParams.get('logout') === 'true';
+
+        if (isLogout) {
+            localStorage.removeItem('rooc_discord_user');
+            sessionStorage.removeItem('discord_user');
+        } else if (!error) {
+            // Auto Login if user already authorized before
+            const savedUser = localStorage.getItem('rooc_discord_user');
+            if (savedUser) {
+                window.location.href = `dashboard.html?user=${encodeURIComponent(savedUser)}`;
+            }
+        }
+
         if (error === 'not_allowed') {
             const errorDiv = document.getElementById('error-message');
             errorDiv.innerHTML = '❌ บัญชี Discord ของคุณไม่ได้รับอนุญาตให้เข้าถึงระบบนี้';

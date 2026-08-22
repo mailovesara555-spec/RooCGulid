@@ -53,7 +53,7 @@
                     <div class="text-sm hidden sm:block text-right">
                         <p id="navUsername" class="font-medium text-stone-700 leading-none">กำลังเชื่อมต่อ...</p>
                     </div>
-                    <a href="/" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
                         ออกจากระบบ
                     </a>
                 </div>
@@ -322,8 +322,15 @@
 
         // 2. User & Permissions
         const urlParams = new URLSearchParams(window.location.search);
-        let currentUser = urlParams.get('user') || sessionStorage.getItem('discord_user') || 'daffodil2693';
+        let currentUser = (urlParams.get('user') || localStorage.getItem('rooc_discord_user') || sessionStorage.getItem('discord_user') || 'daffodil2693').trim();
+        localStorage.setItem('rooc_discord_user', currentUser);
         sessionStorage.setItem('discord_user', currentUser);
+
+        function handleLogout() {
+            localStorage.removeItem('rooc_discord_user');
+            sessionStorage.removeItem('discord_user');
+            window.location.href = '/?logout=true';
+        }
 
         let currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
         let hasAuctionPermission = false;
