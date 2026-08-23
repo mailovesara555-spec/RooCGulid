@@ -49,7 +49,7 @@
 
     <!-- Navbar -->
     <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[98%] 2xl:max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Links -->
                 <div class="flex items-center gap-8">
@@ -79,11 +79,11 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+    <main class="flex-1 max-w-[98%] 2xl:max-w-[1750px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-6 space-y-6">
         
-        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in">
+        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-md">
             <!-- Header Section -->
-            <div class="p-6 sm:p-8 border-b border-amber-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-5 sm:p-7 border-b border-amber-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-amber-900 drop-shadow-sm flex items-center gap-2 flex-wrap">
                         จัดการสมาชิกในกิลด์ 
@@ -118,15 +118,15 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-amber-50/50 border-b border-amber-200/60 text-xs font-bold text-amber-800 uppercase tracking-wider whitespace-nowrap">
-                            <th class="py-4 px-4 text-center w-14">ลำดับ</th>
-                            <th class="py-4 px-6">Discord UID</th>
-                            <th class="py-4 px-6">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
-                            <th class="py-4 px-6 text-center">ตำแหน่ง (ROLE)</th>
-                            <th class="py-4 px-6">อาชีพ</th>
-                            <th class="py-4 px-6 text-center">CP</th>
-                            <th class="py-4 px-6 text-center">สถานะ</th>
-                            <th class="py-4 px-6">อัปเดตล่าสุด</th>
-                            <th class="py-4 px-6 text-center">ACTIONS</th>
+                            <th class="py-3.5 px-3 text-center w-12">ลำดับ</th>
+                            <th class="py-3.5 px-3">Discord UID</th>
+                            <th class="py-3.5 px-4">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
+                            <th class="py-3.5 px-3 text-center">ตำแหน่ง (ROLE)</th>
+                            <th class="py-3.5 px-3">อาชีพ</th>
+                            <th class="py-3.5 px-3 text-center">CP</th>
+                            <th class="py-3.5 px-3 text-center">สถานะ</th>
+                            <th class="py-3.5 px-3">อัปเดตล่าสุด</th>
+                            <th class="py-3.5 px-4 text-center">ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody id="memberTableBody" class="divide-y divide-amber-100/50">
@@ -527,28 +527,28 @@
                 const roleBadge = getRoleBadge(member.role);
 
                 tr.innerHTML = `
-                    <td class="py-4 px-4 text-center font-bold text-stone-400 text-xs whitespace-nowrap">#${index + 1}</td>
-                    <td class="py-4 px-6 text-sm text-stone-700 font-medium whitespace-nowrap">${member.uid}</td>
-                    <td class="py-4 px-6 text-sm text-stone-800 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                    <td class="py-3.5 px-3 text-center font-bold text-stone-400 text-xs whitespace-nowrap">#${index + 1}</td>
+                    <td class="py-3.5 px-3 text-sm text-stone-700 font-medium whitespace-nowrap">${member.uid}</td>
+                    <td class="py-3.5 px-4 text-sm text-stone-800 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
                         <div class="hover:text-amber-700 transition flex items-center gap-1.5">${displayName} <span class="text-xs text-amber-500">🔍</span></div>
                         ${iconDisplay}
                     </td>
-                    <td class="py-4 px-6 text-center whitespace-nowrap">${roleBadge}</td>
-                    <td class="py-4 px-6 text-sm text-amber-700 font-medium whitespace-nowrap">${member.charClass || '-'}</td>
-                    <td class="py-4 px-6 text-sm text-center font-bold text-amber-900 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
+                    <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleBadge}</td>
+                    <td class="py-3.5 px-3 text-sm text-amber-700 font-medium whitespace-nowrap">${member.charClass || '-'}</td>
+                    <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-900 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
-                    <td class="py-4 px-6 cursor-pointer text-center whitespace-nowrap">
+                    <td class="py-3.5 px-3 cursor-pointer text-center whitespace-nowrap">
                         ${toggleHtml}
                     </td>
-                    <td class="py-4 px-6 text-sm whitespace-nowrap">
+                    <td class="py-3.5 px-3 text-sm whitespace-nowrap">
                         <div class="text-stone-600">${member.lastUpdate || '-'}</div>
                         <div class="text-amber-600 text-xs font-semibold flex items-center gap-1 mt-0.5">
                             <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> อัปเดตแล้ว
                         </div>
                     </td>
-                    <td class="py-4 px-6 whitespace-nowrap">
-                        <div class="flex items-center justify-center gap-2 flex-nowrap">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1.5 flex-nowrap">
                             <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-stone-100 border border-stone-300 text-stone-700 hover:bg-stone-200 rounded-lg text-xs font-bold transition shadow-sm inline-flex items-center gap-1" title="ดูสเตตัส">
                                 📊 สเตตัส
                             </button>
