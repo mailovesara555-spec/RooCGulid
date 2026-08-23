@@ -530,6 +530,11 @@
 
         loadExistingData(currentUser);
 
+        function getFormattedDate() {
+            const now = new Date();
+            return `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()+543} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+
         // Helper สำหรับย่อขนาดรูปโปรไฟล์อัตโนมัติ ไม่ให้ข้อมูลใหญ่เกินขีดจำกัด Cloud
         function compressAvatarImage(file, maxWidth = 300, maxHeight = 300, quality = 0.8) {
             return new Promise((resolve, reject) => {
