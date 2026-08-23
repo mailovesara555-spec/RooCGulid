@@ -621,10 +621,12 @@
                         document.getElementById('stat_criDam').value = data.stats.criDam || '';
                     }
                     const charSuffix = index === 1 ? '' : ' [ตัวที่ 2]';
-                    document.getElementById('navUsername').innerText = data.name ? `${data.name}${charSuffix} (${currentUser}) [${currentUserRole}]` : `${currentUser}${charSuffix} [${currentUserRole}]`;
+                    const charRole = index === 1 ? currentUserRole : 'สมาชิกกิลด์';
+                    document.getElementById('navUsername').innerText = data.name ? `${data.name}${charSuffix} (${currentUser}) [${charRole}]` : `${currentUser}${charSuffix} [${charRole}]`;
                 } else {
                     const charSuffix = index === 1 ? '' : ' [ตัวที่ 2]';
-                    document.getElementById('navUsername').innerText = `${currentUser}${charSuffix} [${currentUserRole}]`;
+                    const charRole = index === 1 ? currentUserRole : 'สมาชิกกิลด์';
+                    document.getElementById('navUsername').innerText = `${currentUser}${charSuffix} [${charRole}]`;
                 }
             }).catch(err => {
                 console.error("Firebase Error:", err);
@@ -708,6 +710,7 @@
             db.ref('members/' + safeKey).once('value').then(snap => {
                 const existing = snap.val() || {};
                 const createdAt = existing.createdAt || Date.now();
+                const roleToSave = (activeCharIndex === 2) ? 'สมาชิกกิลด์' : (currentUserRole || (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์'));
 
                 const payload = {
                     uid: charUid,
@@ -715,7 +718,7 @@
                     isChar2: (activeCharIndex === 2),
                     name: name,
                     charClass: charClass,
-                    role: currentUserRole,
+                    role: roleToSave,
                     active: active,
                     lastUpdate: updateTime,
                     createdAt: createdAt
@@ -730,7 +733,8 @@
                 const charTypeStr = (activeCharIndex === 1) ? 'ตัวละครหลัก (ตัวที่ 1)' : 'ตัวละครรอง (ตัวที่ 2)';
                 alert(`💾 บันทึกข้อมูล ${charTypeStr} เรียบร้อยแล้ว!`);
                 const charSuffix = (activeCharIndex === 1) ? '' : ' [ตัวที่ 2]';
-                document.getElementById('navUsername').innerText = `${name}${charSuffix} (${currentUser}) [${currentUserRole}]`;
+                const roleDisplay = (activeCharIndex === 2) ? 'สมาชิกกิลด์' : currentUserRole;
+                document.getElementById('navUsername').innerText = `${name}${charSuffix} (${currentUser}) [${roleDisplay}]`;
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });

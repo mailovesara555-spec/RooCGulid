@@ -588,10 +588,17 @@
             const roleSelect = document.getElementById('editRole');
             const roleHint = document.getElementById('roleAdminHint');
 
-            // จัดการ Dropdown สำหรับ daffodil2693 เท่านั้นที่เป็น Admin
-            if (uid.toLowerCase() === 'daffodil2693') {
+            // จัดการ Dropdown ยศ
+            if (member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'))) {
+                roleSelect.innerHTML = `<option value="สมาชิกกิลด์">🛡️ สมาชิกกิลด์ (ตัวละครที่ 2 เป็นสมาชิกกิลด์เสมอ)</option>`;
+                roleSelect.disabled = true;
+                roleSelect.classList.add('opacity-60', 'cursor-not-allowed');
+                roleHint.innerText = "🛡️ ตัวละครตัวที่ 2 จะมีตำแหน่งเป็นสมาชิกกิลด์เท่านั้น";
+                roleHint.className = "text-xs text-amber-700 font-semibold";
+            } else if (uid.toLowerCase() === 'daffodil2693') {
                 roleSelect.innerHTML = `<option value="Admin">⚡ Admin (ยศพิเศษเฉพาะ daffodil2693)</option>`;
                 roleSelect.disabled = true;
+                roleSelect.classList.add('opacity-60', 'cursor-not-allowed');
                 roleHint.innerText = "⚡ ยศ Admin เป็นยศพิเศษเฉพาะ daffodil2693";
                 roleHint.className = "text-xs text-red-600 font-bold";
             } else {
@@ -693,7 +700,10 @@
                 active: active
             };
 
-            if (isAdmin && uid.toLowerCase() !== 'daffodil2693') {
+            const isChar2 = uid.includes('(ตัวที่ 2)');
+            if (isChar2) {
+                updates.role = 'สมาชิกกิลด์';
+            } else if (isAdmin && uid.toLowerCase() !== 'daffodil2693') {
                 updates.role = role;
             }
 
