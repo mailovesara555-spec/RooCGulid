@@ -530,12 +530,6 @@
 
         loadExistingData(currentUser);
 
-        // Helper สำหรับแปลง UID ให้เป็น Firebase Safe Key (ป้องกันชื่อ Discord ที่มีจุด . หรืออักขระพิเศษ)
-        function getFirebaseUidKey(uid) {
-            if (!uid) return 'unknown_user';
-            return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
-        }
-
         // Helper สำหรับย่อขนาดรูปโปรไฟล์อัตโนมัติ ไม่ให้ข้อมูลใหญ่เกินขีดจำกัด Cloud
         function compressAvatarImage(file, maxWidth = 300, maxHeight = 300, quality = 0.8) {
             return new Promise((resolve, reject) => {
