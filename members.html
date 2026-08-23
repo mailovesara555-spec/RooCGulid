@@ -416,6 +416,11 @@
         }
 
         const isAdmin = currentUser.toLowerCase() === 'daffodil2693';
+        let currentUserRole = isAdmin ? 'Admin' : 'สมาชิกกิลด์';
+
+        function canDeleteMembers() {
+            return isAdmin || currentUserRole === 'หัวหน้ากิลด์' || currentUserRole === 'หัวหน้ากิล';
+        }
         
         if (isAdmin) {
             document.getElementById('adminBadge').classList.remove('hidden');
@@ -423,7 +428,7 @@
             if (btnWhitelist) btnWhitelist.classList.remove('hidden');
         }
 
-        document.getElementById('navUsername').innerText = `${currentUser} ${isAdmin ? '(Admin)' : ''}`;
+        document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
 
         let allMembersData = [];
         let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
@@ -533,6 +538,11 @@
                 const cp = (member.stats && member.stats.cp) ? Number(member.stats.cp).toLocaleString() : '-';
                 const roleBadge = getRoleBadge(member.role);
 
+                const rawBaseUid = String(member.uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
+                const isMyCharacter = (currentUser.toLowerCase() === rawBaseUid);
+                const toggleTitle = isMyCharacter ? 'คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม' : 'เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์สลับสถานะ';
+                const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
+
                 tr.innerHTML = `
                     <td class="py-3.5 px-3 text-center font-bold text-stone-400 text-xs whitespace-nowrap">#${index + 1}</td>
                     <td class="py-3.5 px-3 text-sm text-stone-700 font-medium whitespace-nowrap">${member.uid}</td>
@@ -549,7 +559,7 @@
                     <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-900 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
-                    <td class="py-3.5 px-3 cursor-pointer text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม">
+                    <td class="py-3.5 px-3 ${toggleCursor} text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="${toggleTitle}">
                         ${toggleHtml}
                     </td>
                     <td class="py-3.5 px-3 text-sm whitespace-nowrap">
@@ -680,7 +690,12 @@
 
         function getFirebaseUidKey(uid) {
             if (!uid) return 'unknown_user';
-            return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+            const str = String(uid).trim();
+            if (str.includes('(ตัวที่ 2)')) {
+                const base = str.replace(/\s*\(ตัวที่ 2\)/g, '').trim();
+                return `${base.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_')}__char2`;
+            }
+            return str.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
         }
 
         function saveEditMember() {
@@ -717,32 +732,37 @@
             });
         }
 
-        // สลับสถานะ เข้าร่วม / ลากิจกรรม
+        // สลับสถานะ เข้าร่วม / ลากิจกรรม (เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์)
         function toggleMemberActive(uid, newActive) {
-            if (!isAdmin && currentUser.toLowerCase() !== uid.toLowerCase()) {
-                alert('⚠️ คุณไม่มีสิทธิ์เปลี่ยนสถานะของสมาชิกท่านอื่น (เฉพาะ Admin หรือเจ้าของตัวละคร)');
+            const rawBaseUid = String(uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
+            const isSelf = (currentUser.toLowerCase() === rawBaseUid);
+            if (!isSelf) {
+                alert('⚠️ มีเพียงเจ้าของตัวละครเท่านั้นที่สามารถสลับสถานะเข้าร่วม/ลากิจกรรมได้ครับ');
                 return;
             }
 
             const safeKey = getFirebaseUidKey(uid);
             db.ref('members/' + safeKey + '/active').set(newActive).then(() => {
-                console.log(`Updated active for ${uid} to ${newActive}`);
+                console.log(`Updated active for ${safeKey} to ${newActive}`);
             }).catch(err => {
                 alert('❌ เปลี่ยนสถานะไม่สำเร็จ: ' + err.message);
             });
         }
 
-        // ลบสมาชิก
+        // ลบสมาชิก (สิทธิ์: Admin daffodil2693 และ หัวหน้ากิลด์)
         function deleteMember(uid) {
-            if (!isAdmin && currentUser.toLowerCase() !== uid.toLowerCase()) {
-                alert('⚠️ คุณไม่มีสิทธิ์ลบข้อมูลของสมาชิกท่านอื่น (เฉพาะ Admin daffodil2693)');
+            const isSelf = currentUser.toLowerCase() === uid.toLowerCase() || uid.toLowerCase().startsWith(currentUser.toLowerCase() + ' (ตัวที่ 2)');
+            if (!canDeleteMembers() && !isSelf) {
+                alert('⚠️ คุณไม่มีสิทธิ์ลบข้อมูลของสมาชิกท่านอื่น (เฉพาะ Admin daffodil2693 หรือ หัวหน้ากิลด์)');
                 return;
             }
 
             if (confirm(`คุณต้องการลบข้อมูลของ ${uid} ใช่หรือไม่?`)) {
                 const safeKey = getFirebaseUidKey(uid);
                 db.ref('members/' + safeKey).remove().then(() => {
-                    alert('ลบสมาชิกเรียบร้อยแล้ว');
+                    alert('🗑️ ลบข้อมูลเรียบร้อยแล้ว');
+                }).catch(err => {
+                    alert('❌ เกิดข้อผิดพลาดในการลบ: ' + err.message);
                 });
             }
         }
@@ -789,6 +809,15 @@
 
                 let list = Object.values(data);
                 
+                // ตรวจสอบยศของผู้ใช้ปัจจุบัน
+                const myRecord = list.find(m => m.uid && m.uid.toLowerCase() === currentUser.toLowerCase() && !m.isChar2);
+                if (myRecord && myRecord.role) {
+                    currentUserRole = myRecord.role;
+                } else if (isAdmin) {
+                    currentUserRole = 'Admin';
+                }
+                document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
+
                 // เรียงลำดับ: 
                 // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
                 // 2. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ลำดับท้ายสุดเสมอ)
