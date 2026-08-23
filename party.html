@@ -514,13 +514,21 @@
             document.getElementById('assignedCount').innerText = assignedTotal;
         }
 
+        function isMemberOnLeave(m) {
+            if (!m) return false;
+            if (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0') return true;
+            if (leaveMembers && (leaveMembers.includes(m.name) || (m.uid && leaveMembers.includes(m.uid)))) return true;
+            return false;
+        }
+
         function renderSlotHtml(pKey, sNum, assignedMemberName) {
-            const member = allGuildMembers.find(m => m.name === assignedMemberName);
+            const member = allGuildMembers.find(m => m.name === assignedMemberName || m.uid === assignedMemberName);
             const isSelected = selectedMember && selectedMember.source === pKey && selectedMember.slot === sNum;
             const hasActiveSelection = !!selectedMember || !!draggedMember;
 
             if (member) {
                 const icon = CLASS_ICONS[member.charClass] || '👤';
+                const isLeave = isMemberOnLeave(member);
                 return `
                     <div id="slot_${pKey}_${sNum}" 
                          draggable="${canEditParties}" 
@@ -530,12 +538,15 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box filled ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
+                         class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="text-base">${icon}</span>
                             <div class="min-w-0">
-                                <p class="text-xs font-bold text-stone-900 truncate">${member.name}</p>
-                                <p class="text-[10px] text-amber-800 font-medium leading-tight">${member.charClass || '-'}</p>
+                                <div class="flex items-center gap-1">
+                                    <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
+                                    ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
+                                </div>
+                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight">${member.charClass || '-'}</p>
                             </div>
                         </div>
                         ${canEditParties ? `
@@ -574,17 +585,11 @@
                 }
             }
 
-            // รวมคนที่ถูกลากมาใส่กล่อง Leave + คนที่ตั้งสถานะ "ลากิจกรรม" (active === false) ในหน้าข้อมูลส่วนตัว
-            const profileLeaveNames = new Set(
-                allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
-            );
-            const allLeaveNames = new Set([...leaveMembers, ...profileLeaveNames]);
-
             // สมาชิกที่พร้อมจัดปาร์ตี้ (ไม่ติดจัดในปาร์ตี้ และไม่ได้ลากิจกรรม)
-            const waitlist = allGuildMembers.filter(m => !assignedNames.has(m.name) && !allLeaveNames.has(m.name));
+            const waitlist = allGuildMembers.filter(m => !assignedNames.has(m.name) && !isMemberOnLeave(m));
             
             // สมาชิกที่ลากิจกรรม
-            const leaveList = allGuildMembers.filter(m => allLeaveNames.has(m.name));
+            const leaveList = allGuildMembers.filter(m => isMemberOnLeave(m));
 
             document.getElementById('waitlistCountBadge').innerText = waitlist.length;
             document.getElementById('leaveCountBadge').innerText = leaveList.length;
@@ -630,7 +635,7 @@
             } else {
                 leaveContainer.innerHTML = leaveList.map(m => {
                     const icon = CLASS_ICONS[m.charClass] || '👤';
-                    const isProfileLeave = (m.active === false || m.active === 'false');
+                    const isProfileLeave = (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0');
 
                     return `
                         <div draggable="${canEditParties}" 

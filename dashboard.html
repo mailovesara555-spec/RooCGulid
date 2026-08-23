@@ -439,7 +439,8 @@
         let currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
         let currentAvatarBase64 = '';
 
-        // Handle Leave UI
+        // Handle Leave UI & Auto-sync to Firebase
+        let isProgrammaticLeaveChange = false;
         toggleLeave.addEventListener('change', () => {
             const isLeave = toggleLeave.checked;
             const dot = document.getElementById('leaveStatusDot');
@@ -452,6 +453,16 @@
                 dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
                 text.className = "text-xs font-extrabold text-emerald-800";
                 text.innerText = "สะดวกเข้าร่วมกิจกรรม";
+            }
+
+            // Real-time auto save to Firebase when user flips switch
+            if (!isProgrammaticLeaveChange) {
+                const uid = charUidInput.value.trim() || currentUser;
+                if (uid) {
+                    db.ref('members/' + uid + '/active').set(!isLeave).then(() => {
+                        console.log(`Updated active status for ${uid}: ${!isLeave}`);
+                    });
+                }
             }
         });
 
@@ -466,8 +477,10 @@
                     currentUserRole = data.role || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
                     
                     // Active/Leave Status (active === false means on leave)
-                    toggleLeave.checked = (data.active === false);
+                    isProgrammaticLeaveChange = true;
+                    toggleLeave.checked = (data.active === false || data.active === 'false' || data.active === 0 || data.active === '0');
                     toggleLeave.dispatchEvent(new Event('change'));
+                    isProgrammaticLeaveChange = false;
 
                     // Avatar Image
                     if (data.avatarUrl) {

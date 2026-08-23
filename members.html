@@ -538,7 +538,7 @@
                     <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-900 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
-                    <td class="py-3.5 px-3 cursor-pointer text-center whitespace-nowrap">
+                    <td class="py-3.5 px-3 cursor-pointer text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม">
                         ${toggleHtml}
                     </td>
                     <td class="py-3.5 px-3 text-sm whitespace-nowrap">
@@ -686,6 +686,20 @@
                 closeEditModal();
             }).catch(err => {
                 alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
+        // สลับสถานะ เข้าร่วม / ลากิจกรรม
+        function toggleMemberActive(uid, newActive) {
+            if (!isAdmin && currentUser.toLowerCase() !== uid.toLowerCase()) {
+                alert('⚠️ คุณไม่มีสิทธิ์เปลี่ยนสถานะของสมาชิกท่านอื่น (เฉพาะ Admin หรือเจ้าของตัวละคร)');
+                return;
+            }
+
+            db.ref('members/' + uid + '/active').set(newActive).then(() => {
+                console.log(`Updated active for ${uid} to ${newActive}`);
+            }).catch(err => {
+                alert('❌ เปลี่ยนสถานะไม่สำเร็จ: ' + err.message);
             });
         }
 
