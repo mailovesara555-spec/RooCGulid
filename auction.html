@@ -155,7 +155,10 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-stone-600 mb-1">แบ่งรอบละกี่ใบ / คน</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[11px] font-bold text-stone-600">แบ่งรอบละกี่ใบ / คน</label>
+                                    <span id="cardLockBadge" class="text-[10px] font-bold"></span>
+                                </div>
                                 <input type="number" id="cardAmount" placeholder="เช่น 1" min="1" class="item-input w-full bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-xs font-bold text-amber-900 shadow-inner">
                             </div>
                         </div>
@@ -188,7 +191,10 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-stone-600 mb-1">แบ่งรอบละกี่ใบ / คน</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[11px] font-bold text-stone-600">แบ่งรอบละกี่ใบ / คน</label>
+                                    <span id="whiteLockBadge" class="text-[10px] font-bold"></span>
+                                </div>
                                 <input type="number" id="whiteAmount" placeholder="เช่น 3" min="1" class="item-input w-full bg-white border border-sky-300 rounded-lg px-3 py-1.5 text-xs font-bold text-sky-900 shadow-inner">
                             </div>
                         </div>
@@ -221,7 +227,10 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-stone-600 mb-1">แบ่งรอบละกี่ใบ / คน</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[11px] font-bold text-stone-600">แบ่งรอบละกี่ใบ / คน</label>
+                                    <span id="blackLockBadge" class="text-[10px] font-bold"></span>
+                                </div>
                                 <input type="number" id="blackAmount" placeholder="เช่น 3" min="1" class="item-input w-full bg-white border border-stone-300 rounded-lg px-3 py-1.5 text-xs font-bold text-stone-900 shadow-inner">
                             </div>
                         </div>
@@ -230,9 +239,14 @@
 
                 <!-- แจ้งเตือนการดึงข้อมูลสมาชิก -->
                 <div class="bg-amber-100/50 rounded-3xl p-5 shadow-sm border border-amber-200 animate-fade-in" style="animation-delay: 0.2s;">
-                    <h3 class="text-sm font-bold text-amber-900 mb-2 flex items-center gap-1.5">
-                        <span class="text-amber-600">👥</span> ลำดับคิวกิลด์ (เรียงตามตำแหน่ง)
-                    </h3>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-bold text-amber-900 flex items-center gap-1.5">
+                            <span class="text-amber-600">👥</span> ลำดับคิวกิลด์ (เรียงตามตำแหน่ง)
+                        </h3>
+                        <button id="btnResetRounds" onclick="resetAllAuctionRounds()" class="text-[11px] text-red-600 hover:text-red-800 bg-white hover:bg-red-50 border border-red-200 px-2 py-0.5 rounded-lg font-bold transition">
+                            🔄 รีเซ็ตรอบใหม่
+                        </button>
+                    </div>
                     <div id="memberPreview" class="mb-3 p-3 bg-white/80 rounded-xl border border-amber-200 text-xs text-stone-600 max-h-32 overflow-y-auto shadow-inner leading-relaxed">
                         กำลังโหลดรายชื่อสมาชิกจาก Cloud...
                     </div>
@@ -253,7 +267,7 @@
                             <h2 class="text-xl font-extrabold text-amber-900 drop-shadow-sm flex items-center gap-2">
                                 📋 ตารางสรุปผลการจัดสรรประมูล
                             </h2>
-                            <p class="text-xs text-stone-500 mt-0.5">แบ่งตามหน้าและช่องไอเทมที่ต้องกดรับในเกมอย่างชัดเจน</p>
+                            <p class="text-xs text-stone-500 mt-0.5">แบ่งตามหน้าและช่องไอเทมที่ต้องกดรับในเกมอย่างชัดเจน (แบ่งเท่ากันลงตัวเท่านั้น)</p>
                         </div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <div id="summaryStats" class="text-xs font-semibold text-stone-600 bg-amber-50 px-3.5 py-1.5 rounded-xl border border-amber-200 shadow-sm">
@@ -262,6 +276,20 @@
                             <button id="btnCopyResult" onclick="copyAuctionSummary()" class="hidden px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-800 text-xs font-bold rounded-xl border border-amber-300 shadow-sm transition flex items-center gap-1">
                                 📋 คัดลอกข้อความ
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Leftover Section (ของที่เหลือจากการประมูล - ตัดออก) -->
+                    <div id="leftoverSection" class="hidden mb-6 p-4 bg-amber-50/90 rounded-2xl border border-amber-300 text-amber-950 space-y-2 shadow-sm animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-extrabold text-xs sm:text-sm text-amber-950 flex items-center gap-1.5">
+                                <span>📦</span> ไอเทมเหลือจากการประมูลครั้งนี้ (ตัดออก):
+                            </h4>
+                            <span class="text-[11px] bg-rose-100 text-rose-800 border border-rose-200 px-2.5 py-0.5 rounded-full font-bold">
+                                ตัดออก (ไม่แจกเศษ)
+                            </span>
+                        </div>
+                        <div id="leftoverContent" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
                         </div>
                     </div>
                     
@@ -493,6 +521,51 @@
             document.getElementById('cardRoundProgress').innerText = `รอบนี้ได้แล้ว ${cCount}/${total} คน`;
             document.getElementById('whiteRoundProgress').innerText = `รอบนี้ได้แล้ว ${wCount}/${total} คน`;
             document.getElementById('blackRoundProgress').innerText = `รอบนี้ได้แล้ว ${bCount}/${total} คน`;
+
+            // Card Lock check: ล็อกจำนวนใบต่อคนหากรอบยังไม่จบ
+            const cardInput = document.getElementById('cardAmount');
+            const cardLockBadge = document.getElementById('cardLockBadge');
+            if (cCount > 0 && cCount < total) {
+                const lockedAmt = currentAuctionState.cardRoundAmount || 1;
+                cardInput.value = lockedAmt;
+                cardInput.disabled = true;
+                cardInput.classList.add('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                cardLockBadge.innerHTML = `<span class="text-[10px] text-amber-900 bg-amber-200/90 font-extrabold px-2 py-0.5 rounded border border-amber-300">🔒 ล็อก ${lockedAmt} ใบ/คน</span>`;
+            } else {
+                cardInput.disabled = false;
+                cardInput.classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                cardLockBadge.innerHTML = `<span class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded border border-emerald-300">🔓 ตั้งค่ารอบใหม่ได้</span>`;
+            }
+
+            // White Feather Lock check
+            const whiteInput = document.getElementById('whiteAmount');
+            const whiteLockBadge = document.getElementById('whiteLockBadge');
+            if (wCount > 0 && wCount < total) {
+                const lockedAmt = currentAuctionState.whiteRoundAmount || 3;
+                whiteInput.value = lockedAmt;
+                whiteInput.disabled = true;
+                whiteInput.classList.add('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                whiteLockBadge.innerHTML = `<span class="text-[10px] text-sky-900 bg-sky-200/90 font-extrabold px-2 py-0.5 rounded border border-sky-300">🔒 ล็อก ${lockedAmt} ใบ/คน</span>`;
+            } else {
+                whiteInput.disabled = false;
+                whiteInput.classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                whiteLockBadge.innerHTML = `<span class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded border border-emerald-300">🔓 ตั้งค่ารอบใหม่ได้</span>`;
+            }
+
+            // Black Feather Lock check
+            const blackInput = document.getElementById('blackAmount');
+            const blackLockBadge = document.getElementById('blackLockBadge');
+            if (bCount > 0 && bCount < total) {
+                const lockedAmt = currentAuctionState.blackRoundAmount || 3;
+                blackInput.value = lockedAmt;
+                blackInput.disabled = true;
+                blackInput.classList.add('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                blackLockBadge.innerHTML = `<span class="text-[10px] text-stone-900 bg-stone-300 font-extrabold px-2 py-0.5 rounded border border-stone-400">🔒 ล็อก ${lockedAmt} ใบ/คน</span>`;
+            } else {
+                blackInput.disabled = false;
+                blackInput.classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+                blackLockBadge.innerHTML = `<span class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded border border-emerald-300">🔓 ตั้งค่ารอบใหม่ได้</span>`;
+            }
         }
 
         // 4. ฟังก์ชันแสดงผล Pill สวยงาม
@@ -552,6 +625,8 @@
             const tbody = document.getElementById('resultTableBody');
             const summaryStats = document.getElementById('summaryStats');
             const btnCopy = document.getElementById('btnCopyResult');
+            const leftoverSection = document.getElementById('leftoverSection');
+            const leftoverContent = document.getElementById('leftoverContent');
 
             currentCalculatedData = data;
 
@@ -559,6 +634,7 @@
                 tbody.innerHTML = `<tr><td colspan="5" class="py-16 text-center text-stone-400 text-sm font-medium">ยังไม่มีผลการประมูลล่าสุด</td></tr>`;
                 summaryStats.innerText = 'ยังไม่มีข้อมูล';
                 btnCopy.classList.add('hidden');
+                leftoverSection.classList.add('hidden');
                 return;
             }
 
@@ -566,6 +642,64 @@
 
             if (data.summaryText) {
                 summaryStats.innerHTML = data.summaryText;
+            }
+
+            // Render Leftovers (ของที่เหลือจากการประมูล)
+            const leftovers = data.leftovers || {};
+            let hasLeftover = (leftovers.cardCount > 0) || (leftovers.whiteCount > 0) || (leftovers.blackCount > 0);
+
+            if (hasLeftover) {
+                leftoverSection.classList.remove('hidden');
+                let leftoverCards = [];
+
+                if (leftovers.cardCount > 0) {
+                    let loc = (leftovers.cardChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    leftoverCards.push(`
+                        <div class="bg-amber-50/90 border border-amber-300 rounded-xl p-2.5 flex items-center justify-between shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="images/item_card.png" class="w-6 h-6 object-contain" alt="การ์ด">
+                                <div>
+                                    <p class="text-xs font-bold text-amber-950">การ์ด เหลือ <b class="text-rose-700">${leftovers.cardCount}</b> ใบ</p>
+                                    <p class="text-[10px] text-amber-800 font-medium">${loc || '-'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (leftovers.whiteCount > 0) {
+                    let loc = (leftovers.whiteChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    leftoverCards.push(`
+                        <div class="bg-sky-50/90 border border-sky-300 rounded-xl p-2.5 flex items-center justify-between shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="images/item_white.png" class="w-6 h-6 object-contain" alt="ขนขาว">
+                                <div>
+                                    <p class="text-xs font-bold text-sky-950">ขนขาว เหลือ <b class="text-rose-700">${leftovers.whiteCount}</b> ใบ</p>
+                                    <p class="text-[10px] text-sky-800 font-medium">${loc || '-'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (leftovers.blackCount > 0) {
+                    let loc = (leftovers.blackChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    leftoverCards.push(`
+                        <div class="bg-stone-100/90 border border-stone-300 rounded-xl p-2.5 flex items-center justify-between shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="images/item_black.png" class="w-6 h-6 object-contain" alt="ขนดำ">
+                                <div>
+                                    <p class="text-xs font-bold text-stone-950">ขนดำ เหลือ <b class="text-rose-700">${leftovers.blackCount}</b> ใบ</p>
+                                    <p class="text-[10px] text-stone-700 font-medium">${loc || '-'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                leftoverContent.innerHTML = leftoverCards.join('');
+            } else {
+                leftoverSection.classList.add('hidden');
             }
 
             tbody.innerHTML = '';
@@ -604,7 +738,6 @@
         // รวม Chunks ที่อยู่หน้าเดียวกันและติดกันให้เป็นก้อนเดียวอย่างสวยงาม
         function mergeChunks(chunks) {
             if (!chunks || chunks.length === 0) return [];
-            // เรียงตามหน้า และ Slot เริ่มต้น
             chunks.sort((a, b) => a.page !== b.page ? a.page - b.page : a.startSlot - b.startSlot);
 
             let merged = [];
@@ -624,21 +757,40 @@
             return merged;
         }
 
-        // ระบบแจกแบบต่อเนื่อง เรียงตามหน้าและ Slot ให้หมดทีละหน้า
-        function allocatePersistentRound(allMembers, supply, amountPerPerson, startIndex, existingHolders) {
+        // ระบบแจกแบบต่อเนื่อง เรียงตามหน้าและ Slot ให้หมดทีละหน้า (แบ่งเท่ากันลงตัวเท่านั้น + คืนค่าของเหลือ)
+        function allocatePersistentRound(allMembers, supply, requestedAmountPerPerson, startIndex, existingHolders, existingRoundAmount) {
             if (allMembers.length === 0 || supply <= 0) {
-                return { allocations: {}, receivers: [], updatedHolders: existingHolders || [] };
+                return { 
+                    allocations: {}, 
+                    receivers: [], 
+                    updatedHolders: existingHolders || [], 
+                    roundAmount: existingRoundAmount || requestedAmountPerPerson || 1,
+                    leftoverCount: 0,
+                    leftoverChunks: []
+                };
             }
+
+            let currentHolders = [...(existingHolders || [])];
+            
+            // ล็อกจำนวนใบต่อคนตามรอบ หากรอบยังไม่จบให้ใช้ค่าเดิมของรอบนั้น
+            let roundAmount = (currentHolders.length > 0 && currentHolders.length < allMembers.length && existingRoundAmount) 
+                ? existingRoundAmount 
+                : requestedAmountPerPerson;
+
+            if (!roundAmount || roundAmount <= 0) roundAmount = 1;
 
             let allocations = {};
             allMembers.forEach(m => allocations[m.name] = []);
 
-            let currentHolders = [...(existingHolders || [])];
-            let currentSupply = supply;
+            // คำนวณจำนวนคนที่สามารถได้รับของครบตามจำนวน roundAmount อย่างลงตัวเท่านั้น
+            let fullPersonsCount = Math.floor(supply / roundAmount);
+            let usableSupply = fullPersonsCount * roundAmount;
+            let leftoverCount = supply - usableSupply;
+
             let currIndex = startIndex;
             let receivers = new Set();
 
-            while (currentSupply > 0) {
+            for (let i = 0; i < fullPersonsCount; i++) {
                 let availableCandidates = allMembers.filter(m => !currentHolders.includes(m.name));
 
                 if (availableCandidates.length === 0) {
@@ -647,7 +799,7 @@
                 }
 
                 let nextMember = availableCandidates[0];
-                let take = Math.min(currentSupply, amountPerPerson);
+                let take = roundAmount;
                 
                 let remaining = take;
                 let chunkStart = currIndex;
@@ -671,16 +823,39 @@
 
                 receivers.add(nextMember.name);
                 currentHolders.push(nextMember.name);
-
-                currentSupply -= take;
                 currIndex += take;
+            }
+
+            // คำนวณตำแหน่งช่องของไอเทมที่เหลือ (Leftovers)
+            let leftoverChunks = [];
+            if (leftoverCount > 0) {
+                let leftoverStart = currIndex;
+                let remainingLeftover = leftoverCount;
+
+                while (remainingLeftover > 0) {
+                    let page = Math.floor(leftoverStart / 4) + 1;
+                    let slot = (leftoverStart % 4) + 1;
+                    let spaceOnPage = 4 - slot + 1;
+                    let partTake = Math.min(remainingLeftover, spaceOnPage);
+
+                    leftoverChunks.push({
+                        page: page,
+                        startSlot: slot,
+                        endSlot: slot + partTake - 1,
+                        count: partTake
+                    });
+
+                    remainingLeftover -= partTake;
+                    leftoverStart += partTake;
+                }
+                leftoverChunks = mergeChunks(leftoverChunks);
             }
 
             if (currentHolders.length >= allMembers.length) {
                 currentHolders = [];
             }
 
-            // รวม Chunks ของแต่ละคนให้เรียงหน้าต่อเนื่อง ไม่แตกกระจาย
+            // รวม Chunks ของแต่ละคนให้เรียงหน้าต่อเนื่อง
             for (let name in allocations) {
                 allocations[name] = mergeChunks(allocations[name]);
             }
@@ -688,7 +863,10 @@
             return {
                 allocations: allocations,
                 receivers: Array.from(receivers),
-                updatedHolders: currentHolders
+                updatedHolders: currentHolders,
+                roundAmount: roundAmount,
+                leftoverCount: leftoverCount,
+                leftoverChunks: leftoverChunks
             };
         }
 
@@ -741,9 +919,9 @@
             const oldWhiteHolders = currentAuctionState.whiteHolders || [];
             const oldBlackHolders = currentAuctionState.blackHolders || [];
 
-            const cardAlloc  = allocatePersistentRound(allMembers, cardTotal, cAmt, cardStartIndex, oldCardHolders);
-            const whiteAlloc = allocatePersistentRound(allMembers, whiteTotal, wAmt, whiteStartIndex, oldWhiteHolders);
-            const blackAlloc = allocatePersistentRound(allMembers, blackTotal, bAmt, blackStartIndex, oldBlackHolders);
+            const cardAlloc  = allocatePersistentRound(allMembers, cardTotal, cAmt, cardStartIndex, oldCardHolders, currentAuctionState.cardRoundAmount);
+            const whiteAlloc = allocatePersistentRound(allMembers, whiteTotal, wAmt, whiteStartIndex, oldWhiteHolders, currentAuctionState.whiteRoundAmount);
+            const blackAlloc = allocatePersistentRound(allMembers, blackTotal, bAmt, blackStartIndex, oldBlackHolders, currentAuctionState.blackRoundAmount);
 
             const allReceivers = new Set([
                 ...cardAlloc.receivers,
@@ -760,44 +938,78 @@
                 blackChunks: blackAlloc.allocations[member.name] || []
             }));
 
-            const summaryStatsHtml = `สมาชิก <b class="text-amber-800 font-extrabold">${allMembers.length}</b> คน | การ์ด <b class="text-amber-800 font-extrabold">${cardTotal}</b> ใบ, ขาว <b class="text-sky-800 font-extrabold">${whiteTotal}</b> ใบ, ดำ <b class="text-stone-800 font-extrabold">${blackTotal}</b> ใบ`;
+            let summaryStatsHtml = `สมาชิก <b class="text-amber-800 font-extrabold">${allMembers.length}</b> คน | `;
+            let summaryItems = [];
+            if (cardTotal > 0) summaryItems.push(`การ์ด <b class="text-amber-800 font-extrabold">${cardTotal - cardAlloc.leftoverCount}/${cardTotal}</b> ใบ`);
+            if (whiteTotal > 0) summaryItems.push(`ขาว <b class="text-sky-800 font-extrabold">${whiteTotal - whiteAlloc.leftoverCount}/${whiteTotal}</b> ใบ`);
+            if (blackTotal > 0) summaryItems.push(`ดำ <b class="text-stone-800 font-extrabold">${blackTotal - blackAlloc.leftoverCount}/${blackTotal}</b> ใบ`);
+            summaryStatsHtml += summaryItems.join(', ');
 
             db.ref('auctionState').set({
                 cardHolders: cardAlloc.updatedHolders,
+                cardRoundAmount: cardAlloc.roundAmount,
                 whiteHolders: whiteAlloc.updatedHolders,
+                whiteRoundAmount: whiteAlloc.roundAmount,
                 blackHolders: blackAlloc.updatedHolders,
+                blackRoundAmount: blackAlloc.roundAmount,
                 lastUpdated: new Date().toISOString()
             });
 
             db.ref('auctionResults').set({
                 structuredAllocations: structuredList,
+                leftovers: {
+                    cardChunks: cardAlloc.leftoverChunks,
+                    cardCount: cardAlloc.leftoverCount,
+                    whiteChunks: whiteAlloc.leftoverChunks,
+                    whiteCount: whiteAlloc.leftoverCount,
+                    blackChunks: blackAlloc.leftoverChunks,
+                    blackCount: blackAlloc.leftoverCount
+                },
                 summaryText: summaryStatsHtml,
                 lastCalculated: new Date().toISOString(),
                 calculatedBy: currentUser
             }).then(() => {
-                // ล้างค่าในช่องกรอกข้อมูลทั้งหมดให้ว่าง เพื่อเตรียมใส่ข้อมูลใหม่รอบถัดไป
-                document.querySelectorAll('.item-input').forEach(input => {
-                    input.value = '';
-                });
+                // ล้างค่าในช่องกรอกหน้าและ slot
+                document.getElementById('cardStartPage').value = '';
+                document.getElementById('cardStartSlot').value = '';
+                document.getElementById('cardEndPage').value = '';
+                document.getElementById('cardEndSlot').value = '';
 
-                alert('✨ คำนวณและอัปเดตผลการประมูลขึ้นกิลด์เรียบร้อยแล้ว!\nระบบได้ล้างช่องกรอกข้อมูลเพื่อให้พร้อมใส่ข้อมูลรอบถัดไปแล้วครับ');
+                document.getElementById('whiteStartPage').value = '';
+                document.getElementById('whiteStartSlot').value = '';
+                document.getElementById('whiteEndPage').value = '';
+                document.getElementById('whiteEndSlot').value = '';
+
+                document.getElementById('blackStartPage').value = '';
+                document.getElementById('blackStartSlot').value = '';
+                document.getElementById('blackEndPage').value = '';
+                document.getElementById('blackEndSlot').value = '';
+
+                let alertMsg = '✨ คำนวณและอัปเดตผลการประมูลขึ้นกิลด์เรียบร้อยแล้ว!';
+                if (cardAlloc.leftoverCount > 0 || whiteAlloc.leftoverCount > 0 || blackAlloc.leftoverCount > 0) {
+                    alertMsg += '\n📦 มีไอเทมเหลือจากการประมูล (ตัดออก): ระบุในตารางของเหลือเรียบร้อยแล้วครับ';
+                }
+                alert(alertMsg);
             }).catch(err => {
                 alert('❌ เกิดข้อผิดพลาด: ' + err.message);
             });
         }
 
         function resetAllAuctionRounds() {
-            if (!confirm('คุณต้องการรีเซ็ตรอบการประมูลและล้างไอคอนของทุกคนเพื่อเริ่มต้นรอบที่ 1 ใหม่ใช่หรือไม่?')) {
+            if (!confirm('คุณต้องการรีเซ็ตรอบการประมูลทั้งหมด และปลดล็อกการตั้งค่าจำนวนใบเพื่อเริ่มรอบใหม่ใช่หรือไม่?')) {
                 return;
             }
 
             db.ref('auctionState').set({
                 cardHolders: [],
+                cardRoundAmount: null,
                 whiteHolders: [],
+                whiteRoundAmount: null,
                 blackHolders: [],
+                blackRoundAmount: null,
                 lastReset: new Date().toISOString()
             }).then(() => {
-                alert('🔄 รีเซ็ตรอบประมูลใหม่และล้างไอคอนของทุกคนเรียบร้อยแล้ว!');
+                alert('🔄 รีเซ็ตรอบประมูลใหม่และปลดล็อกการตั้งค่าเรียบร้อยแล้ว!');
             });
         }
 
@@ -808,20 +1020,40 @@
             text += `----------------------------------------\n`;
             currentCalculatedData.structuredAllocations.forEach((item, index) => {
                 text += `#${index + 1} ${item.name} (${item.role || 'สมาชิก'}):\n`;
-                if (item.cardChunks.length > 0) {
+                if (item.cardChunks && item.cardChunks.length > 0) {
                     let cText = item.cardChunks.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
                     text += `  🃏 การ์ด: ${cText}\n`;
                 }
-                if (item.whiteChunks.length > 0) {
+                if (item.whiteChunks && item.whiteChunks.length > 0) {
                     let wText = item.whiteChunks.map(w => `หน้า ${w.page} (ใบที่ ${w.startSlot}${w.startSlot !== w.endSlot ? '-'+w.endSlot : ''})`).join(', ');
                     text += `  🕊️ ขนขาว: ${wText}\n`;
                 }
-                if (item.blackChunks.length > 0) {
+                if (item.blackChunks && item.blackChunks.length > 0) {
                     let bText = item.blackChunks.map(b => `หน้า ${b.page} (ใบที่ ${b.startSlot}${b.startSlot !== b.endSlot ? '-'+b.endSlot : ''})`).join(', ');
                     text += `  🦅 ขนดำ: ${bText}\n`;
                 }
                 text += `\n`;
             });
+
+            // แสดงของเหลือจากการประมูลในข้อความคัดลอก (ตัดออก)
+            const leftovers = currentCalculatedData.leftovers;
+            if (leftovers && (leftovers.cardCount > 0 || leftovers.whiteCount > 0 || leftovers.blackCount > 0)) {
+                text += `----------------------------------------\n`;
+                text += `📦 ไอเทมเหลือจากการประมูล (ตัดออก):\n`;
+                if (leftovers.cardCount > 0) {
+                    let cText = (leftovers.cardChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    text += `  🃏 การ์ด: เหลือ ${leftovers.cardCount} ใบ (${cText})\n`;
+                }
+                if (leftovers.whiteCount > 0) {
+                    let wText = (leftovers.whiteChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    text += `  🕊️ ขนขาว: เหลือ ${leftovers.whiteCount} ใบ (${wText})\n`;
+                }
+                if (leftovers.blackCount > 0) {
+                    let bText = (leftovers.blackChunks || []).map(c => `หน้า ${c.page} ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''}`).join(', ');
+                    text += `  🦅 ขนดำ: เหลือ ${leftovers.blackCount} ใบ (${bText})\n`;
+                }
+                text += `\n`;
+            }
 
             navigator.clipboard.writeText(text).then(() => {
                 alert('📋 คัดลอกข้อความสรุปผลสำเร็จแล้ว! สามารถนำไปวางส่งใน Discord หรือ LINE กลุ่มกิลด์ได้เลยครับ');
