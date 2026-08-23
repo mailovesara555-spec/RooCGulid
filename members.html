@@ -499,6 +499,7 @@
             tbody.innerHTML = '';
 
             const filteredMembers = allMembersData.filter(m => {
+                if (!m || !m.uid || m.uid === 'undefined' || m.uid === 'null') return false;
                 return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
                        (m.charClass && m.charClass.toLowerCase().includes(searchKeyword)) ||
                        (m.role && m.role.toLowerCase().includes(searchKeyword)) ||
@@ -770,10 +771,26 @@
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
+                // บังคับให้ตัวละครตัวที่ 2 ทุกตัวในระบบ (ทั้งเก่าและใหม่) มีตำแหน่งเป็น 'สมาชิกกิลด์' เท่านั้น
+                Object.keys(data).forEach(key => {
+                    const m = data[key];
+                    if (m) {
+                        const isChar2 = m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)'));
+                        if (isChar2) {
+                            m.isChar2 = true;
+                            if (m.role !== 'สมาชิกกิลด์') {
+                                m.role = 'สมาชิกกิลด์';
+                                // แก้ไขข้อมูลเดิมบน Firebase ให้อัตโนมัติทันที
+                                db.ref('members/' + key + '/role').set('สมาชิกกิลด์');
+                            }
+                        }
+                    }
+                });
+
                 let list = Object.values(data);
                 
                 // เรียงลำดับ: 
-                // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกกิลด์)
+                // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
                 // 2. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ลำดับท้ายสุดเสมอ)
                 list.sort((a, b) => {
                     const pA = getRolePriority(a.role);

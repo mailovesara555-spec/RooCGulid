@@ -497,11 +497,19 @@
             return 0;
         }
 
-        // 3. ดึงรายชื่อสมาชิก เรียงลำดับตามตำแหน่ง Admin -> หัวหน้า -> รองหัวหน้า -> ผู้จัดการ -> สมาชิก
+        // 3. ดึงรายชื่อสมาชิก เรียงลำดับตามตำแหน่ง Admin -> หัวหน้า -> รองหัวหน้า -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิก
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             const preview = document.getElementById('memberPreview');
             if (data) {
+                Object.keys(data).forEach(key => {
+                    const m = data[key];
+                    if (m && (m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)')))) {
+                        m.isChar2 = true;
+                        m.role = 'สมาชิกกิลด์';
+                    }
+                });
+
                 let list = Object.values(data).filter(m => m.active !== false);
                 
                 list.sort((a, b) => {

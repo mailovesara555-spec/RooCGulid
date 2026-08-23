@@ -964,6 +964,13 @@
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
+                Object.keys(data).forEach(key => {
+                    const m = data[key];
+                    if (m && (m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)')))) {
+                        m.isChar2 = true;
+                        m.role = 'สมาชิกกิลด์';
+                    }
+                });
                 let list = Object.values(data);
                 
                 function getPartyRolePriority(role) {
