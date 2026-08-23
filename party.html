@@ -759,9 +759,10 @@
             } else if (activeM.source === 'leave') {
                 leaveMembers = leaveMembers.filter(n => n !== activeM.name);
                 const m = allGuildMembers.find(x => x.name === activeM.name);
-                if (m && (m.active === false || m.active === 'false')) {
+                if (m && (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0')) {
                     const uid = m.uid || activeM.name;
-                    db.ref(`members/${uid}/active`).set(true);
+                    const safeKey = getFirebaseUidKey(uid);
+                    db.ref(`members/${safeKey}/active`).set(true);
                 }
             }
 
@@ -836,14 +837,20 @@
             saveAndRender();
         }
 
+        function getFirebaseUidKey(uid) {
+            if (!uid) return 'unknown_user';
+            return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+        }
+
         function returnFromLeave(memberName) {
             if (!canEditParties) return;
             leaveMembers = leaveMembers.filter(n => n !== memberName);
             
             const m = allGuildMembers.find(x => x.name === memberName);
-            if (m && (m.active === false || m.active === 'false')) {
+            if (m && (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0')) {
                 const uid = m.uid || memberName;
-                db.ref(`members/${uid}/active`).set(true);
+                const safeKey = getFirebaseUidKey(uid);
+                db.ref(`members/${safeKey}/active`).set(true);
             }
 
             selectedMember = null;

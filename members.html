@@ -659,6 +659,11 @@
             document.getElementById('statsDetailModal').classList.add('hidden');
         }
 
+        function getFirebaseUidKey(uid) {
+            if (!uid) return 'unknown_user';
+            return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+        }
+
         function saveEditMember() {
             const uid = document.getElementById('editUid').value;
             const name = document.getElementById('editName').value.trim();
@@ -681,7 +686,8 @@
                 updates.role = role;
             }
 
-            db.ref('members/' + uid).update(updates).then(() => {
+            const safeKey = getFirebaseUidKey(uid);
+            db.ref('members/' + safeKey).update(updates).then(() => {
                 alert('✨ บันทึกการแก้ไขข้อมูลเรียบร้อยแล้ว!');
                 closeEditModal();
             }).catch(err => {
@@ -696,7 +702,8 @@
                 return;
             }
 
-            db.ref('members/' + uid + '/active').set(newActive).then(() => {
+            const safeKey = getFirebaseUidKey(uid);
+            db.ref('members/' + safeKey + '/active').set(newActive).then(() => {
                 console.log(`Updated active for ${uid} to ${newActive}`);
             }).catch(err => {
                 alert('❌ เปลี่ยนสถานะไม่สำเร็จ: ' + err.message);
@@ -711,7 +718,8 @@
             }
 
             if (confirm(`คุณต้องการลบข้อมูลของ ${uid} ใช่หรือไม่?`)) {
-                db.ref('members/' + uid).remove().then(() => {
+                const safeKey = getFirebaseUidKey(uid);
+                db.ref('members/' + safeKey).remove().then(() => {
                     alert('ลบสมาชิกเรียบร้อยแล้ว');
                 });
             }
