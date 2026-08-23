@@ -94,7 +94,7 @@
                             ⚡ Admin (daffodil2693)
                         </span>
                     </h2>
-                    <p class="text-xs text-stone-500 mt-1">เรียงลำดับ: ⚡ Admin &rarr; 👑 หัวหน้ากิลด์ &rarr; ⚔️ รองหัวหน้ากิลด์ &rarr; 📋 ผู้จัดการ &rarr; 🛡️ สมาชิกกิลด์</p>
+                    <p class="text-xs text-stone-500 mt-1">เรียงลำดับ: ⚡ Admin &rarr; 👑 หัวหน้ากิลด์ &rarr; ⚔️ รองหัวหน้ากิลด์ &rarr; 📋 ผู้จัดการ &rarr; ⭐ สมาชิกพิเศษ &rarr; 🛡️ สมาชิกกิลด์</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -442,10 +442,12 @@
                     return 3;
                 case 'ผู้จัดการ':
                     return 4;
+                case 'สมาชิกพิเศษ':
+                    return 5;
                 case 'สมาชิกกิลด์':
                 case 'สมาชิกกิล':
                 default:
-                    return 5;
+                    return 6;
             }
         }
 
@@ -476,6 +478,8 @@
                     return `<span class="whitespace-nowrap bg-purple-100 text-purple-900 border border-purple-300 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
                 case 'ผู้จัดการ':
                     return `<span class="whitespace-nowrap bg-sky-100 text-sky-900 border border-sky-300 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
+                case 'สมาชิกพิเศษ':
+                    return `<span class="whitespace-nowrap bg-teal-100 text-teal-900 border border-teal-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">⭐ สมาชิกพิเศษ</span>`;
                 case 'สมาชิกกิลด์':
                 case 'สมาชิกกิล':
                 default:
@@ -520,6 +524,8 @@
                 if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-sky-100 text-sky-900 px-1.5 py-0.5 rounded border border-sky-300 text-xs inline-flex items-center gap-1"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
                 if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-stone-200 text-stone-900 px-1.5 py-0.5 rounded border border-stone-400 text-xs inline-flex items-center gap-1"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
                 
+                let isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
+                let char2Tag = isChar2 ? '<span class="text-[10px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.5 rounded-md font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
                 let displayName = member.name || '-';
                 let iconDisplay = icons.length > 0 ? `<div class="flex items-center gap-1.5 mt-1 flex-wrap">${icons.join(' ')}</div>` : '';
 
@@ -530,7 +536,11 @@
                     <td class="py-3.5 px-3 text-center font-bold text-stone-400 text-xs whitespace-nowrap">#${index + 1}</td>
                     <td class="py-3.5 px-3 text-sm text-stone-700 font-medium whitespace-nowrap">${member.uid}</td>
                     <td class="py-3.5 px-4 text-sm text-stone-800 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
-                        <div class="hover:text-amber-700 transition flex items-center gap-1.5">${displayName} <span class="text-xs text-amber-500">🔍</span></div>
+                        <div class="hover:text-amber-700 transition flex items-center gap-1.5 flex-wrap">
+                            <span>${displayName}</span>
+                            ${char2Tag}
+                            <span class="text-xs text-amber-500">🔍</span>
+                        </div>
                         ${iconDisplay}
                     </td>
                     <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleBadge}</td>
@@ -589,6 +599,7 @@
                     <option value="หัวหน้ากิลด์">👑 หัวหน้ากิลด์</option>
                     <option value="รองหัวหน้ากิลด์">⚔️ รองหัวหน้ากิลด์</option>
                     <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
+                    <option value="สมาชิกพิเศษ">⭐ สมาชิกพิเศษ (มีตัวละครตัวที่ 2 ได้)</option>
                     <option value="สมาชิกกิลด์">🛡️ สมาชิกกิลด์</option>
                 `;
                 roleSelect.value = member.role || 'สมาชิกกิลด์';

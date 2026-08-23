@@ -126,6 +126,22 @@
             </div>
         </div>
 
+        <!-- Character Selector Tabs (ตัวละครที่ 1 & ตัวละครที่ 2) -->
+        <div class="flex items-center justify-between flex-wrap gap-3 bg-white/90 backdrop-blur-sm p-3 rounded-2xl border border-amber-200 shadow-sm animate-fade-in">
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" id="btnChar1Tab" onclick="switchCharacterTab(1)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 cursor-pointer">
+                    <span>👤</span> ตัวละครหลัก (ตัวที่ 1)
+                </button>
+                <button type="button" id="btnChar2Tab" onclick="switchCharacterTab(2)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-900 border border-stone-200 cursor-pointer">
+                    <span>✌️</span> ตัวละครรอง (ตัวที่ 2)
+                    <span id="char2LockBadge" class="hidden text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold border border-amber-300">🔒 สิทธิ์พิเศษ</span>
+                </button>
+            </div>
+            <div id="charTabHint" class="text-xs font-semibold text-amber-800 flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-xl border border-amber-200">
+                <span>🛡️</span> กำลังจัดการ: <strong id="activeCharLabel" class="text-amber-950 font-extrabold">ตัวละครหลัก (ตัวที่ 1)</strong>
+            </div>
+        </div>
+
         <!-- Top Row: Information & Avatar Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
             
@@ -438,11 +454,76 @@
 
         let currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
         let currentAvatarBase64 = '';
+        let activeCharIndex = 1; // 1 = ตัวหลัก, 2 = ตัวรอง
 
         // Helper สำหรับแปลง UID ให้เป็น Firebase Safe Key (ป้องกันชื่อ Discord ที่มีจุด . หรืออักขระพิเศษ)
         function getFirebaseUidKey(uid) {
             if (!uid) return 'unknown_user';
             return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+        }
+
+        // ตรวจสอบสิทธิ์การมีตัวละครตัวที่ 2 (หัวหน้ากิลด์ขึ้นไป: Admin, หัวหน้ากิลด์ และ สมาชิกพิเศษ)
+        function canAccessChar2(role) {
+            const r = role || currentUserRole || '';
+            return r === 'Admin' || r === 'admin' || r === 'หัวหน้ากิลด์' || r === 'หัวหน้ากิล' || r === 'สมาชิกพิเศษ' || currentUser.toLowerCase() === 'daffodil2693';
+        }
+
+        function getActiveFirebaseKey() {
+            const baseSafeKey = getFirebaseUidKey(currentUser);
+            return activeCharIndex === 1 ? baseSafeKey : `${baseSafeKey}__char2`;
+        }
+
+        function getActiveCharUid() {
+            return activeCharIndex === 1 ? currentUser : `${currentUser} (ตัวที่ 2)`;
+        }
+
+        // ฟังก์ชันสลับแท็บตัวละคร (ตัวที่ 1 / ตัวที่ 2)
+        function switchCharacterTab(index) {
+            if (index === 2 && !canAccessChar2(currentUserRole)) {
+                alert('🔒 สิทธิ์การเพิ่มตัวละครตัวที่ 2 สงวนไว้สำหรับตำแหน่ง "หัวหน้ากิลด์" และ "สมาชิกพิเศษ" เท่านั้นครับ\n(หากต้องการเพิ่มตัวละครตัวที่ 2 กรุณาติดต่อ Admin เพื่อขอปรับยศเป็น สมาชิกพิเศษ)');
+                return;
+            }
+
+            activeCharIndex = index;
+            const btn1 = document.getElementById('btnChar1Tab');
+            const btn2 = document.getElementById('btnChar2Tab');
+            const label = document.getElementById('activeCharLabel');
+
+            if (index === 1) {
+                btn1.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 cursor-pointer';
+                btn2.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-900 border border-stone-200 cursor-pointer';
+                label.innerText = 'ตัวละครหลัก (ตัวที่ 1)';
+                charUidInput.value = currentUser;
+            } else {
+                btn2.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 cursor-pointer';
+                btn1.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-900 border border-stone-200 cursor-pointer';
+                label.innerText = 'ตัวละครรอง (ตัวที่ 2)';
+                charUidInput.value = `${currentUser} (ตัวที่ 2)`;
+            }
+
+            clearFormFields();
+            loadCharacterData(activeCharIndex);
+        }
+
+        function clearFormFields() {
+            charNameInput.value = '';
+            charClassSelect.value = 'Sniper';
+            currentAvatarBase64 = '';
+            document.getElementById('avatarPreviewImg').src = '';
+            document.getElementById('avatarPreviewImg').classList.add('hidden');
+            document.getElementById('avatarPlaceholder').classList.remove('hidden');
+
+            ['stat_cp', 'stat_maxHp', 'stat_maxSp', 'stat_pAtk', 'stat_mAtk', 'stat_pDef', 'stat_mDef',
+             'stat_ignorePDef', 'stat_ignoreMDef', 'stat_pDmg', 'stat_mDmg', 'stat_pReduc', 'stat_mReduc',
+             'stat_pvpDmg', 'stat_pvpReduc', 'stat_cri', 'stat_criDam'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+
+            isProgrammaticLeaveChange = true;
+            toggleLeave.checked = false;
+            toggleLeave.dispatchEvent(new Event('change'));
+            isProgrammaticLeaveChange = false;
         }
 
         // Handle Leave UI & Auto-sync to Firebase
@@ -463,28 +544,49 @@
 
             // Real-time auto save to Firebase when user flips switch
             if (!isProgrammaticLeaveChange) {
-                const uid = charUidInput.value.trim() || currentUser;
-                if (uid) {
-                    const safeKey = getFirebaseUidKey(uid);
-                    db.ref('members/' + safeKey + '/active').set(!isLeave).then(() => {
-                        console.log(`Updated active status for ${uid}: ${!isLeave}`);
-                    });
-                }
+                const safeKey = getActiveFirebaseKey();
+                db.ref('members/' + safeKey + '/active').set(!isLeave).then(() => {
+                    console.log(`Updated active status for ${safeKey}: ${!isLeave}`);
+                });
             }
         });
 
         // 3. Load Existing Member Data
-        function loadExistingData(uid) {
-            if (!uid) return;
-            const safeKey = getFirebaseUidKey(uid);
-            db.ref('members/' + safeKey).once('value').then((snapshot) => {
+        function loadCharacterData(index) {
+            const key = index === 1 ? getFirebaseUidKey(currentUser) : `${getFirebaseUidKey(currentUser)}__char2`;
+            
+            // First check master role
+            db.ref('members/' + getFirebaseUidKey(currentUser)).once('value').then(masterSnap => {
+                const masterData = masterSnap.val();
+                if (masterData && masterData.role) {
+                    currentUserRole = masterData.role;
+                } else {
+                    currentUserRole = (currentUser.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
+                }
+
+                // Update Char 2 lock badge
+                const lockBadge = document.getElementById('char2LockBadge');
+                if (lockBadge) {
+                    if (canAccessChar2(currentUserRole)) {
+                        lockBadge.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold border border-emerald-300';
+                        lockBadge.innerText = '✅ ปลดล็อกแล้ว';
+                        lockBadge.classList.remove('hidden');
+                    } else {
+                        lockBadge.className = 'text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold border border-amber-300';
+                        lockBadge.innerText = '🔒 สิทธิ์พิเศษ';
+                        lockBadge.classList.remove('hidden');
+                    }
+                }
+
+                // Now fetch data for this specific character
+                return db.ref('members/' + key).once('value');
+            }).then(snapshot => {
                 const data = snapshot.val();
                 if (data) {
                     charNameInput.value = data.name || '';
-                    charClassSelect.value = data.charClass || '';
-                    currentUserRole = data.role || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
+                    charClassSelect.value = data.charClass || 'Sniper';
                     
-                    // Active/Leave Status (active === false means on leave)
+                    // Active/Leave Status
                     isProgrammaticLeaveChange = true;
                     toggleLeave.checked = (data.active === false || data.active === 'false' || data.active === 0 || data.active === '0');
                     toggleLeave.dispatchEvent(new Event('change'));
@@ -518,17 +620,18 @@
                         document.getElementById('stat_cri').value = data.stats.cri || '';
                         document.getElementById('stat_criDam').value = data.stats.criDam || '';
                     }
-                    document.getElementById('navUsername').innerText = data.name ? `${data.name} (${uid}) [${currentUserRole}]` : `${uid} [${currentUserRole}]`;
+                    const charSuffix = index === 1 ? '' : ' [ตัวที่ 2]';
+                    document.getElementById('navUsername').innerText = data.name ? `${data.name}${charSuffix} (${currentUser}) [${currentUserRole}]` : `${currentUser}${charSuffix} [${currentUserRole}]`;
                 } else {
-                    currentUserRole = (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
-                    document.getElementById('navUsername').innerText = `${uid} [${currentUserRole}]`;
+                    const charSuffix = index === 1 ? '' : ' [ตัวที่ 2]';
+                    document.getElementById('navUsername').innerText = `${currentUser}${charSuffix} [${currentUserRole}]`;
                 }
             }).catch(err => {
                 console.error("Firebase Error:", err);
             });
         }
 
-        loadExistingData(currentUser);
+        loadCharacterData(1);
 
         function getFormattedDate() {
             const now = new Date();
@@ -584,7 +687,6 @@
 
         // 4. Save Character Info
         document.getElementById('btnSaveInfo').addEventListener('click', () => {
-            const uid = charUidInput.value.trim() || currentUser;
             const name = charNameInput.value.trim();
             const charClass = charClassSelect.value;
             const active = !toggleLeave.checked;
@@ -593,24 +695,27 @@
                 alert('กรุณากรอกชื่อตัวละครในเกม (ชื่อตัวละครห้ามเว้นว่าง)');
                 return;
             }
-            if (!uid) {
-                alert('ไม่พบ Discord UID กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
+
+            if (activeCharIndex === 2 && !canAccessChar2(currentUserRole)) {
+                alert('🔒 สิทธิ์การเพิ่มตัวละครตัวที่ 2 สงวนไว้สำหรับตำแหน่ง "หัวหน้ากิลด์" และ "สมาชิกพิเศษ" เท่านั้น');
                 return;
             }
 
+            const safeKey = getActiveFirebaseKey();
+            const charUid = getActiveCharUid();
             const updateTime = getFormattedDate();
-            const roleToSave = currentUserRole || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
-            const safeKey = getFirebaseUidKey(uid);
 
             db.ref('members/' + safeKey).once('value').then(snap => {
                 const existing = snap.val() || {};
                 const createdAt = existing.createdAt || Date.now();
 
                 const payload = {
-                    uid: uid,
+                    uid: charUid,
+                    mainUid: currentUser,
+                    isChar2: (activeCharIndex === 2),
                     name: name,
                     charClass: charClass,
-                    role: roleToSave,
+                    role: currentUserRole,
                     active: active,
                     lastUpdate: updateTime,
                     createdAt: createdAt
@@ -622,8 +727,10 @@
 
                 return db.ref('members/' + safeKey).update(payload);
             }).then(() => {
-                alert('💾 บันทึกข้อมูลตัวละครขึ้นกิลด์เรียบร้อยแล้ว!');
-                document.getElementById('navUsername').innerText = `${name} (${uid}) [${roleToSave}]`;
+                const charTypeStr = (activeCharIndex === 1) ? 'ตัวละครหลัก (ตัวที่ 1)' : 'ตัวละครรอง (ตัวที่ 2)';
+                alert(`💾 บันทึกข้อมูล ${charTypeStr} เรียบร้อยแล้ว!`);
+                const charSuffix = (activeCharIndex === 1) ? '' : ' [ตัวที่ 2]';
+                document.getElementById('navUsername').innerText = `${name}${charSuffix} (${currentUser}) [${currentUserRole}]`;
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });
@@ -631,9 +738,8 @@
 
         // 5. Save Character Stats
         document.getElementById('btnSaveStats').addEventListener('click', () => {
-            const uid = charUidInput.value.trim() || currentUser;
-            if (!uid) {
-                alert('ไม่พบ Discord UID กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
+            if (activeCharIndex === 2 && !canAccessChar2(currentUserRole)) {
+                alert('🔒 สิทธิ์การเพิ่มตัวละครตัวที่ 2 สงวนไว้สำหรับตำแหน่ง "หัวหน้ากิลด์" และ "สมาชิกพิเศษ" เท่านั้น');
                 return;
             }
 
@@ -657,10 +763,11 @@
                 criDam: parseFloat(document.getElementById('stat_criDam').value) || 0
             };
 
-            const safeKey = getFirebaseUidKey(uid);
+            const safeKey = getActiveFirebaseKey();
             db.ref('members/' + safeKey + '/stats').set(stats).then(() => {
                 db.ref('members/' + safeKey + '/lastUpdate').set(getFormattedDate());
-                alert('✨ บันทึกสเตตัสตัวละครขึ้นระบบกิลด์เรียบร้อยแล้ว!');
+                const charTypeStr = (activeCharIndex === 1) ? 'ตัวละครหลัก' : 'ตัวละครรอง (ตัวที่ 2)';
+                alert(`✨ บันทึกสเตตัสของ ${charTypeStr} ขึ้นระบบกิลด์เรียบร้อยแล้ว!`);
             }).catch(err => {
                 alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
             });

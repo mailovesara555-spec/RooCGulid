@@ -381,6 +381,11 @@
         let hasAuctionPermission = false;
         let currentCalculatedData = null;
 
+        function getFirebaseUidKey(uid) {
+            if (!uid) return 'unknown_user';
+            return String(uid).trim().replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+        }
+
         function getRolePriority(role) {
             switch (role) {
                 case 'Admin':
@@ -394,17 +399,20 @@
                     return 3;
                 case 'ผู้จัดการ':
                     return 4;
+                case 'สมาชิกพิเศษ':
+                    return 5;
                 case 'สมาชิกกิลด์':
                 case 'สมาชิกกิล':
                 default:
-                    return 5;
+                    return 6;
             }
         }
 
         function checkUserPermission() {
             const isSuperAdmin = currentUser.toLowerCase() === 'daffodil2693';
+            const safeKey = getFirebaseUidKey(currentUser);
 
-            db.ref('members/' + currentUser).once('value').then((snapshot) => {
+            db.ref('members/' + safeKey).once('value').then((snapshot) => {
                 const data = snapshot.val();
                 if (data && data.role) {
                     currentUserRole = data.role;
@@ -529,8 +537,10 @@
             if (sortedGuildMembers.length > 0) {
                 preview.innerHTML = '<b class="text-amber-900">รายชื่อตามคิว (' + sortedGuildMembers.length + ' คน):</b><br>' + 
                     sortedGuildMembers.map((m, i) => {
-                        let roleIcon = m.role === 'Admin' ? '⚡' : (m.role === 'หัวหน้ากิลด์' ? '👑' : (m.role === 'รองหัวหน้ากิลด์' ? '⚔️' : (m.role === 'ผู้จัดการ' ? '📋' : '🛡️')));
-                        return `<span class="inline-block bg-amber-50 text-stone-800 px-2 py-0.5 rounded border border-amber-200 mr-1 mt-1 font-medium text-[11px]">${i+1}. ${roleIcon} ${m.name}</span>`;
+                        let roleIcon = m.role === 'Admin' ? '⚡' : (m.role === 'หัวหน้ากิลด์' ? '👑' : (m.role === 'รองหัวหน้ากิลด์' ? '⚔️' : (m.role === 'ผู้จัดการ' ? '📋' : (m.role === 'สมาชิกพิเศษ' ? '⭐' : '🛡️'))));
+                        let isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
+                        let char2Text = isChar2 ? ' <b class="text-teal-800">[ตัวที่ 2]</b>' : '';
+                        return `<span class="inline-block bg-amber-50 text-stone-800 px-2 py-0.5 rounded border border-amber-200 mr-1 mt-1 font-medium text-[11px]">${i+1}. ${roleIcon} ${m.name}${char2Text}</span>`;
                     }).join(' ');
             } else {
                 preview.innerHTML = '<span class="text-stone-400">ยังไม่มีสมาชิกในระบบ</span>';

@@ -529,6 +529,8 @@
             if (member) {
                 const icon = CLASS_ICONS[member.charClass] || '👤';
                 const isLeave = isMemberOnLeave(member);
+                const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
+                const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
                 return `
                     <div id="slot_${pKey}_${sNum}" 
                          draggable="${canEditParties}" 
@@ -542,8 +544,9 @@
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="text-base">${icon}</span>
                             <div class="min-w-0">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1 flex-wrap">
                                     <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
+                                    ${char2Badge}
                                     ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
                                 <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight">${member.charClass || '-'}</p>
@@ -607,6 +610,8 @@
                     const icon = CLASS_ICONS[m.charClass] || '👤';
                     const cpText = (m.stats && m.stats.cp) ? Number(m.stats.cp).toLocaleString() : '-';
                     const isSelected = selectedMember && selectedMember.name === m.name && selectedMember.source === 'waitlist';
+                    const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
+                    const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
 
                     return `
                         <div draggable="${canEditParties}" 
@@ -617,7 +622,10 @@
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <span class="text-lg">${icon}</span>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-bold text-stone-900 truncate">${m.name}</p>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <p class="text-xs font-bold text-stone-900 truncate">${m.name}</p>
+                                        ${char2Badge}
+                                    </div>
                                     <p class="text-[10px] text-amber-800">${m.charClass || '-'} • CP: ${cpText}</p>
                                 </div>
                             </div>
@@ -636,6 +644,8 @@
                 leaveContainer.innerHTML = leaveList.map(m => {
                     const icon = CLASS_ICONS[m.charClass] || '👤';
                     const isProfileLeave = (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0');
+                    const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
+                    const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
 
                     return `
                         <div draggable="${canEditParties}" 
@@ -645,8 +655,9 @@
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="text-base">${icon}</span>
                                 <div class="min-w-0">
-                                    <div class="flex items-center gap-1.5">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
                                         <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
+                                        ${char2Badge}
                                         ${isProfileLeave ? `<span class="text-[9px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.2 rounded font-bold shrink-0">🏖️ ลาในโปรไฟล์</span>` : ''}
                                     </div>
                                     <p class="text-[10px] text-rose-700">${m.charClass || '-'}</p>
@@ -961,7 +972,8 @@
                         case 'หัวหน้ากิลด์': case 'หัวหน้ากิล': return 2;
                         case 'รองหัวหน้ากิลด์': case 'รองหัวหน้ากิล': return 3;
                         case 'ผู้จัดการ': return 4;
-                        default: return 5;
+                        case 'สมาชิกพิเศษ': return 5;
+                        default: return 6;
                     }
                 }
 
