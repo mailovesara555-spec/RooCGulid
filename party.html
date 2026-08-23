@@ -941,8 +941,49 @@
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                // โหลดสมาชิกทั้งหมดในกิลด์ (เพื่อให้คนที่ตั้งลากิจกรรม active=false แสดงในช่องลากิจกรรมได้)
                 let list = Object.values(data);
+                
+                function getPartyRolePriority(role) {
+                    switch (role) {
+                        case 'Admin': case 'admin': return 1;
+                        case 'หัวหน้ากิลด์': case 'หัวหน้ากิล': return 2;
+                        case 'รองหัวหน้ากิลด์': case 'รองหัวหน้ากิล': return 3;
+                        case 'ผู้จัดการ': return 4;
+                        default: return 5;
+                    }
+                }
+
+                function getPartyMemberTimestamp(m) {
+                    if (!m) return 0;
+                    if (m.createdAt && typeof m.createdAt === 'number') return m.createdAt;
+                    if (m.createdAt && !isNaN(new Date(m.createdAt).getTime())) return new Date(m.createdAt).getTime();
+                    if (m.lastUpdate && typeof m.lastUpdate === 'string') {
+                        const parts = m.lastUpdate.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})/);
+                        if (parts) {
+                            let day = parseInt(parts[1]);
+                            let month = parseInt(parts[2]) - 1;
+                            let year = parseInt(parts[3]);
+                            if (year > 2400) year -= 543;
+                            let hour = parseInt(parts[4]);
+                            let min = parseInt(parts[5]);
+                            return new Date(year, month, day, hour, min).getTime();
+                        }
+                    }
+                    return 0;
+                }
+
+                list.sort((a, b) => {
+                    const pA = getPartyRolePriority(a.role);
+                    const pB = getPartyRolePriority(b.role);
+                    if (pA !== pB) return pA - pB;
+
+                    const tA = getPartyMemberTimestamp(a);
+                    const tB = getPartyMemberTimestamp(b);
+                    if (tA !== tB) return tA - tB;
+
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+
                 allGuildMembers = list;
             } else {
                 allGuildMembers = [];

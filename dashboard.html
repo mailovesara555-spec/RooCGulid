@@ -548,20 +548,26 @@
             const updateTime = getFormattedDate();
             const roleToSave = currentUserRole || (uid.toLowerCase() === 'daffodil2693' ? 'Admin' : 'สมาชิกกิลด์');
 
-            const payload = {
-                uid: uid,
-                name: name,
-                charClass: charClass,
-                role: roleToSave,
-                active: active,
-                lastUpdate: updateTime
-            };
+            db.ref('members/' + uid).once('value').then(snap => {
+                const existing = snap.val() || {};
+                const createdAt = existing.createdAt || Date.now();
 
-            if (currentAvatarBase64) {
-                payload.avatarUrl = currentAvatarBase64;
-            }
+                const payload = {
+                    uid: uid,
+                    name: name,
+                    charClass: charClass,
+                    role: roleToSave,
+                    active: active,
+                    lastUpdate: updateTime,
+                    createdAt: createdAt
+                };
 
-            db.ref('members/' + uid).update(payload).then(() => {
+                if (currentAvatarBase64) {
+                    payload.avatarUrl = currentAvatarBase64;
+                }
+
+                return db.ref('members/' + uid).update(payload);
+            }).then(() => {
                 alert('💾 บันทึกข้อมูลตัวละครขึ้นกิลด์เรียบร้อยแล้ว!');
                 document.getElementById('navUsername').innerText = `${name} (${uid}) [${roleToSave}]`;
             }).catch(err => {

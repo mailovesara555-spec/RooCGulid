@@ -703,18 +703,45 @@
             }
         }
 
+        // ฟังก์ชันแปลงเวลาเข้าร่วม/อัปเดต เพื่อใช้เรียงลำดับคนที่มาก่อน-หลัง
+        function getMemberTimestamp(m) {
+            if (!m) return 0;
+            if (m.createdAt && typeof m.createdAt === 'number') return m.createdAt;
+            if (m.createdAt && !isNaN(new Date(m.createdAt).getTime())) return new Date(m.createdAt).getTime();
+            if (m.lastUpdate && typeof m.lastUpdate === 'string') {
+                const parts = m.lastUpdate.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})/);
+                if (parts) {
+                    let day = parseInt(parts[1]);
+                    let month = parseInt(parts[2]) - 1;
+                    let year = parseInt(parts[3]);
+                    if (year > 2400) year -= 543; // แปลง พ.ศ. เป็น ค.ศ.
+                    let hour = parseInt(parts[4]);
+                    let min = parseInt(parts[5]);
+                    return new Date(year, month, day, hour, min).getTime();
+                }
+            }
+            return 0;
+        }
+
         // 5. Real-time Listeners with Role-based Sorting
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 let list = Object.values(data);
                 
-                // เรียงลำดับ: Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกกิลด์
+                // เรียงลำดับ: 
+                // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกกิลด์)
+                // 2. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ลำดับท้ายสุดเสมอ)
                 list.sort((a, b) => {
                     const pA = getRolePriority(a.role);
                     const pB = getRolePriority(b.role);
                     if (pA !== pB) return pA - pB;
-                    return (a.createdAt || 0) - (b.createdAt || 0);
+
+                    const tA = getMemberTimestamp(a);
+                    const tB = getMemberTimestamp(b);
+                    if (tA !== tB) return tA - tB; // เวลาน้อยกว่า (มาก่อน) อยู่ก่อน, เวลามากกว่า (มาทีหลัง) อยู่ท้ายสุด
+
+                    return (a.name || '').localeCompare(b.name || '');
                 });
                 
                 allMembersData = list;
