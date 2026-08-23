@@ -573,10 +573,18 @@
                     if (partyAssignments[p][s]) assignedNames.add(partyAssignments[p][s]);
                 }
             }
-            const leaveNames = new Set(leaveMembers);
 
-            const waitlist = allGuildMembers.filter(m => !assignedNames.has(m.name) && !leaveNames.has(m.name));
-            const leaveList = allGuildMembers.filter(m => leaveNames.has(m.name));
+            // รวมคนที่ถูกลากมาใส่กล่อง Leave + คนที่ตั้งสถานะ "ลากิจกรรม" (active === false) ในหน้าข้อมูลส่วนตัว
+            const profileLeaveNames = new Set(
+                allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
+            );
+            const allLeaveNames = new Set([...leaveMembers, ...profileLeaveNames]);
+
+            // สมาชิกที่พร้อมจัดปาร์ตี้ (ไม่ติดจัดในปาร์ตี้ และไม่ได้ลากิจกรรม)
+            const waitlist = allGuildMembers.filter(m => !assignedNames.has(m.name) && !allLeaveNames.has(m.name));
+            
+            // สมาชิกที่ลากิจกรรม
+            const leaveList = allGuildMembers.filter(m => allLeaveNames.has(m.name));
 
             document.getElementById('waitlistCountBadge').innerText = waitlist.length;
             document.getElementById('leaveCountBadge').innerText = leaveList.length;
@@ -622,20 +630,25 @@
             } else {
                 leaveContainer.innerHTML = leaveList.map(m => {
                     const icon = CLASS_ICONS[m.charClass] || '👤';
+                    const isProfileLeave = (m.active === false || m.active === 'false');
+
                     return `
                         <div draggable="${canEditParties}" 
                              ondragstart="handleDragStart(event, '${m.name}', 'leave', null)"
                              ondragend="handleDragEnd(event)"
-                             class="member-chip bg-white rounded-xl p-2 flex items-center justify-between border border-rose-200 shadow-sm">
+                             class="member-chip bg-white rounded-xl p-2 flex items-center justify-between border border-rose-200 hover:border-rose-400 shadow-sm">
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="text-base">${icon}</span>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
+                                    <div class="flex items-center gap-1.5">
+                                        <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
+                                        ${isProfileLeave ? `<span class="text-[9px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.2 rounded font-bold shrink-0">🏖️ ลาในโปรไฟล์</span>` : ''}
+                                    </div>
                                     <p class="text-[10px] text-rose-700">${m.charClass || '-'}</p>
                                 </div>
                             </div>
                             ${canEditParties ? `
-                                <button onclick="returnFromLeave('${m.name}')" class="text-stone-600 hover:text-stone-900 text-xs px-2 py-0.5 rounded bg-stone-100 font-bold" title="กลับไป Waitlist">
+                                <button onclick="returnFromLeave('${m.name}')" class="text-stone-600 hover:text-stone-900 text-xs px-2 py-0.5 rounded bg-stone-100 hover:bg-amber-100 font-bold transition" title="กลับไป Waitlist">
                                     คืนค่า
                                 </button>
                             ` : ''}
@@ -712,6 +725,11 @@
             // 2. If from leave
             else if (activeM.source === 'leave') {
                 leaveMembers = leaveMembers.filter(n => n !== activeM.name);
+                const m = allGuildMembers.find(x => x.name === activeM.name);
+                if (m && (m.active === false || m.active === 'false')) {
+                    const uid = m.uid || activeM.name;
+                    db.ref(`members/${uid}/active`).set(true);
+                }
             }
 
             // Put active member in target slot
@@ -735,6 +753,11 @@
                 partyAssignments[activeM.source][`slot${activeM.slot}`] = null;
             } else if (activeM.source === 'leave') {
                 leaveMembers = leaveMembers.filter(n => n !== activeM.name);
+                const m = allGuildMembers.find(x => x.name === activeM.name);
+                if (m && (m.active === false || m.active === 'false')) {
+                    const uid = m.uid || activeM.name;
+                    db.ref(`members/${uid}/active`).set(true);
+                }
             }
 
             draggedMember = null;
@@ -811,6 +834,13 @@
         function returnFromLeave(memberName) {
             if (!canEditParties) return;
             leaveMembers = leaveMembers.filter(n => n !== memberName);
+            
+            const m = allGuildMembers.find(x => x.name === memberName);
+            if (m && (m.active === false || m.active === 'false')) {
+                const uid = m.uid || memberName;
+                db.ref(`members/${uid}/active`).set(true);
+            }
+
             selectedMember = null;
             saveAndRender();
         }
@@ -827,8 +857,11 @@
         function autoFillParties() {
             if (!canEditParties) return;
             
-            const leaveNames = new Set(leaveMembers);
-            const candidates = allGuildMembers.filter(m => !leaveNames.has(m.name));
+            const allLeaveNames = new Set([
+                ...leaveMembers,
+                ...allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
+            ]);
+            const candidates = allGuildMembers.filter(m => !allLeaveNames.has(m.name));
 
             if (candidates.length === 0) {
                 alert('ไม่มีสมาชิกที่พร้อมจัดปาร์ตี้');
@@ -908,7 +941,8 @@
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                let list = Object.values(data).filter(m => m.active !== false);
+                // โหลดสมาชิกทั้งหมดในกิลด์ (เพื่อให้คนที่ตั้งลากิจกรรม active=false แสดงในช่องลากิจกรรมได้)
+                let list = Object.values(data);
                 allGuildMembers = list;
             } else {
                 allGuildMembers = [];
@@ -945,8 +979,12 @@
                 text += `\n`;
             }
 
-            if (leaveMembers.length > 0) {
-                text += `🏖️ ลากิจกรรม (${leaveMembers.length} คน): ${leaveMembers.join(', ')}\n`;
+            const allLeaveNames = new Set([
+                ...leaveMembers,
+                ...allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
+            ]);
+            if (allLeaveNames.size > 0) {
+                text += `🏖️ ลากิจกรรม (${allLeaveNames.size} คน): ${Array.from(allLeaveNames).join(', ')}\n`;
             }
 
             document.getElementById('exportTextarea').value = text;
