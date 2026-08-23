@@ -17,12 +17,29 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #fdf6e3;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-color: #fdf6e7;
             color: #292524;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/bg_banner.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.52;
+            pointer-events: none;
+            z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-track { background: #fdf6e7; }
         ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
         
@@ -649,7 +666,7 @@
             }
         });
 
-        // Smart parser extracting all 17 Ragnarok Origin Stats
+        // Smart parser extracting all 17 Ragnarok Origin Stats from in-game OCR screenshots
         function parseStatsFromOCR(rawText) {
             console.log("Raw OCR Text Output:\n", rawText);
             const text = rawText.toUpperCase().replace(/,/g, '');
@@ -664,72 +681,72 @@
             }
 
             // 1. CP / Combat Power
-            const cp = extractNumber(/(?:CP|COMBAT|POWER)[:\s]+([0-9]+)/) || extractNumber(/CP[:\s]*([0-9]{4,7})/);
-            if (cp) document.getElementById('stat_cp').value = cp;
+            const cp = extractNumber(/(?:COMBAT\s*POWER|CP|POWER)[:\s\+]*([0-9]+)/) || extractNumber(/CP[:\s]*([0-9]{4,7})/);
+            if (cp !== null) document.getElementById('stat_cp').value = cp;
 
             // 2. MAX HP
-            const hp = extractNumber(/(?:MAX\s*HP|HP)[:\s]+([0-9]+)/) || extractNumber(/HP[:\s]*([0-9]{4,8})/);
-            if (hp) document.getElementById('stat_maxHp').value = hp;
+            const hp = extractNumber(/(?:MAX\s*HP|HP)[:\s\+]*([0-9]+)/) || extractNumber(/HP[:\s]*([0-9]{4,8})/);
+            if (hp !== null) document.getElementById('stat_maxHp').value = hp;
 
             // 3. MAX SP
-            const sp = extractNumber(/(?:MAX\s*SP|SP)[:\s]+([0-9]+)/);
-            if (sp) document.getElementById('stat_maxSp').value = sp;
+            const sp = extractNumber(/(?:MAX\s*SP|SP)[:\s\+]*([0-9]+)/);
+            if (sp !== null) document.getElementById('stat_maxSp').value = sp;
 
             // 4. P.ATK
-            const pAtk = extractNumber(/(?:P\.?\s*ATK|PHYSICAL\s*ATK)[:\s]+([0-9]+)/);
-            if (pAtk) document.getElementById('stat_pAtk').value = pAtk;
+            const pAtk = extractNumber(/(?:P\.?\s*ATK|PHYSICAL\s*ATK)[:\s\+]*([0-9]+)/);
+            if (pAtk !== null) document.getElementById('stat_pAtk').value = pAtk;
 
             // 5. M.ATK
-            const mAtk = extractNumber(/(?:M\.?\s*ATK|MAGIC\s*ATK)[:\s]+([0-9]+)/);
-            if (mAtk) document.getElementById('stat_mAtk').value = mAtk;
+            const mAtk = extractNumber(/(?:M\.?\s*ATK|MAGIC\s*ATK)[:\s\+]*([0-9]+)/);
+            if (mAtk !== null) document.getElementById('stat_mAtk').value = mAtk;
 
             // 6. P.DEF
-            const pDef = extractNumber(/(?:P\.?\s*DEF|PHYSICAL\s*DEF)[:\s]+([0-9]+)/);
-            if (pDef) document.getElementById('stat_pDef').value = pDef;
+            const pDef = extractNumber(/(?:P\.?\s*DEF|PHYSICAL\s*DEF)[:\s\+]*([0-9]+)/);
+            if (pDef !== null) document.getElementById('stat_pDef').value = pDef;
 
             // 7. M.DEF
-            const mDef = extractNumber(/(?:M\.?\s*DEF|MAGIC\s*DEF)[:\s]+([0-9]+)/);
-            if (mDef) document.getElementById('stat_mDef').value = mDef;
+            const mDef = extractNumber(/(?:M\.?\s*DEF|MAGIC\s*DEF)[:\s\+]*([0-9]+)/);
+            if (mDef !== null) document.getElementById('stat_mDef').value = mDef;
 
             // 8. IGNORE P.DEF
-            const ignPDef = extractNumber(/(?:IGNORE\s*P\.?\s*DEF|IGN\s*P\.?DEF)[:\s]+([0-9.]+)/);
-            if (ignPDef) document.getElementById('stat_ignorePDef').value = ignPDef;
+            const ignPDef = extractNumber(/(?:IGNORE\s*P\.?\s*DEF|IGN\s*P\.?DEF|IGNORE\s*PHYSICAL\s*DEF)[:\s\+]*([0-9.]+)/);
+            if (ignPDef !== null) document.getElementById('stat_ignorePDef').value = ignPDef;
 
             // 9. IGNORE M.DEF
-            const ignMDef = extractNumber(/(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?DEF)[:\s]+([0-9.]+)/);
-            if (ignMDef) document.getElementById('stat_ignoreMDef').value = ignMDef;
+            const ignMDef = extractNumber(/(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?DEF|IGNORE\s*MAGIC\s*DEF)[:\s\+]*([0-9.]+)/);
+            if (ignMDef !== null) document.getElementById('stat_ignoreMDef').value = ignMDef;
 
-            // 10. P.DMG
-            const pDmg = extractNumber(/(?:P\.?\s*DMG|PHYSICAL\s*DMG)[:\s]+([0-9.]+)%?/);
-            if (pDmg) document.getElementById('stat_pDmg').value = pDmg;
+            // 10. P.DMG (Maps to in-game "P.DMG Bonus" / "P.DMG")
+            const pDmg = extractNumber(/(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC(?:REASE)?|P\.?\s*DMG|PHYSICAL\s*DMG)[:\s\+]*([0-9.]+)%?/);
+            if (pDmg !== null) document.getElementById('stat_pDmg').value = pDmg;
 
-            // 11. M.DMG
-            const mDmg = extractNumber(/(?:M\.?\s*DMG|MAGIC\s*DMG)[:\s]+([0-9.]+)%?/);
-            if (mDmg) document.getElementById('stat_mDmg').value = mDmg;
+            // 11. M.DMG (Maps to in-game "M.DMG Bonus" / "M.DMG")
+            const mDmg = extractNumber(/(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC(?:REASE)?|M\.?\s*DMG|MAGIC\s*DMG)[:\s\+]*([0-9.]+)%?/);
+            if (mDmg !== null) document.getElementById('stat_mDmg').value = mDmg;
 
-            // 12. P.REDUC
-            const pReduc = extractNumber(/(?:P\.?\s*REDUC|PHYSICAL\s*REDUC)[:\s]+([0-9.]+)%?/);
-            if (pReduc) document.getElementById('stat_pReduc').value = pReduc;
+            // 12. P.REDUC (Maps to in-game "P.DMG Reduction" / "P.REDUC")
+            const pReduc = extractNumber(/(?:P\.?\s*DMG\s*REDUCTION|PHYSICAL\s*DMG\s*REDUCTION|P\.?\s*DMG\s*REDUC|P\.?\s*REDUC|PHYSICAL\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
+            if (pReduc !== null) document.getElementById('stat_pReduc').value = pReduc;
 
-            // 13. M.REDUC
-            const mReduc = extractNumber(/(?:M\.?\s*REDUC|MAGIC\s*REDUC)[:\s]+([0-9.]+)%?/);
-            if (mReduc) document.getElementById('stat_mReduc').value = mReduc;
+            // 13. M.REDUC (Maps to in-game "M.DMG Reduction" / "M.REDUC")
+            const mReduc = extractNumber(/(?:M\.?\s*DMG\s*REDUCTION|MAGIC\s*DMG\s*REDUCTION|M\.?\s*DMG\s*REDUC|M\.?\s*REDUC|MAGIC\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
+            if (mReduc !== null) document.getElementById('stat_mReduc').value = mReduc;
 
-            // 14. PVP DMG
-            const pvpDmg = extractNumber(/(?:PVP\s*DMG)[:\s]+([0-9.]+)%?/);
-            if (pvpDmg) document.getElementById('stat_pvpDmg').value = pvpDmg;
+            // 14. PVP DMG (Maps to in-game "PVP DMG Bonus" / "PVP DMG")
+            const pvpDmg = extractNumber(/(?:PVP\s*DMG\s*BONUS|PVP\s*DMG\s*INC(?:REASE)?|PVP\s*DMG)[:\s\+]*([0-9.]+)%?/);
+            if (pvpDmg !== null) document.getElementById('stat_pvpDmg').value = pvpDmg;
 
-            // 15. PVP REDUC
-            const pvpReduc = extractNumber(/(?:PVP\s*REDUC)[:\s]+([0-9.]+)%?/);
-            if (pvpReduc) document.getElementById('stat_pvpReduc').value = pvpReduc;
+            // 15. PVP REDUC (Maps to in-game "PVP DMG Reduction" / "PVP REDUC")
+            const pvpReduc = extractNumber(/(?:PVP\s*DMG\s*REDUCTION|PVP\s*DMG\s*REDUC|PVP\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
+            if (pvpReduc !== null) document.getElementById('stat_pvpReduc').value = pvpReduc;
 
-            // 16. CRI
-            const cri = extractNumber(/(?:CRI|CRITICAL)[:\s]+([0-9]+)/);
-            if (cri) document.getElementById('stat_cri').value = cri;
+            // 16. CRI (Maps to in-game "CRIT" / "CRI" / "CRIT Rate")
+            const cri = extractNumber(/(?:CRIT\s*RATE|CRITICAL\s*RATE|\bCRIT\b|\bCRITICAL\b|\bCRI\b)(?!\s*DAM|\s*DMG)[:\s\+]*([0-9]+)/);
+            if (cri !== null) document.getElementById('stat_cri').value = cri;
 
-            // 17. CRI DAM
-            const criDam = extractNumber(/(?:CRI\s*DAM|CRITICAL\s*DAMAGE)[:\s]+([0-9.]+)%?/);
-            if (criDam) document.getElementById('stat_criDam').value = criDam;
+            // 17. CRI DAM (Maps to in-game "CRIT DMG" / "CRIT DMG Bonus" / "CRI DAM")
+            const criDam = extractNumber(/(?:CRIT\s*DMG\s*BONUS|CRIT\s*DMG|CRITICAL\s*DAMAGE|CRIT\s*DAMAGE|CRI\s*DAM|CRI\s*DAMAGE)[:\s\+]*([0-9.]+)%?/);
+            if (criDam !== null) document.getElementById('stat_criDam').value = criDam;
         }
     </script>
 </body>

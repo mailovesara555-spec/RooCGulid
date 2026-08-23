@@ -9,10 +9,27 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #fdf6e3;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#d4c4a8' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-color: #fdf6e7;
+            position: relative;
+            min-height: 100vh;
         }
-        .roo-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/bg_banner.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.52;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .roo-card { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(10px); border: 1px solid #e5d3b3; box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); }
         .roo-button { background: linear-gradient(to bottom, #fbbf24, #d97706); box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); border: 1px solid #b45309; text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); }
         .roo-button:hover { background: linear-gradient(to bottom, #fcd34d, #ea580c); }
         .discord-button { background: linear-gradient(to bottom, #5865F2, #4752C4); box-shadow: 0 2px 4px rgba(88, 101, 242, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); border: 1px solid #3c45a5; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
