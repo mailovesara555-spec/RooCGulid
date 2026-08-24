@@ -81,29 +81,60 @@ app.get('/auth/discord/callback', async (req, res) => {
         });
 
         const discordUser = userResponse.data;
-        const username = discordUser.username.toLowerCase(); // ชื่อ Username ของ Discord
+        const rawUsername = (discordUser.username || '').trim();
+        const username = rawUsername.toLowerCase();
+        const globalName = (discordUser.global_name || '').trim().toLowerCase();
+        const userId = String(discordUser.id || '').trim();
+        const userTag = (discordUser.discriminator && discordUser.discriminator !== '0') ? `${username}#${discordUser.discriminator}` : username;
 
-        // 3. ตรวจสอบว่าชื่อ Username อยู่ในรายชื่ออนุญาตหรือไม่ (ตรวจสอบทั้งจาก Firebase Realtime Database และ Admin)
-        let isAllowed = (username === 'daffodil2693') || ALLOWED_USERS.map(u => u.toLowerCase()).includes(username);
+        const candidateNames = [
+            username,
+            username.replace(/\./g, ''),
+            globalName,
+            globalName.replace(/\./g, ''),
+            userTag,
+            userId
+        ].filter(Boolean);
+
+        // 3. ตรวจสอบว่าชื่อ Username อยู่ในรายชื่ออนุญาตหรือไม่ (ตรวจสอบทั้งจาก Firebase Realtime Database และ Fallback)
+        let isAllowed = (username === 'daffodil2693') || ALLOWED_USERS.some(u => {
+            const cleanAllowed = String(u).trim().toLowerCase();
+            return candidateNames.includes(cleanAllowed) || candidateNames.includes(cleanAllowed.replace(/\./g, ''));
+        });
 
         if (!isAllowed) {
             try {
                 const fbRes = await axios.get('https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app/whitelist.json');
                 const whitelistData = fbRes.data;
                 if (whitelistData) {
+                    const allowedList = new Set();
                     if (Array.isArray(whitelistData)) {
-                        isAllowed = whitelistData.map(u => String(u).toLowerCase()).includes(username);
+                        whitelistData.forEach(u => {
+                            if (u) {
+                                const s = String(u).trim().toLowerCase();
+                                allowedList.add(s);
+                                allowedList.add(s.replace(/__dot__/g, '.'));
+                                allowedList.add(s.replace(/__dot__/g, ''));
+                            }
+                        });
                     } else if (typeof whitelistData === 'object') {
-                        const allowedList = [];
                         for (let k in whitelistData) {
-                            allowedList.push(k.toLowerCase());
-                            allowedList.push(k.toLowerCase().replace(/__dot__/g, '.'));
-                            if (whitelistData[k] && whitelistData[k].username) {
-                                allowedList.push(whitelistData[k].username.toLowerCase());
+                            const cleanKey = String(k).trim().toLowerCase();
+                            allowedList.add(cleanKey);
+                            allowedList.add(cleanKey.replace(/__dot__/g, '.'));
+                            allowedList.add(cleanKey.replace(/__dot__/g, ''));
+
+                            const item = whitelistData[k];
+                            if (item && item.username) {
+                                const cleanU = String(item.username).trim().toLowerCase();
+                                allowedList.add(cleanU);
+                                allowedList.add(cleanU.replace(/__dot__/g, '.'));
+                                allowedList.add(cleanU.replace(/__dot__/g, ''));
                             }
                         }
-                        isAllowed = allowedList.includes(username);
                     }
+
+                    isAllowed = candidateNames.some(c => allowedList.has(c));
                 }
             } catch (fbErr) {
                 console.warn('Firebase whitelist check fallback:', fbErr.message);
@@ -114,8 +145,8 @@ app.get('/auth/discord/callback', async (req, res) => {
             // อนุญาตให้เข้าถึง: ส่งต่อไปยังหน้า Dashboard พร้อมแนบ Discord Username
             res.redirect(`/dashboard.html?user=${encodeURIComponent(discordUser.username)}`);
         } else {
-            // ไม่มีสิทธิ์เข้าถึง กลับไปหน้าแรกพร้อมแจ้งเตือน
-            res.redirect('/?error=not_allowed');
+            // ไม่มีสิทธิ์เข้าถึง กลับไปหน้าแรกพร้อมระบุ Discord Username ให้ผู้ใช้เห็น
+            res.redirect(`/?error=not_allowed&discord_user=${encodeURIComponent(discordUser.username)}&display_name=${encodeURIComponent(discordUser.global_name || '')}`);
         }
 
     } catch (error) {

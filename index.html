@@ -89,9 +89,13 @@
             }
         }
 
+        const discordUserParam = urlParams.get('discord_user');
+        const displayNameParam = urlParams.get('display_name');
+
         if (error === 'not_allowed') {
             const errorDiv = document.getElementById('error-message');
-            errorDiv.innerHTML = '❌ บัญชี Discord ของคุณไม่ได้รับอนุญาตให้เข้าถึงระบบนี้';
+            let userDetail = discordUserParam ? `<br><div class="mt-2 p-2 bg-amber-100/80 border border-amber-300 rounded-lg text-xs font-bold text-amber-950">บัญชีที่ใช้ล็อกอิน: <span class="text-red-700">${discordUserParam}</span>${displayNameParam && displayNameParam.toLowerCase() !== discordUserParam.toLowerCase() ? ' (' + displayNameParam + ')' : ''}</div>` : '';
+            errorDiv.innerHTML = `❌ บัญชี Discord ของคุณไม่ได้รับอนุญาตให้เข้าถึงระบบนี้${userDetail}<p class="text-xs text-stone-600 mt-2 font-normal">กรุณาแจ้ง Admin (daffodil2693) ให้เพิ่มชื่อนี้ในระบบ Whitelist ครับ</p>`;
             errorDiv.classList.remove('hidden');
         } else if (error) {
             const errorDiv = document.getElementById('error-message');
