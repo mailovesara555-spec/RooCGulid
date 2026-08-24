@@ -32,6 +32,7 @@ const ALLOWED_USERS = [
     'daffodil2693',
     'amooma_aom',
     'zinchess',
+    'nestcafe7297',
     'guild_leader',
     'player123'
 ];
