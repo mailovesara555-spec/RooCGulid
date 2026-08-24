@@ -258,11 +258,11 @@
 
             </div>
 
-            <!-- Right Sidebar: Waitlist & On-Leave -->
-            <div class="lg:col-span-4 space-y-6">
+            <!-- Right Sidebar: Waitlist & On-Leave (Sticky ตามการเลื่อนหน้าจอ) -->
+            <div class="lg:col-span-4 space-y-5 lg:sticky lg:top-20 lg:self-start">
                 
                 <!-- Waitlist (รอจัดปาร์ตี้) -->
-                <div class="roo-card rounded-3xl p-5 space-y-4 shadow-sm border border-amber-200">
+                <div class="roo-card rounded-3xl p-5 space-y-4 shadow-md border border-amber-200">
                     <div class="flex items-center justify-between border-b border-amber-200 pb-3">
                         <h3 class="text-sm font-bold text-amber-900 flex items-center gap-2">
                             <span>👥</span> รอจัดปาร์ตี้ (Waitlist)
@@ -283,7 +283,7 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropWaitlist(event)" 
                          onclick="handleDropWaitlist(event)"
-                         class="min-h-[220px] max-h-[380px] overflow-y-auto space-y-2 p-2 rounded-2xl bg-amber-50/40 border border-amber-200/70 shadow-inner">
+                         class="min-h-[220px] max-h-[calc(100vh-23rem)] overflow-y-auto space-y-2 p-2 rounded-2xl bg-amber-50/40 border border-amber-200/70 shadow-inner">
                         <div class="text-center py-8 text-xs text-stone-400">
                             กำลังโหลดรายชื่อสมาชิก...
                         </div>
@@ -291,12 +291,12 @@
                 </div>
 
                 <!-- On Leave (ลากิจกรรม) -->
-                <div class="roo-card rounded-3xl p-5 space-y-3 border-2 border-rose-200 bg-rose-50/40 shadow-sm">
-                    <div class="flex items-center justify-between border-b border-rose-200 pb-3">
-                        <h3 class="text-sm font-bold text-rose-900 flex items-center gap-2">
+                <div class="roo-card rounded-3xl p-4 space-y-2.5 border-2 border-rose-200 bg-rose-50/40 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-rose-200 pb-2">
+                        <h3 class="text-xs font-bold text-rose-900 flex items-center gap-1.5">
                             <span>🏖️</span> ลากิจกรรม (On Leave)
                         </h3>
-                        <span id="leaveCountBadge" class="text-xs font-extrabold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-sm">
+                        <span id="leaveCountBadge" class="text-xs font-extrabold bg-rose-600 text-white px-2 py-0.5 rounded-full shadow-sm">
                             0
                         </span>
                     </div>
@@ -307,8 +307,8 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropLeave(event)" 
                          onclick="handleDropLeave(event)"
-                         class="min-h-[120px] max-h-[220px] overflow-y-auto space-y-2 p-2 rounded-2xl bg-white/70 border border-rose-200 shadow-inner">
-                        <div id="emptyLeaveHint" class="text-center py-6 text-xs text-rose-400 font-medium">
+                         class="min-h-[90px] max-h-[140px] overflow-y-auto space-y-1.5 p-2 rounded-2xl bg-white/70 border border-rose-200 shadow-inner">
+                        <div id="emptyLeaveHint" class="text-center py-4 text-xs text-rose-400 font-medium">
                             ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม
                         </div>
                     </div>
