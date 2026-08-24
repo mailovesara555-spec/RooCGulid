@@ -216,24 +216,44 @@
             </button>
         </div>
 
-        <!-- Grid Layout: Left 8 Parties + Right Waitlist -->
+        <!-- Grid Layout: Left 16 Parties (Main 1-8 + Sub 9-16) + Right Waitlist -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Left 8 Parties (Main Team 40 คน) -->
-            <div class="lg:col-span-8 space-y-4">
+            <!-- Left 16 Parties (Main Team 40 คน + Sub Team 40 คน) -->
+            <div class="lg:col-span-8 space-y-8">
                 
-                <div class="flex items-center justify-between bg-amber-50/70 px-4 py-2.5 rounded-2xl border border-amber-200 shadow-sm">
-                    <h3 class="text-sm font-extrabold text-amber-900 flex items-center gap-2">
-                        <span class="text-amber-600">🛡️</span> ทีมหลัก (Main Team) - <span id="assignedCount" class="text-amber-700">0</span>/40 คน
-                    </h3>
-                    <span class="text-xs bg-amber-200/80 text-amber-900 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
-                        ปาร์ตี้ 1 - 8
-                    </span>
+                <!-- Main Team (ทีมหลัก 1 - 8) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between bg-amber-50/80 px-4 py-2.5 rounded-2xl border border-amber-200 shadow-sm">
+                        <h3 class="text-sm font-extrabold text-amber-900 flex items-center gap-2">
+                            <span class="text-amber-600">🛡️</span> ทีมหลัก (Main Team) - <span id="assignedMainCount" class="text-amber-700">0</span>/40 คน
+                        </h3>
+                        <span class="text-xs bg-amber-200/80 text-amber-900 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
+                            ปาร์ตี้ 1 - 8
+                        </span>
+                    </div>
+
+                    <!-- 8 Parties Grid (Main) -->
+                    <div id="partiesContainerMain" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                        <!-- Party 1 to 8 rendered dynamically -->
+                    </div>
                 </div>
 
-                <!-- 8 Parties Grid -->
-                <div id="partiesContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                    <!-- Party 1 to 8 rendered dynamically -->
+                <!-- Sub Team (ทีมรอง 9 - 16) -->
+                <div class="space-y-3 pt-4 border-t-2 border-dashed border-indigo-200/80">
+                    <div class="flex items-center justify-between bg-indigo-50/80 px-4 py-2.5 rounded-2xl border border-indigo-200 shadow-sm">
+                        <h3 class="text-sm font-extrabold text-indigo-950 flex items-center gap-2">
+                            <span class="text-indigo-600">⚔️</span> ทีมรอง (Sub Team) - <span id="assignedSubCount" class="text-indigo-700">0</span>/40 คน
+                        </h3>
+                        <span class="text-xs bg-indigo-200/80 text-indigo-950 font-bold px-2.5 py-0.5 rounded-full border border-indigo-300">
+                            ปาร์ตี้ 9 - 16
+                        </span>
+                    </div>
+
+                    <!-- 8 Parties Grid (Sub) -->
+                    <div id="partiesContainerSub" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                        <!-- Party 9 to 16 rendered dynamically -->
+                    </div>
                 </div>
 
             </div>
@@ -389,7 +409,7 @@
 
         function initEmptyParties() {
             const parties = {};
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 16; i++) {
                 parties[`p${i}`] = {
                     slot1: null,
                     slot2: null,
@@ -401,10 +421,10 @@
             return parties;
         }
 
-        // รับประกันว่า Party 1 ถึง Party 8 จะมีโครงสร้าง Object ครบถ้วนเสมอ (ป้องกัน Firebase ลบ Object ว่างทิ้ง)
+        // รับประกันว่า Party 1 ถึง Party 16 จะมีโครงสร้าง Object ครบถ้วนเสมอ (ป้องกัน Firebase ลบ Object ว่างทิ้ง)
         function ensureAllPartiesStructure(parties) {
             const result = {};
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 16; i++) {
                 const pKey = `p${i}`;
                 const src = (parties && parties[pKey]) ? parties[pKey] : {};
                 result[pKey] = {
@@ -473,33 +493,56 @@
 
         checkUserPermission();
 
-        // 4. Render 8 Parties Layout
+        // 4. Render 16 Parties Layout (Main 1-8, Sub 9-16)
         function renderPartiesGrid() {
-            const container = document.getElementById('partiesContainer');
-            container.innerHTML = '';
+            const containerMain = document.getElementById('partiesContainerMain');
+            const containerSub = document.getElementById('partiesContainerSub');
+            if (containerMain) containerMain.innerHTML = '';
+            if (containerSub) containerSub.innerHTML = '';
 
-            let assignedTotal = 0;
+            let assignedMainTotal = 0;
+            let assignedSubTotal = 0;
 
-            for (let pNum = 1; pNum <= 8; pNum++) {
+            for (let pNum = 1; pNum <= 16; pNum++) {
                 const pKey = `p${pNum}`;
                 const partyData = partyAssignments[pKey] || {};
+                const isSubTeam = (pNum >= 9);
 
                 let pCount = 0;
                 for (let s = 1; s <= 5; s++) {
                     if (partyData[`slot${s}`]) pCount++;
                 }
-                assignedTotal += pCount;
+
+                if (isSubTeam) {
+                    assignedSubTotal += pCount;
+                } else {
+                    assignedMainTotal += pCount;
+                }
 
                 const card = document.createElement('div');
-                card.className = 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-amber-200 bg-white/95 shadow-sm';
+                card.className = isSubTeam 
+                    ? 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-indigo-200 bg-white/95 shadow-sm'
+                    : 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-amber-200 bg-white/95 shadow-sm';
+                
+                const numBadgeClass = isSubTeam
+                    ? 'bg-indigo-100 text-indigo-900 border-indigo-300'
+                    : 'bg-amber-100 text-amber-900 border-amber-300';
+
+                const subTeamLabel = isSubTeam
+                    ? '<div class="text-[10px] text-indigo-600 font-semibold flex items-center gap-0.5 mt-0.5"><span>⚔️</span> ทีมรอง (40 คน)</div>'
+                    : '';
+
                 card.innerHTML = `
-                    <div class="flex items-center justify-between pb-1.5 border-b border-amber-200">
-                        <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center text-[10px] font-extrabold border border-amber-300">
-                                ${pNum}
-                            </span>
-                            Party ${pNum}
-                        </h4>
+                    <div class="flex items-start justify-between pb-1.5 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'}">
+                        <div>
+                            <h4 class="text-xs font-bold ${isSubTeam ? 'text-indigo-950' : 'text-amber-900'} flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-extrabold border ${numBadgeClass}">
+                                    ${pNum}
+                                </span>
+                                Party ${pNum}
+                            </h4>
+                            ${subTeamLabel}
+                        </div>
                         <span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2 py-0.5 rounded-full border">
                             ${pCount}/5
                         </span>
@@ -508,10 +551,16 @@
                         ${[1,2,3,4,5].map(sNum => renderSlotHtml(pKey, sNum, partyData[`slot${sNum}`])).join('')}
                     </div>
                 `;
-                container.appendChild(card);
+
+                if (isSubTeam) {
+                    if (containerSub) containerSub.appendChild(card);
+                } else {
+                    if (containerMain) containerMain.appendChild(card);
+                }
             }
 
-            document.getElementById('assignedCount').innerText = assignedTotal;
+            if (document.getElementById('assignedMainCount')) document.getElementById('assignedMainCount').innerText = assignedMainTotal;
+            if (document.getElementById('assignedSubCount')) document.getElementById('assignedSubCount').innerText = assignedSubTotal;
         }
 
         function isMemberOnLeave(m) {
@@ -895,7 +944,7 @@
 
             let candIndex = 0;
             for (let s = 1; s <= 5; s++) {
-                for (let p = 1; p <= 8; p++) {
+                for (let p = 1; p <= 16; p++) {
                     if (candIndex < candidates.length) {
                         partyAssignments[`p${p}`][`slot${s}`] = candidates[candIndex].name;
                         candIndex++;
@@ -905,7 +954,7 @@
 
             selectedMember = null;
             saveAndRender();
-            alert('✨ จัดปาร์ตี้อัตโนมัติเรียบร้อยแล้ว!');
+            alert('✨ จัดปาร์ตี้อัตโนมัติ (ทีมหลัก 1-8 และ ทีมรอง 9-16) เรียบร้อยแล้ว!');
         }
 
         // 7. Save to Firebase Realtime Database
@@ -1033,10 +1082,32 @@
             let text = `📢 ผังจัดปาร์ตี้กิลด์ ETERNITY - ${modeName}\n`;
             text += `=========================================\n\n`;
 
+            text += `🛡️ 【 ทีมหลัก (Main Team) - ปาร์ตี้ 1 - 8 】\n`;
+            text += `-----------------------------------------\n`;
             for (let pNum = 1; pNum <= 8; pNum++) {
                 const pKey = `p${pNum}`;
                 const pData = partyAssignments[pKey] || {};
-                text += `🛡️ Party ${pNum}:\n`;
+                text += `Party ${pNum}:\n`;
+                for (let s = 1; s <= 5; s++) {
+                    const memberName = pData[`slot${s}`];
+                    if (memberName) {
+                        const m = allGuildMembers.find(x => x.name === memberName);
+                        const cName = m ? m.charClass || '' : '';
+                        const icon = m ? (CLASS_ICONS[m.charClass] || '👤') : '👤';
+                        text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
+                    } else {
+                        text += `  Slot ${s}: [ว่าง]\n`;
+                    }
+                }
+                text += `\n`;
+            }
+
+            text += `⚔️ 【 ทีมรอง (Sub Team) - ปาร์ตี้ 9 - 16 】\n`;
+            text += `-----------------------------------------\n`;
+            for (let pNum = 9; pNum <= 16; pNum++) {
+                const pKey = `p${pNum}`;
+                const pData = partyAssignments[pKey] || {};
+                text += `Party ${pNum} (ทีมรอง):\n`;
                 for (let s = 1; s <= 5; s++) {
                     const memberName = pData[`slot${s}`];
                     if (memberName) {

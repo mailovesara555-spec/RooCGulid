@@ -119,7 +119,6 @@
                     <thead>
                         <tr class="bg-amber-50/50 border-b border-amber-200/60 text-xs font-bold text-amber-800 uppercase tracking-wider whitespace-nowrap">
                             <th class="py-3.5 px-3 text-center w-12">ลำดับ</th>
-                            <th class="py-3.5 px-3">Discord UID</th>
                             <th class="py-3.5 px-4">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
                             <th class="py-3.5 px-3 text-center">ตำแหน่ง (ROLE)</th>
                             <th class="py-3.5 px-3">อาชีพ</th>
@@ -131,7 +130,7 @@
                     </thead>
                     <tbody id="memberTableBody" class="divide-y divide-amber-100/50">
                         <tr>
-                            <td colspan="9" class="py-12 text-center text-stone-400 text-sm animate-pulse">
+                            <td colspan="8" class="py-12 text-center text-stone-400 text-sm animate-pulse">
                                 กำลังโหลดข้อมูลสมาชิกจาก Cloud...
                             </td>
                         </tr>
@@ -512,7 +511,7 @@
             });
 
             if (filteredMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="py-10 text-center text-stone-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-stone-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
                 return;
             }
 
@@ -545,7 +544,6 @@
 
                 tr.innerHTML = `
                     <td class="py-3.5 px-3 text-center font-bold text-stone-400 text-xs whitespace-nowrap">#${index + 1}</td>
-                    <td class="py-3.5 px-3 text-sm text-stone-700 font-medium whitespace-nowrap">${member.uid}</td>
                     <td class="py-3.5 px-4 text-sm text-stone-800 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
                         <div class="hover:text-amber-700 transition flex items-center gap-1.5 flex-wrap">
                             <span>${displayName}</span>
@@ -840,7 +838,7 @@
             renderTable();
         }, (error) => {
             console.error("Firebase Read Error:", error);
-            document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="9" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
+            document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="8" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
         });
 
         // ฟังผลและสถานะรอบการประมูลล่าสุด
