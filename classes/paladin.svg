@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="palBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12"/>
+      <stop offset="50%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="palGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <filter id="palShadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#palBg)" stroke="url(#palGold)" stroke-width="4" filter="url(#palShadow)"/>
+  <!-- Grand Holy Shield -->
+  <path d="M50,18 C68,18 78,25 78,42 C78,65 50,82 50,82 C50,82 22,65 22,42 C22,25 32,18 50,18 Z" fill="#1e293b" stroke="url(#palGold)" stroke-width="3" filter="url(#palShadow)"/>
+  <!-- Inner Holy Cross -->
+  <path d="M46,26 L54,26 L54,42 L70,42 L70,50 L54,50 L54,74 L46,74 L46,50 L30,50 L30,42 L46,42 Z" fill="url(#palGold)" stroke="#854d0e" stroke-width="1.2"/>
+  <circle cx="50" cy="46" r="4" fill="#38bdf8"/>
+  <!-- Winged Flairs -->
+  <path d="M22,35 C15,30 18,20 28,24" stroke="url(#palGold)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M78,35 C85,30 82,20 72,24" stroke="url(#palGold)" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

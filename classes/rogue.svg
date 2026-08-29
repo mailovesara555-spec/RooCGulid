@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="rogueBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="50%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="rogueGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#rogueBg)" stroke="url(#rogueGold)" stroke-width="4"/>
+  <!-- Venetian Theater Comedy/Tragedy Mask -->
+  <path d="M30,30 C30,22 70,22 70,30 C74,48 70,72 50,75 C30,72 26,48 30,30 Z" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+  <!-- Mask Feathers / Horns -->
+  <path d="M32,26 C24,14 18,22 28,30" stroke="url(#rogueGold)" stroke-width="2.5" fill="none"/>
+  <path d="M68,26 C76,14 82,22 72,30" stroke="url(#rogueGold)" stroke-width="2.5" fill="none"/>
+  <!-- Eyes -->
+  <ellipse cx="42" cy="40" rx="5" ry="3" fill="#0f172a"/>
+  <ellipse cx="58" cy="40" rx="5" ry="3" fill="#0f172a"/>
+  <!-- Smirk -->
+  <path d="M40,56 C46,62 56,60 62,54" stroke="#0f172a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Cross Dagger behind -->
+  <path d="M18,74 L40,52 M82,74 L60,52" stroke="url(#rogueGold)" stroke-width="3" stroke-linecap="round"/>
+</svg>
