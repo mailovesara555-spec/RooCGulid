@@ -544,6 +544,20 @@
             return result;
         }
 
+        // ฟังก์ชันดึงค่า CP เป็นตัวเลขสำหรับจัดเรียง
+        function getMemberCp(m) {
+            if (!m) return 0;
+            if (m.stats && m.stats.cp !== undefined && m.stats.cp !== null && m.stats.cp !== '') {
+                const num = parseFloat(String(m.stats.cp).replace(/,/g, ''));
+                return isNaN(num) ? 0 : num;
+            }
+            if (m.cp !== undefined && m.cp !== null && m.cp !== '') {
+                const num = parseFloat(String(m.cp).replace(/,/g, ''));
+                return isNaN(num) ? 0 : num;
+            }
+            return 0;
+        }
+
         partyAssignments = initEmptyParties();
 
         // Listen for user role permissions
@@ -758,6 +772,7 @@
                 return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
                        (m.charClass && m.charClass.toLowerCase().includes(searchKeyword));
             });
+            filteredWaitlist.sort((a, b) => getMemberCp(b) - getMemberCp(a));
 
             if (filteredWaitlist.length === 0) {
                 waitlistContainer.innerHTML = `<div class="text-center py-8 text-xs text-stone-400">ไม่มีสมาชิกใน Waitlist</div>`;
@@ -795,6 +810,7 @@
             }
 
             // Render Leave List
+            leaveList.sort((a, b) => getMemberCp(b) - getMemberCp(a));
             if (leaveList.length === 0) {
                 leaveContainer.innerHTML = `<div class="text-center py-6 text-xs text-rose-400 font-medium">ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม</div>`;
             } else {
@@ -1043,6 +1059,7 @@
                 ...allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
             ]);
             const candidates = allGuildMembers.filter(m => !allLeaveNames.has(m.name));
+            candidates.sort((a, b) => getMemberCp(b) - getMemberCp(a));
 
             if (candidates.length === 0) {
                 alert('ไม่มีสมาชิกที่พร้อมจัดปาร์ตี้');
@@ -1131,44 +1148,11 @@
                 });
                 let list = Object.values(data);
                 
-                function getPartyRolePriority(role) {
-                    switch (role) {
-                        case 'Admin': case 'admin': return 1;
-                        case 'หัวหน้ากิลด์': case 'หัวหน้ากิล': return 2;
-                        case 'รองหัวหน้ากิลด์': case 'รองหัวหน้ากิล': return 3;
-                        case 'ผู้จัดการ': return 4;
-                        case 'สมาชิกพิเศษ': return 5;
-                        default: return 6;
-                    }
-                }
-
-                function getPartyMemberTimestamp(m) {
-                    if (!m) return 0;
-                    if (m.createdAt && typeof m.createdAt === 'number') return m.createdAt;
-                    if (m.createdAt && !isNaN(new Date(m.createdAt).getTime())) return new Date(m.createdAt).getTime();
-                    if (m.lastUpdate && typeof m.lastUpdate === 'string') {
-                        const parts = m.lastUpdate.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})/);
-                        if (parts) {
-                            let day = parseInt(parts[1]);
-                            let month = parseInt(parts[2]) - 1;
-                            let year = parseInt(parts[3]);
-                            if (year > 2400) year -= 543;
-                            let hour = parseInt(parts[4]);
-                            let min = parseInt(parts[5]);
-                            return new Date(year, month, day, hour, min).getTime();
-                        }
-                    }
-                    return 0;
-                }
-
+                // เรียงตาม CP ค่ามากสุดอยู่บนสุดแล้วเรียงลำดับลงมา
                 list.sort((a, b) => {
-                    const pA = getPartyRolePriority(a.role);
-                    const pB = getPartyRolePriority(b.role);
-                    if (pA !== pB) return pA - pB;
-
-                    const tA = getPartyMemberTimestamp(a);
-                    const tB = getPartyMemberTimestamp(b);
-                    if (tA !== tB) return tA - tB;
+                    const cpA = getMemberCp(a);
+                    const cpB = getMemberCp(b);
+                    if (cpA !== cpB) return cpB - cpA; // ค่ามากสุดอยู่บนสุด
 
                     return (a.name || '').localeCompare(b.name || '');
                 });
