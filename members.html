@@ -434,42 +434,44 @@
 
         const CLASS_ICON_FILES = {
             'Lord Knight': 'images/classes/lord-knight.webp',
-            'Knight': 'images/classes/knight.webp',
+            'Knight': 'images/classes/lord-knight.webp',
             'Paladin': 'images/classes/paladin.webp',
-            'Crusader': 'images/classes/crusader.webp',
+            'Crusader': 'images/classes/paladin.webp',
             'Biochemist': 'images/classes/biochemist.webp',
-            'Creator': 'images/classes/creator.webp',
-            'Alchemist': 'images/classes/alchemist.webp',
+            'Creator': 'images/classes/biochemist.webp',
+            'Alchemist': 'images/classes/biochemist.webp',
             'Mastersmith': 'images/classes/mastersmith.webp',
-            'Whitesmith': 'images/classes/whitesmith.webp',
-            'Blacksmith': 'images/classes/blacksmith.webp',
-            'Bard': 'images/classes/bard.webp',
-            'Clown': 'images/classes/clown.webp',
+            'Whitesmith': 'images/classes/mastersmith.webp',
+            'Blacksmith': 'images/classes/mastersmith.webp',
+            'Bard': 'images/classes/minstrel.webp',
+            'Clown': 'images/classes/minstrel.webp',
             'Minstrel': 'images/classes/minstrel.webp',
             'Gypsy': 'images/classes/gypsy.webp',
-            'Dancer': 'images/classes/dancer.webp',
+            'Dancer': 'images/classes/gypsy.webp',
             'Sniper': 'images/classes/sniper.webp',
-            'Hunter': 'images/classes/hunter.webp',
+            'Hunter': 'images/classes/sniper.webp',
             'Champion': 'images/classes/champion.webp',
-            'Monk': 'images/classes/monk.webp',
-            'Priest': 'images/classes/priest.webp',
+            'Monk': 'images/classes/champion.webp',
+            'Priest': 'images/classes/high-priest.webp',
             'High Priest': 'images/classes/high-priest.webp',
-            'Assassin': 'images/classes/assassin.webp',
+            'Assassin': 'images/classes/assassin-cross.webp',
             'Assassin Cross': 'images/classes/assassin-cross.webp',
-            'Rogue': 'images/classes/rogue.webp',
+            'Rogue': 'images/classes/stalker.webp',
             'Stalker': 'images/classes/stalker.webp',
-            'Wizard': 'images/classes/wizard.webp',
+            'Wizard': 'images/classes/high-wizard.webp',
             'High Wizard': 'images/classes/high-wizard.webp',
-            'Sage': 'images/classes/sage.webp',
+            'Sage': 'images/classes/professor.webp',
             'Professor': 'images/classes/professor.webp',
             'Summoner': 'images/classes/summoner.webp',
-            'Doram': 'images/classes/doram.webp',
+            'Doram': 'images/classes/summoner.webp',
             'Rebellion': 'images/classes/rebellion.webp',
-            'Gunslinger': 'images/classes/gunslinger.webp'
+            'Gunslinger': 'images/classes/rebellion.webp'
         };
 
         function getClassIconHtml(charClass, sizeClass = 'w-5 h-5') {
-            const file = CLASS_ICON_FILES[charClass];
+            if (!charClass) return `<span class="inline-block text-xs">👤</span>`;
+            const key = Object.keys(CLASS_ICON_FILES).find(k => k.toLowerCase() === String(charClass).trim().toLowerCase());
+            const file = key ? CLASS_ICON_FILES[key] : null;
             if (file) {
                 return `<img src="${file}" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm" alt="${charClass}">`;
             }
