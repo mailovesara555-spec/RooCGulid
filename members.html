@@ -432,6 +432,40 @@
         let allMembersData = [];
         let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
 
+        const CLASS_ICON_FILES = {
+            'Lord Knight': 'images/classes/lord-knight.svg',
+            'Paladin': 'images/classes/paladin.svg',
+            'Biochemist': 'images/classes/biochemist.svg',
+            'Creator': 'images/classes/creator.svg',
+            'Mastersmith': 'images/classes/mastersmith.svg',
+            'Whitesmith': 'images/classes/whitesmith.svg',
+            'Bard': 'images/classes/bard.svg',
+            'Clown': 'images/classes/clown.svg',
+            'Gypsy': 'images/classes/gypsy.svg',
+            'Sniper': 'images/classes/sniper.svg',
+            'Champion': 'images/classes/champion.svg',
+            'Priest': 'images/classes/priest.svg',
+            'High Priest': 'images/classes/high-priest.svg',
+            'Assassin': 'images/classes/assassin.svg',
+            'Assassin Cross': 'images/classes/assassin-cross.svg',
+            'Rogue': 'images/classes/rogue.svg',
+            'Stalker': 'images/classes/stalker.svg',
+            'Wizard': 'images/classes/wizard.svg',
+            'High Wizard': 'images/classes/high-wizard.svg',
+            'Sage': 'images/classes/sage.svg',
+            'Professor': 'images/classes/professor.svg',
+            'Summoner': 'images/classes/summoner.svg',
+            'Rebellion': 'images/classes/rebellion.svg'
+        };
+
+        function getClassIconHtml(charClass, sizeClass = 'w-5 h-5') {
+            const file = CLASS_ICON_FILES[charClass];
+            if (file) {
+                return `<img src="${file}" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm" alt="${charClass}">`;
+            }
+            return `<span class="inline-block text-xs">👤</span>`;
+        }
+
         // ลำดับความสำคัญของตำแหน่ง (Admin = 1 สูงสุด)
         function getRolePriority(role) {
             switch (role) {
@@ -553,7 +587,12 @@
                         ${iconDisplay}
                     </td>
                     <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleBadge}</td>
-                    <td class="py-3.5 px-3 text-sm text-amber-700 font-medium whitespace-nowrap">${member.charClass || '-'}</td>
+                    <td class="py-3.5 px-3 text-sm text-stone-800 font-medium whitespace-nowrap">
+                        <div class="flex items-center gap-2">
+                            ${getClassIconHtml(member.charClass, 'w-6 h-6')}
+                            <span class="font-bold text-amber-950">${member.charClass || '-'}</span>
+                        </div>
+                    </td>
                     <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-900 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
