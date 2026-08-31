@@ -932,6 +932,68 @@
                     ]
                 },
                 {
+                    key: 'stat_pvpReduc',
+                    label: 'PVP Reduc',
+                    patterns: [
+                        /(?:PVP\s*DMG\s*RED[A-Z]*|PVP\s*DAMAGE\s*RED[A-Z]*|PVP\s*RED[A-Z]*|ลดความเสียหาย\s*PVP|ลดดาเมจ\s*PVP|ต้านทาน\s*PVP|ลด\s*PVP|PVP\s*DEF|PVP\s*RES[A-Z]*)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_pvpDmg',
+                    label: 'PVP Dmg',
+                    patterns: [
+                        /(?:PVP\s*DMG\s*BONUS|PVP\s*DAMAGE\s*BONUS|PVP\s*DMG\s*INC[A-Z]*|โบนัสความเสียหาย\s*PVP|ความเสียหาย\s*PVP|ดาเมจ\s*PVP|เพิ่ม\s*PVP|PVP\s*ATK)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i,
+                        /(?:^|\s)(?:PVP\s*DMG|PVP\s*DAMAGE|PVP\s*DM[G6])(?!\s*RED|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_pReduc',
+                    label: 'P.Reduc',
+                    patterns: [
+                        /(?:P\.?\s*DMG\s*RED[A-Z]*|PHYSICAL\s*DMG\s*RED[A-Z]*|PHYSICAL\s*RED[A-Z]*|P\.?\s*RED[A-Z]*|ลดความเสียหายกายภาพ|ลดดาเมจกายภาพ|ต้านทานกายภาพ|ลดกายภาพ|PHY\s*RED[A-Z]*|P\.?\s*RES[A-Z]*)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_mReduc',
+                    label: 'M.Reduc',
+                    patterns: [
+                        /(?:M\.?\s*DMG\s*RED[A-Z]*|MAGIC\s*DMG\s*RED[A-Z]*|MAGIC\s*RED[A-Z]*|M\.?\s*RED[A-Z]*|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|ลดเวท(?:ย์)?|MAG\s*RED[A-Z]*|M\.?\s*RES[A-Z]*)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_criDam',
+                    label: 'Crit Dmg',
+                    patterns: [
+                        /(?:CRIT\s*DMG\s*BONUS|CRIT\s*DAMAGE\s*BONUS|CRITICAL\s*DAMAGE|CRIT\s*DAMAGE|CRIT\s*DMG|CRI\s*DAM|CRI\s*DMG|ความเสียหายคริติคอล|ดาเมจคริติคอล|โบนัสคริติคอล|โบนัสความเสียหายคริ|แรงคริ|คริแดเมจ|CRI\s*DAMAGE|CR1T\s*DMG|CR1\s*DAM|CR1T\s*DAM)(?!\s*RES|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_cri',
+                    label: 'Crit Rate',
+                    patterns: [
+                        /(?:CRIT\s*RATE|CRITICAL\s*RATE|อัตราคริติคอล|อัตราคริ|CRIT\s*RATIO|CR1T\s*RATE|CR1\s*RATE)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*RES|\s*ต้าน)\s*[\+\:]*\s*([0-9]{1,5})/i,
+                        /(?:^|\s)(?:CRIT|CRITICAL|CRI|CR1T|CR1|คริติคอล|ค่าคริ)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*RED|\s*RES|\s*ต้าน|\s*ลด)\s*[\+\:]*\s*([0-9]{1,5})/i
+                    ]
+                },
+                {
+                    key: 'stat_pDmg',
+                    label: 'P.Dmg',
+                    patterns: [
+                        /(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC[A-Z]*|PHYSICAL\s*DMG\s*INC|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%/i,
+                        /(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC[A-Z]*|PHYSICAL\s*DMG\s*INC|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)/i,
+                        /(?:^|\s)(?:P\.?\s*DMG|PHYSICAL\s*DMG|PHYSICAL\s*DAMAGE|P\s*DMG|PHY\s*DMG|P\.?\s*DM[G6]|P\.?\s*OM[G6]|PHY\s*DM[G6])(?!\s*RED|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_mDmg',
+                    label: 'M.Dmg',
+                    patterns: [
+                        /(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC[A-Z]*|MAGIC\s*DMG\s*INC|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%/i,
+                        /(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC[A-Z]*|MAGIC\s*DMG\s*INC|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)/i,
+                        /(?:^|\s)(?:M\.?\s*DMG|MAGIC\s*DMG|MAGIC\s*DAMAGE|M\s*DMG|MAG\s*DMG|M\.?\s*DM[G6]|M\.?\s*OM[G6]|MAG\s*DM[G6])(?!\s*RED|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
                     key: 'stat_ignorePDef',
                     label: 'Ignore P.Def',
                     patterns: [
@@ -945,63 +1007,6 @@
                     patterns: [
                         /(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?\s*DEF|IGN\s*MDEF|IGNORE\s*MAGIC\s*DEF|เจาะเกราะเวท|ละเว้นป้องกันเวท|ละเว้นเวท|เพิกเฉยป้องกันเวท|เพิกเฉยเวท|เจาะเกราะเวทย์|IGN\s*MAGIC|IGNORE\s*MAGIC|PEN\s*M\.?DEF|PEN\s*MAGIC|IGN\s*M\.?D[EF]{2,3}|ORE\s*M\.?\s*DEF|GNORE\s*M\.?\s*DEF)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i,
                         /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*M\.?\s*D[EF]{2,3}\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_pvpReduc',
-                    label: 'PVP Reduc',
-                    patterns: [
-                        /(?:PVP\s*DMG\s*REDUC(?:TION)?|PVP\s*REDUC(?:TION)?|PVP\s*DAMAGE\s*REDUC(?:TION)?|ลดความเสียหาย\s*PVP|ลดดาเมจ\s*PVP|ต้านทาน\s*PVP|ลด\s*PVP|PVP\s*DEF|PVP\s*RES(?:IST)?|PVP\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_pvpDmg',
-                    label: 'PVP Dmg',
-                    patterns: [
-                        /(?:PVP\s*DMG\s*BONUS|PVP\s*DMG\s*INC(?:REASE)?|PVP\s*DAMAGE\s*BONUS|PVP\s*DMG|PVP\s*DAMAGE|โบนัสความเสียหาย\s*PVP|ความเสียหาย\s*PVP|ดาเมจ\s*PVP|เพิ่ม\s*PVP|PVP\s*ATK|PVP\s*DM[G6]|PVP\s*BONUS)(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_pReduc',
-                    label: 'P.Reduc',
-                    patterns: [
-                        /(?:P\.?\s*DMG\s*REDUC(?:TION)?|PHYSICAL\s*DMG\s*REDUC(?:TION)?|P\.?\s*REDUC(?:TION)?|PHYSICAL\s*REDUC(?:TION)?|ลดความเสียหายกายภาพ|ลดดาเมจกายภาพ|ต้านทานกายภาพ|ลดกายภาพ|P\s*REDUC|PHY\s*REDUC|P\.?\s*RESIST|P\.?\s*RED[UC]{1,3}|PHY\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_mReduc',
-                    label: 'M.Reduc',
-                    patterns: [
-                        /(?:M\.?\s*DMG\s*REDUC(?:TION)?|MAGIC\s*DMG\s*REDUC(?:TION)?|M\.?\s*REDUC(?:TION)?|MAGIC\s*REDUC(?:TION)?|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|ลดเวท(?:ย์)?|M\s*REDUC|MAG\s*REDUC|M\.?\s*RESIST|M\.?\s*RED[UC]{1,3}|MAG\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_criDam',
-                    label: 'Crit Dmg',
-                    patterns: [
-                        /(?:CRIT\s*DMG\s*BONUS|CRIT\s*DAMAGE\s*BONUS|CRIT\s*DMG|CRIT\s*DAMAGE|CRITICAL\s*DAMAGE|CRI\s*DAM|CRI\s*DMG|ความเสียหายคริติคอล|ดาเมจคริติคอล|โบนัสคริติคอล|โบนัสความเสียหายคริ|แรงคริ|คริแดเมจ|CRI\s*DAMAGE|CR1T\s*DMG|CR1\s*DAM|CR1T\s*DAM)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_cri',
-                    label: 'Crit Rate',
-                    patterns: [
-                        /(?:CRIT\s*RATE|CRITICAL\s*RATE|อัตราคริติคอล|อัตราคริ|CRIT\s*RATIO|CR1T\s*RATE|CR1\s*RATE)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย)\s*[\+\:]*\s*([0-9]{1,5})/i,
-                        /(?:^|\s)(?:CRIT|CRITICAL|CRI|CR1T|CR1|คริติคอล|ค่าคริ)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*REDUC|\s*RESIST)\s*[\+\:]*\s*([0-9]{2,5})/i
-                    ]
-                },
-                {
-                    key: 'stat_pDmg',
-                    label: 'P.Dmg',
-                    patterns: [
-                        /(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC(?:REASE)?|PHYSICAL\s*DMG\s*INC|P\.?\s*DMG|PHYSICAL\s*DMG|PHYSICAL\s*DAMAGE|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ|P\s*DMG|PHY\s*DMG|P\.?\s*DM[G6]|P\.?\s*OM[G6]|PHY\s*DM[G6])(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
-                    ]
-                },
-                {
-                    key: 'stat_mDmg',
-                    label: 'M.Dmg',
-                    patterns: [
-                        /(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC(?:REASE)?|MAGIC\s*DMG\s*INC|M\.?\s*DMG|MAGIC\s*DMG|MAGIC\s*DAMAGE|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?|M\s*DMG|MAG\s*DMG|M\.?\s*DM[G6]|M\.?\s*OM[G6]|MAG\s*DM[G6])(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
                     ]
                 },
                 {
@@ -1058,7 +1063,7 @@
                 // 1. ตรวจสอบในข้อความรวมทั้งหมด
                 for (let pat of rule.patterns) {
                     const match = fullNormalized.match(pat);
-                    if (match && match[1]) {
+                    if (match && match[1] !== undefined) {
                         const val = parseFloat(match[1].replace(/[^0-9.]/g, ''));
                         if (!isNaN(val)) {
                             foundVal = val;
@@ -1076,7 +1081,7 @@
 
                         for (let pat of rule.patterns) {
                             const m1 = lineNorm.match(pat) || combined2Lines.match(pat);
-                            if (m1 && m1[1]) {
+                            if (m1 && m1[1] !== undefined) {
                                 const val = parseFloat(m1[1].replace(/[^0-9.]/g, ''));
                                 if (!isNaN(val)) {
                                     foundVal = val;
@@ -1098,7 +1103,7 @@
                         const parentCard = inputEl.closest('.stat-input-card');
                         if (parentCard) {
                             parentCard.classList.add('highlight');
-                            setTimeout(() => parentCard.classList.remove('highlight'), 3000);
+                            setTimeout(() => parentCard.classList.remove('highlight'), 3500);
                         }
                     }
                 }
