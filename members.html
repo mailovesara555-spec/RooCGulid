@@ -420,12 +420,27 @@
         function canDeleteMembers() {
             return isAdmin || currentUserRole === 'หัวหน้ากิลด์' || currentUserRole === 'หัวหน้ากิล';
         }
-        
-        if (isAdmin) {
-            document.getElementById('adminBadge').classList.remove('hidden');
-            const btnWhitelist = document.getElementById('btnManageWhitelist');
-            if (btnWhitelist) btnWhitelist.classList.remove('hidden');
+
+        function canManageWhitelist() {
+            return isAdmin || currentUserRole === 'หัวหน้ากิลด์' || currentUserRole === 'หัวหน้ากิล';
         }
+        
+        function updatePermissionsUI() {
+            if (isAdmin) {
+                const adminBadge = document.getElementById('adminBadge');
+                if (adminBadge) adminBadge.classList.remove('hidden');
+            }
+            const btnWhitelist = document.getElementById('btnManageWhitelist');
+            if (btnWhitelist) {
+                if (canManageWhitelist()) {
+                    btnWhitelist.classList.remove('hidden');
+                } else {
+                    btnWhitelist.classList.add('hidden');
+                }
+            }
+        }
+        
+        updatePermissionsUI();
 
         document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
 
@@ -866,6 +881,7 @@
                     currentUserRole = 'Admin';
                 }
                 document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
+                updatePermissionsUI();
 
                 // เรียงลำดับ: 
                 // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
@@ -901,7 +917,7 @@
         document.getElementById('searchInput').addEventListener('input', renderTable);
 
         // ==========================================
-        // 6. Whitelist Management Functions (Admin - Unlimited)
+        // 6. Whitelist Management Functions (Admin & Guild Leader)
         // ==========================================
         let currentWhitelist = {};
 
@@ -914,8 +930,8 @@
         }
 
         function openWhitelistModal() {
-            if (!isAdmin) {
-                alert('⚠️ เฉพาะ Admin (daffodil2693) เท่านั้นที่สามารถจัดการสิทธิ์การเข้าใช้งานเว็บได้');
+            if (!canManageWhitelist()) {
+                alert('⚠️ เฉพาะ Admin (daffodil2693) หรือหัวหน้ากิลด์เท่านั้นที่สามารถจัดการสิทธิ์การเข้าใช้งานเว็บได้');
                 return;
             }
             document.getElementById('whitelistModal').classList.remove('hidden');
@@ -926,6 +942,11 @@
         }
 
         function addWhitelistUser() {
+            if (!canManageWhitelist()) {
+                alert('⚠️ คุณไม่มีสิทธิ์จัดการ Whitelist (เฉพาะ Admin หรือหัวหน้ากิลด์)');
+                return;
+            }
+
             const rawUser = document.getElementById('newWhitelistUser').value.trim();
             const note = document.getElementById('newWhitelistNote').value.trim();
 
@@ -940,7 +961,7 @@
             db.ref('whitelist/' + safeKey).set({
                 username: cleanUser,
                 addedAt: new Date().toISOString(),
-                addedBy: currentUser,
+                addedBy: `${currentUser} [${currentUserRole}]`,
                 note: note || '-'
             }).then(() => {
                 alert(`✨ อนุญาตสิทธิ์ให้ "${cleanUser}" เข้าใช้งานเว็บเรียบร้อยแล้ว! (ไม่จำกัดจำนวนคน)`);
@@ -952,6 +973,11 @@
         }
 
         function deleteWhitelistUser(safeKey, username) {
+            if (!canManageWhitelist()) {
+                alert('⚠️ คุณไม่มีสิทธิ์จัดการ Whitelist (เฉพาะ Admin หรือหัวหน้ากิลด์)');
+                return;
+            }
+
             if (username.toLowerCase() === 'daffodil2693') {
                 alert('⚠️ ไม่สามารถลบสิทธิ์ Super Admin (daffodil2693) ได้');
                 return;
