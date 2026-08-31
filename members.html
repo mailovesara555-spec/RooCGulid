@@ -871,7 +871,7 @@
                     }
                 });
 
-                let list = Object.values(data);
+                let list = Object.values(data).filter(m => m && m.name && m.name !== 'undefined' && String(m.name).trim() !== '');
                 
                 // ตรวจสอบยศของผู้ใช้ปัจจุบัน
                 const myRecord = list.find(m => m.uid && m.uid.toLowerCase() === currentUser.toLowerCase() && !m.isChar2);
@@ -903,6 +903,7 @@
                 allMembersData = [];
             }
             renderTable();
+            renderWhitelistList();
         }, (error) => {
             console.error("Firebase Read Error:", error);
             document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="8" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
@@ -1009,7 +1010,9 @@
                 const item = currentWhitelist[k] || {};
                 const user = (item.username || decodeWhitelistKey(k)).toLowerCase();
                 const note = ((typeof item === 'object' && item.note) ? item.note : '').toLowerCase();
-                return user.includes(filterKeyword) || note.includes(filterKeyword);
+                const matched = allMembersData.find(m => m.uid && m.uid.toLowerCase() === user);
+                const charName = matched ? (matched.name || '').toLowerCase() : '';
+                return user.includes(filterKeyword) || note.includes(filterKeyword) || charName.includes(filterKeyword);
             });
 
             if (filteredKeys.length === 0) {
@@ -1023,25 +1026,60 @@
                 const note = (typeof item === 'object' && item.note) ? item.note : '-';
                 const isSuper = (trueUsername.toLowerCase() === 'daffodil2693');
 
+                const mainChar = allMembersData.find(m => m.uid && m.uid.toLowerCase() === trueUsername.toLowerCase() && !m.isChar2);
+                const secondChar = allMembersData.find(m => m.uid && (m.uid.toLowerCase() === `${trueUsername.toLowerCase()} (ตัวที่ 2)` || (m.uid.toLowerCase() === trueUsername.toLowerCase() && m.isChar2)));
+
+                let charBadges = '';
+                if (mainChar) {
+                    const icon1 = getClassIconHtml(mainChar.charClass, 'w-4 h-4');
+                    charBadges += `
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100/90 text-amber-950 rounded-md border border-amber-300 text-xs font-bold shadow-2xs">
+                            ${icon1} ${mainChar.name}
+                        </span>
+                    `;
+                    if (secondChar) {
+                        const icon2 = getClassIconHtml(secondChar.charClass, 'w-4 h-4');
+                        charBadges += `
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-teal-100 text-teal-900 rounded-md border border-teal-300 text-[11px] font-bold shadow-2xs">
+                                ${icon2} ${secondChar.name} <span class="text-[9px] text-teal-700">(ตัวที่ 2)</span>
+                            </span>
+                        `;
+                    }
+                } else {
+                    charBadges = `<span class="text-[10px] text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">ยังไม่สร้างโปรไฟล์</span>`;
+                }
+
+                let subtitle = '';
+                if (mainChar) {
+                    subtitle = `<span class="text-amber-800 font-semibold">${mainChar.role || 'สมาชิกกิลด์'} • ${mainChar.charClass || '-'}</span>`;
+                    if (note && note !== '-') {
+                        subtitle += ` <span class="text-stone-400">(${note})</span>`;
+                    }
+                } else {
+                    subtitle = `<span class="text-stone-500">${note}</span>`;
+                }
+
                 return `
                     <div class="flex items-center justify-between p-2.5 bg-amber-50/50 hover:bg-amber-100/60 rounded-xl border border-amber-200 transition">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="w-6 h-6 rounded-full ${isSuper ? 'bg-red-100 text-red-700 border-red-300' : 'bg-amber-200 text-amber-900 border-amber-300'} border flex items-center justify-center text-xs font-extrabold">
+                            <span class="w-7 h-7 rounded-full ${isSuper ? 'bg-red-100 text-red-700 border-red-300' : 'bg-amber-200 text-amber-900 border-amber-300'} border flex items-center justify-center text-xs font-extrabold shrink-0 shadow-2xs">
                                 ${isSuper ? '⚡' : '👤'}
                             </span>
                             <div class="min-w-0">
-                                <p class="text-xs font-bold text-stone-900 truncate flex items-center gap-1.5">
-                                    ${trueUsername}
-                                    ${isSuper ? '<span class="text-[10px] bg-red-100 text-red-800 font-extrabold px-1.5 py-0.5 rounded border border-red-300">Admin</span>' : ''}
-                                </p>
-                                <p class="text-[10px] text-stone-500 truncate">${note}</p>
+                                <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                                    <span class="text-xs font-mono font-bold text-stone-800 bg-white px-1.5 py-0.2 rounded border border-stone-300">${trueUsername}</span>
+                                    ${isSuper ? '<span class="text-[10px] bg-red-100 text-red-800 font-extrabold px-1.5 py-0.2 rounded border border-red-300">Admin</span>' : ''}
+                                    <span class="text-stone-400 text-xs">➔</span>
+                                    ${charBadges}
+                                </div>
+                                <p class="text-[10px] truncate">${subtitle}</p>
                             </div>
                         </div>
                         ${!isSuper ? `
-                            <button onclick="deleteWhitelistUser('${safeKey}', '${trueUsername}')" class="px-2.5 py-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold transition shadow-sm" title="ลบสิทธิ์">
+                            <button onclick="deleteWhitelistUser('${safeKey}', '${trueUsername}')" class="px-2.5 py-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold transition shadow-sm shrink-0 ml-2" title="ลบสิทธิ์">
                                 🗑️ ลบสิทธิ์
                             </button>
-                        ` : '<span class="text-[10px] text-stone-400 font-bold mr-2">ถาวร</span>'}
+                        ` : '<span class="text-[10px] text-stone-400 font-bold mr-2 shrink-0">ถาวร</span>'}
                     </div>
                 `;
             }).join('');

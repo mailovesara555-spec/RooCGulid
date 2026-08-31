@@ -1261,7 +1261,7 @@
                         }
                     }
                 });
-                let list = Object.values(data);
+                let list = Object.values(data).filter(m => m && m.name && m.name !== 'undefined' && String(m.name).trim() !== '');
                 
                 // เรียงตาม CP ค่ามากสุดอยู่บนสุดแล้วเรียงลำดับลงมา
                 list.sort((a, b) => {
