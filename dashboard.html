@@ -866,9 +866,10 @@
                     aiProgressBar.style.width = `${progressVal}%`;
 
                     try {
+                        let workerLang = 'eng';
                         const result = await Tesseract.recognize(
                             file,
-                            'eng',
+                            workerLang,
                             { logger: m => {
                                 if (m.status === 'recognizing text') {
                                     const subProgress = Math.floor(progressVal + (m.progress * (75 / files.length)));
@@ -883,15 +884,15 @@
                 }
 
                 aiProgressBar.style.width = '95%';
-                aiStatusTitle.innerText = '✨ AI กำลังจับคู่ค่าสเตตัส...';
+                aiStatusTitle.innerText = '✨ AI กำลังจับคู่ค่าสเตตัสแบบอัจฉริยะ...';
 
-                // Parse Stats from combined OCR text using smart patterns
-                parseStatsFromOCR(extractedTextCombined);
+                // Parse Stats from combined OCR text using smart fuzzy patterns
+                const extractedCount = parseStatsFromOCR(extractedTextCombined);
 
                 aiProgressBar.style.width = '100%';
                 setTimeout(() => {
                     aiOverlay.classList.add('hidden');
-                    alert(`🎉 AI อ่านและกรอกค่าสเตตัสจาก ${files.length} รูปภาพเรียบร้อยแล้ว!\nกรุณาตรวจสอบความถูกต้องและกด "บันทึกค่าสเตตัส" ด้านบนครับ`);
+                    alert(`🎉 AI อ่านและกรอกค่าสเตตัสได้ ${extractedCount} ค่าจาก ${files.length} รูปภาพเรียบร้อยแล้ว!\n(ช่องที่ AI ตรวจพบจะเรืองแสงสีทอง)\nกรุณาตรวจสอบความถูกต้องและกด "บันทึกค่าสเตตัส" ได้เลยครับ`);
                     aiMultiFileInput.value = '';
                 }, 400);
 
@@ -904,86 +905,206 @@
         });
 
         // Smart parser extracting all 17 Ragnarok Origin Stats from in-game OCR screenshots
+        // รองรับทั้งภาษาไทย, ภาษาอังกฤษ, ตัวย่อ, คำขาดหาย, ตัวสะกดเพี้ยน (Fuzzy / Partial Matching)
         function parseStatsFromOCR(rawText) {
             console.log("Raw OCR Text Output:\n", rawText);
-            const text = rawText.toUpperCase().replace(/,/g, '');
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-            function extractNumber(regex) {
-                const match = text.match(regex);
-                if (match && match[1]) {
-                    const cleaned = match[1].replace(/[^0-9.]/g, '');
-                    return parseFloat(cleaned) || 0;
-                }
-                return null;
+            function normalize(str) {
+                return str
+                    .toUpperCase()
+                    .replace(/,/g, '')
+                    .replace(/[\:\=\|\—\–\_]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
             }
 
-            // 1. CP / Combat Power
-            const cp = extractNumber(/(?:COMBAT\s*POWER|CP|POWER)[:\s\+]*([0-9]+)/) || extractNumber(/CP[:\s]*([0-9]{4,7})/);
-            if (cp !== null) document.getElementById('stat_cp').value = cp;
+            const fullNormalized = normalize(rawText);
 
-            // 2. MAX HP
-            const hp = extractNumber(/(?:MAX\s*HP|HP)[:\s\+]*([0-9]+)/) || extractNumber(/HP[:\s]*([0-9]{4,8})/);
-            if (hp !== null) document.getElementById('stat_maxHp').value = hp;
+            const STAT_RULES = [
+                {
+                    key: 'stat_cp',
+                    label: 'CP / Combat Power',
+                    patterns: [
+                        /(?:COMBAT\s*POWER|C\s*O\s*M\s*B\s*A\s*T|POWER|พลังรบ|พลังต่อสู้|พลังรวม|พลัง)\s*[\+\:]*\s*([0-9]{3,8})/i,
+                        /\bCP\s*[\+\:]*\s*([0-9]{3,8})/i,
+                        /(?:^|\s)CP[:\s]*([0-9]{4,8})/i
+                    ]
+                },
+                {
+                    key: 'stat_ignorePDef',
+                    label: 'Ignore P.Def',
+                    patterns: [
+                        /(?:IGNORE\s*P\.?\s*DEF|IGN\s*P\.?\s*DEF|IGN\s*PDEF|IGNORE\s*PHYSICAL\s*DEF|เจาะเกราะกายภาพ|ละเว้นป้องกันกายภาพ|ละเว้นกายภาพ|เพิกเฉยป้องกันกายภาพ|เพิกเฉยกายภาพ|เจาะเกราะกาย|IGN\s*PHYSICAL|IGNORE\s*PHYSICAL|PEN\s*P\.?DEF|PEN\s*PHYSICAL|IGN\s*P\.?D[EF]{2,3}|ORE\s*P\.?\s*DEF|GNORE\s*P\.?\s*DEF)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i,
+                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*P\.?\s*D[EF]{2,3}\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_ignoreMDef',
+                    label: 'Ignore M.Def',
+                    patterns: [
+                        /(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?\s*DEF|IGN\s*MDEF|IGNORE\s*MAGIC\s*DEF|เจาะเกราะเวท|ละเว้นป้องกันเวท|ละเว้นเวท|เพิกเฉยป้องกันเวท|เพิกเฉยเวท|เจาะเกราะเวทย์|IGN\s*MAGIC|IGNORE\s*MAGIC|PEN\s*M\.?DEF|PEN\s*MAGIC|IGN\s*M\.?D[EF]{2,3}|ORE\s*M\.?\s*DEF|GNORE\s*M\.?\s*DEF)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i,
+                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*M\.?\s*D[EF]{2,3}\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_pvpReduc',
+                    label: 'PVP Reduc',
+                    patterns: [
+                        /(?:PVP\s*DMG\s*REDUC(?:TION)?|PVP\s*REDUC(?:TION)?|PVP\s*DAMAGE\s*REDUC(?:TION)?|ลดความเสียหาย\s*PVP|ลดดาเมจ\s*PVP|ต้านทาน\s*PVP|ลด\s*PVP|PVP\s*DEF|PVP\s*RES(?:IST)?|PVP\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_pvpDmg',
+                    label: 'PVP Dmg',
+                    patterns: [
+                        /(?:PVP\s*DMG\s*BONUS|PVP\s*DMG\s*INC(?:REASE)?|PVP\s*DAMAGE\s*BONUS|PVP\s*DMG|PVP\s*DAMAGE|โบนัสความเสียหาย\s*PVP|ความเสียหาย\s*PVP|ดาเมจ\s*PVP|เพิ่ม\s*PVP|PVP\s*ATK|PVP\s*DM[G6]|PVP\s*BONUS)(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_pReduc',
+                    label: 'P.Reduc',
+                    patterns: [
+                        /(?:P\.?\s*DMG\s*REDUC(?:TION)?|PHYSICAL\s*DMG\s*REDUC(?:TION)?|P\.?\s*REDUC(?:TION)?|PHYSICAL\s*REDUC(?:TION)?|ลดความเสียหายกายภาพ|ลดดาเมจกายภาพ|ต้านทานกายภาพ|ลดกายภาพ|P\s*REDUC|PHY\s*REDUC|P\.?\s*RESIST|P\.?\s*RED[UC]{1,3}|PHY\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_mReduc',
+                    label: 'M.Reduc',
+                    patterns: [
+                        /(?:M\.?\s*DMG\s*REDUC(?:TION)?|MAGIC\s*DMG\s*REDUC(?:TION)?|M\.?\s*REDUC(?:TION)?|MAGIC\s*REDUC(?:TION)?|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|ลดเวท(?:ย์)?|M\s*REDUC|MAG\s*REDUC|M\.?\s*RESIST|M\.?\s*RED[UC]{1,3}|MAG\s*RED[UC]{1,3})\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_criDam',
+                    label: 'Crit Dmg',
+                    patterns: [
+                        /(?:CRIT\s*DMG\s*BONUS|CRIT\s*DAMAGE\s*BONUS|CRIT\s*DMG|CRIT\s*DAMAGE|CRITICAL\s*DAMAGE|CRI\s*DAM|CRI\s*DMG|ความเสียหายคริติคอล|ดาเมจคริติคอล|โบนัสคริติคอล|โบนัสความเสียหายคริ|แรงคริ|คริแดเมจ|CRI\s*DAMAGE|CR1T\s*DMG|CR1\s*DAM|CR1T\s*DAM)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_cri',
+                    label: 'Crit Rate',
+                    patterns: [
+                        /(?:CRIT\s*RATE|CRITICAL\s*RATE|อัตราคริติคอล|อัตราคริ|CRIT\s*RATIO|CR1T\s*RATE|CR1\s*RATE)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย)\s*[\+\:]*\s*([0-9]{1,5})/i,
+                        /(?:^|\s)(?:CRIT|CRITICAL|CRI|CR1T|CR1|คริติคอล|ค่าคริ)(?!\s*DAM|\s*DMG|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*REDUC|\s*RESIST)\s*[\+\:]*\s*([0-9]{2,5})/i
+                    ]
+                },
+                {
+                    key: 'stat_pDmg',
+                    label: 'P.Dmg',
+                    patterns: [
+                        /(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC(?:REASE)?|PHYSICAL\s*DMG\s*INC|P\.?\s*DMG|PHYSICAL\s*DMG|PHYSICAL\s*DAMAGE|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ|P\s*DMG|PHY\s*DMG|P\.?\s*DM[G6]|P\.?\s*OM[G6]|PHY\s*DM[G6])(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_mDmg',
+                    label: 'M.Dmg',
+                    patterns: [
+                        /(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC(?:REASE)?|MAGIC\s*DMG\s*INC|M\.?\s*DMG|MAGIC\s*DMG|MAGIC\s*DAMAGE|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?|M\s*DMG|MAG\s*DMG|M\.?\s*DM[G6]|M\.?\s*OM[G6]|MAG\s*DM[G6])(?!\s*REDUC|\s*RESIST|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:]*\s*([0-9]+(?:\.[0-9]+)?)\s*%?/i
+                    ]
+                },
+                {
+                    key: 'stat_maxHp',
+                    label: 'Max HP',
+                    patterns: [
+                        /(?:MAX\s*HP|M\s*A\s*X\s*H\s*P|HP\s*สูงสุด|พลังชีวิตสูงสุด|พลังชีวิต|MAX\s*H\b)\s*[\+\:]*\s*([0-9]{3,9})/i,
+                        /(?:^|\s)HP\s*[\+\:]*\s*([0-9]{4,9})/i
+                    ]
+                },
+                {
+                    key: 'stat_maxSp',
+                    label: 'Max SP',
+                    patterns: [
+                        /(?:MAX\s*SP|M\s*A\s*X\s*S\s*P|SP\s*สูงสุด|มานาสูงสุด|มานา|MAX\s*S\b)\s*[\+\:]*\s*([0-9]{2,7})/i,
+                        /(?:^|\s)SP\s*[\+\:]*\s*([0-9]{3,7})/i
+                    ]
+                },
+                {
+                    key: 'stat_pAtk',
+                    label: 'P.Atk',
+                    patterns: [
+                        /(?:P\.?\s*ATK|PHYSICAL\s*ATK|PHYSICAL\s*ATTACK|พลังโจมตีกายภาพ|โจมตีกายภาพ|พ\.?\s*โจมตี|P\s*ATK|PHY\s*ATK|P\s*ATTACK|PHY\s*ATTACK)(?!\s*DMG|\s*REDUC|\s*BONUS)\s*[\+\:]*\s*([0-9]{2,7})/i
+                    ]
+                },
+                {
+                    key: 'stat_mAtk',
+                    label: 'M.Atk',
+                    patterns: [
+                        /(?:M\.?\s*ATK|MAGIC\s*ATK|MAGIC\s*ATTACK|พลังโจมตีเวท(?:ย์)?|โจมตีเวท(?:ย์)?|เวทโจมตี|M\s*ATK|MAG\s*ATK|M\s*ATTACK|MAG\s*ATTACK)(?!\s*DMG|\s*REDUC|\s*BONUS)\s*[\+\:]*\s*([0-9]{2,7})/i
+                    ]
+                },
+                {
+                    key: 'stat_pDef',
+                    label: 'P.Def',
+                    patterns: [
+                        /(?:P\.?\s*DEF|PHYSICAL\s*DEF|PHYSICAL\s*DEFENSE|พลังป้องกันกายภาพ|ป้องกันกายภาพ|พ\.?\s*ป้องกัน|P\s*DEF|PHY\s*DEF|P\s*DEFENSE|PHY\s*DEFENSE)(?!\s*REDUC)\s*[\+\:]*\s*([0-9]{2,7})/i
+                    ]
+                },
+                {
+                    key: 'stat_mDef',
+                    label: 'M.Def',
+                    patterns: [
+                        /(?:M\.?\s*DEF|MAGIC\s*DEF|MAGIC\s*DEFENSE|พลังป้องกันเวท(?:ย์)?|ป้องกันเวท(?:ย์)?|เวทป้องกัน|M\s*DEF|MAG\s*DEF|M\s*DEFENSE|MAG\s*DEFENSE)(?!\s*REDUC)\s*[\+\:]*\s*([0-9]{2,7})/i
+                    ]
+                }
+            ];
 
-            // 3. MAX SP
-            const sp = extractNumber(/(?:MAX\s*SP|SP)[:\s\+]*([0-9]+)/);
-            if (sp !== null) document.getElementById('stat_maxSp').value = sp;
+            let matchedCount = 0;
 
-            // 4. P.ATK
-            const pAtk = extractNumber(/(?:P\.?\s*ATK|PHYSICAL\s*ATK)[:\s\+]*([0-9]+)/);
-            if (pAtk !== null) document.getElementById('stat_pAtk').value = pAtk;
+            STAT_RULES.forEach(rule => {
+                let foundVal = null;
 
-            // 5. M.ATK
-            const mAtk = extractNumber(/(?:M\.?\s*ATK|MAGIC\s*ATK)[:\s\+]*([0-9]+)/);
-            if (mAtk !== null) document.getElementById('stat_mAtk').value = mAtk;
+                // 1. ตรวจสอบในข้อความรวมทั้งหมด
+                for (let pat of rule.patterns) {
+                    const match = fullNormalized.match(pat);
+                    if (match && match[1]) {
+                        const val = parseFloat(match[1].replace(/[^0-9.]/g, ''));
+                        if (!isNaN(val)) {
+                            foundVal = val;
+                            break;
+                        }
+                    }
+                }
 
-            // 6. P.DEF
-            const pDef = extractNumber(/(?:P\.?\s*DEF|PHYSICAL\s*DEF)[:\s\+]*([0-9]+)/);
-            if (pDef !== null) document.getElementById('stat_pDef').value = pDef;
+                // 2. ตรวจสอบแบบทีละบรรทัด และแบบ 2 บรรทัดติดกัน (กรณีข้อความหัวข้อกับตัวเลขอยู่คนละบรรทัด)
+                if (foundVal === null) {
+                    for (let i = 0; i < lines.length; i++) {
+                        const lineNorm = normalize(lines[i]);
+                        const nextLineNorm = i + 1 < lines.length ? normalize(lines[i + 1]) : '';
+                        const combined2Lines = `${lineNorm} ${nextLineNorm}`;
 
-            // 7. M.DEF
-            const mDef = extractNumber(/(?:M\.?\s*DEF|MAGIC\s*DEF)[:\s\+]*([0-9]+)/);
-            if (mDef !== null) document.getElementById('stat_mDef').value = mDef;
+                        for (let pat of rule.patterns) {
+                            const m1 = lineNorm.match(pat) || combined2Lines.match(pat);
+                            if (m1 && m1[1]) {
+                                const val = parseFloat(m1[1].replace(/[^0-9.]/g, ''));
+                                if (!isNaN(val)) {
+                                    foundVal = val;
+                                    break;
+                                }
+                            }
+                        }
+                        if (foundVal !== null) break;
+                    }
+                }
 
-            // 8. IGNORE P.DEF
-            const ignPDef = extractNumber(/(?:IGNORE\s*P\.?\s*DEF|IGN\s*P\.?DEF|IGNORE\s*PHYSICAL\s*DEF)[:\s\+]*([0-9.]+)/);
-            if (ignPDef !== null) document.getElementById('stat_ignorePDef').value = ignPDef;
+                if (foundVal !== null) {
+                    const inputEl = document.getElementById(rule.key);
+                    if (inputEl) {
+                        inputEl.value = foundVal;
+                        matchedCount++;
 
-            // 9. IGNORE M.DEF
-            const ignMDef = extractNumber(/(?:IGNORE\s*M\.?\s*DEF|IGN\s*M\.?DEF|IGNORE\s*MAGIC\s*DEF)[:\s\+]*([0-9.]+)/);
-            if (ignMDef !== null) document.getElementById('stat_ignoreMDef').value = ignMDef;
+                        // Visual highlight แสดงผลว่าช่องนี้ AI กรอกให้เรียบร้อย
+                        const parentCard = inputEl.closest('.stat-input-card');
+                        if (parentCard) {
+                            parentCard.classList.add('highlight');
+                            setTimeout(() => parentCard.classList.remove('highlight'), 3000);
+                        }
+                    }
+                }
+            });
 
-            // 10. P.DMG (Maps to in-game "P.DMG Bonus" / "P.DMG")
-            const pDmg = extractNumber(/(?:P\.?\s*DMG\s*BONUS|PHYSICAL\s*DMG\s*BONUS|P\.?\s*DMG\s*INC(?:REASE)?|P\.?\s*DMG|PHYSICAL\s*DMG)[:\s\+]*([0-9.]+)%?/);
-            if (pDmg !== null) document.getElementById('stat_pDmg').value = pDmg;
-
-            // 11. M.DMG (Maps to in-game "M.DMG Bonus" / "M.DMG")
-            const mDmg = extractNumber(/(?:M\.?\s*DMG\s*BONUS|MAGIC\s*DMG\s*BONUS|M\.?\s*DMG\s*INC(?:REASE)?|M\.?\s*DMG|MAGIC\s*DMG)[:\s\+]*([0-9.]+)%?/);
-            if (mDmg !== null) document.getElementById('stat_mDmg').value = mDmg;
-
-            // 12. P.REDUC (Maps to in-game "P.DMG Reduction" / "P.REDUC")
-            const pReduc = extractNumber(/(?:P\.?\s*DMG\s*REDUCTION|PHYSICAL\s*DMG\s*REDUCTION|P\.?\s*DMG\s*REDUC|P\.?\s*REDUC|PHYSICAL\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
-            if (pReduc !== null) document.getElementById('stat_pReduc').value = pReduc;
-
-            // 13. M.REDUC (Maps to in-game "M.DMG Reduction" / "M.REDUC")
-            const mReduc = extractNumber(/(?:M\.?\s*DMG\s*REDUCTION|MAGIC\s*DMG\s*REDUCTION|M\.?\s*DMG\s*REDUC|M\.?\s*REDUC|MAGIC\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
-            if (mReduc !== null) document.getElementById('stat_mReduc').value = mReduc;
-
-            // 14. PVP DMG (Maps to in-game "PVP DMG Bonus" / "PVP DMG")
-            const pvpDmg = extractNumber(/(?:PVP\s*DMG\s*BONUS|PVP\s*DMG\s*INC(?:REASE)?|PVP\s*DMG)[:\s\+]*([0-9.]+)%?/);
-            if (pvpDmg !== null) document.getElementById('stat_pvpDmg').value = pvpDmg;
-
-            // 15. PVP REDUC (Maps to in-game "PVP DMG Reduction" / "PVP REDUC")
-            const pvpReduc = extractNumber(/(?:PVP\s*DMG\s*REDUCTION|PVP\s*DMG\s*REDUC|PVP\s*REDUC(?:TION)?)[:\s\+]*([0-9.]+)%?/);
-            if (pvpReduc !== null) document.getElementById('stat_pvpReduc').value = pvpReduc;
-
-            // 16. CRI (Maps to in-game "CRIT" / "CRI" / "CRIT Rate")
-            const cri = extractNumber(/(?:CRIT\s*RATE|CRITICAL\s*RATE|\bCRIT\b|\bCRITICAL\b|\bCRI\b)(?!\s*DAM|\s*DMG)[:\s\+]*([0-9]+)/);
-            if (cri !== null) document.getElementById('stat_cri').value = cri;
-
-            // 17. CRI DAM (Maps to in-game "CRIT DMG" / "CRIT DMG Bonus" / "CRI DAM")
-            const criDam = extractNumber(/(?:CRIT\s*DMG\s*BONUS|CRIT\s*DMG|CRITICAL\s*DAMAGE|CRIT\s*DAMAGE|CRI\s*DAM|CRI\s*DAMAGE)[:\s\+]*([0-9.]+)%?/);
-            if (criDam !== null) document.getElementById('stat_criDam').value = criDam;
+            return matchedCount;
         }
     </script>
 </body>
