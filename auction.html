@@ -95,7 +95,7 @@
             <!-- Admin Reset Round Button -->
             <div id="adminResetContainer" class="hidden">
                 <button onclick="resetAllAuctionRounds()" class="px-4 py-2 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5">
-                    🔄 รีเซ็ตรอบประมูลใหม่ทั้งหมด (ล้างไอคอน)
+                    🔄 รีเซ็ตรอบประมูลใหม่ทั้งหมด (ล้างข้อมูลเก่า)
                 </button>
             </div>
         </div>
@@ -1039,20 +1039,51 @@
         }
 
         function resetAllAuctionRounds() {
-            if (!confirm('คุณต้องการรีเซ็ตรอบการประมูลทั้งหมด และปลดล็อกการตั้งค่าจำนวนใบเพื่อเริ่มรอบใหม่ใช่หรือไม่?')) {
+            if (!confirm('คุณต้องการรีเซ็ตรอบการประมูลทั้งหมด ล้างผลการจัดสรรเดิม และปลดล็อกการตั้งค่าเพื่อเริ่มรอบใหม่ใช่หรือไม่?')) {
                 return;
             }
 
-            db.ref('auctionState').set({
-                cardHolders: [],
-                cardRoundAmount: null,
-                whiteHolders: [],
-                whiteRoundAmount: null,
-                blackHolders: [],
-                blackRoundAmount: null,
-                lastReset: new Date().toISOString()
-            }).then(() => {
-                alert('🔄 รีเซ็ตรอบประมูลใหม่และปลดล็อกการตั้งค่าเรียบร้อยแล้ว!');
+            Promise.all([
+                db.ref('auctionState').set({
+                    cardHolders: [],
+                    cardRoundAmount: null,
+                    whiteHolders: [],
+                    whiteRoundAmount: null,
+                    blackHolders: [],
+                    blackRoundAmount: null,
+                    lastReset: new Date().toISOString(),
+                    resetBy: currentUser
+                }),
+                db.ref('auctionResults').remove()
+            ]).then(() => {
+                // ล้างค่าในช่องกรอกหน้าและ slot ทั้งหมด
+                document.getElementById('cardStartPage').value = '';
+                document.getElementById('cardStartSlot').value = '';
+                document.getElementById('cardEndPage').value = '';
+                document.getElementById('cardEndSlot').value = '';
+                document.getElementById('cardAmount').value = '';
+                document.getElementById('cardAmount').disabled = false;
+                document.getElementById('cardAmount').classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+
+                document.getElementById('whiteStartPage').value = '';
+                document.getElementById('whiteStartSlot').value = '';
+                document.getElementById('whiteEndPage').value = '';
+                document.getElementById('whiteEndSlot').value = '';
+                document.getElementById('whiteAmount').value = '';
+                document.getElementById('whiteAmount').disabled = false;
+                document.getElementById('whiteAmount').classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+
+                document.getElementById('blackStartPage').value = '';
+                document.getElementById('blackStartSlot').value = '';
+                document.getElementById('blackEndPage').value = '';
+                document.getElementById('blackEndSlot').value = '';
+                document.getElementById('blackAmount').value = '';
+                document.getElementById('blackAmount').disabled = false;
+                document.getElementById('blackAmount').classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
+
+                alert('🔄 รีเซ็ตรอบประมูลใหม่ ล้างข้อมูลการจัดสรรเก่า และปลดล็อกการตั้งค่าเรียบร้อยแล้ว!');
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาดในการรีเซ็ต: ' + err.message);
             });
         }
 
