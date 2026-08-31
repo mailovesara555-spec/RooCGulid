@@ -447,6 +447,39 @@
         </div>
     </div>
 
+    <!-- Modal เลือกเปลี่ยนสายอาชีพ (สำหรับผู้จัดการขึ้นไปคลิกเปลี่ยนอาชีพได้โดยตรง) -->
+    <div id="changeClassModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-xl rounded-3xl p-6 sm:p-7 relative bg-white border-2 border-amber-400 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-4">
+                <div>
+                    <h3 class="text-base font-extrabold text-amber-950 flex items-center gap-2">
+                        <span>🔄</span> เลือกเปลี่ยนสายอาชีพ
+                    </h3>
+                    <p class="text-xs text-stone-500 mt-0.5">
+                        สมาชิก: <strong id="changeClassMemberName" class="text-amber-900 font-extrabold"></strong> 
+                        • อาชีพเดิม: <span id="changeClassCurrentClass" class="text-amber-800 font-bold"></span>
+                    </p>
+                </div>
+                <button onclick="closeChangeClassModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <div class="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mb-4 flex items-center gap-2">
+                <span>💡</span> คลิกที่ไอคอนอาชีพด้านล่างเพื่อเปลี่ยนอาชีพของสมาชิกท่านนี้ทันที (สิทธิ์: ผู้จัดการขึ้นไป)
+            </div>
+
+            <!-- Grid 15 อาชีพ -->
+            <div id="changeClassGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-[60vh] overflow-y-auto p-1">
+                <!-- Javascript will render 15 class cards here -->
+            </div>
+
+            <div class="flex items-center justify-end mt-5 pt-3 border-t border-amber-200">
+                <button onclick="closeChangeClassModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition">
+                    ยกเลิก / ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 1. Firebase Initializer
         const firebaseConfig = {
@@ -765,7 +798,7 @@
                          onclick="handleSlotClick('${pKey}', ${sNum})"
                          class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="shrink-0">${icon}</span>
+                            <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${member.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-1 flex-wrap">
                                     <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
@@ -845,7 +878,7 @@
                              onclick="handleWaitlistMemberClick('${m.name}')"
                              class="member-chip ${isSelected ? 'selected-source' : 'bg-white'} rounded-xl p-2.5 flex items-center justify-between border border-amber-200 hover:border-amber-400 shadow-sm">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="shrink-0">${icon}</span>
+                                <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${m.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <p class="text-xs font-bold text-stone-900 truncate">${m.name}</p>
@@ -880,7 +913,7 @@
                              ondragend="handleDragEnd(event)"
                              class="member-chip bg-white rounded-xl p-2 flex items-center justify-between border border-rose-200 hover:border-rose-400 shadow-sm">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="shrink-0">${icon}</span>
+                                <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${m.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
@@ -1195,9 +1228,12 @@
             if (data) {
                 Object.keys(data).forEach(key => {
                     const m = data[key];
-                    if (m && (m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)')))) {
-                        m.isChar2 = true;
-                        m.role = 'สมาชิกกิลด์';
+                    if (m) {
+                        m.firebaseKey = key;
+                        if (m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)'))) {
+                            m.isChar2 = true;
+                            m.role = 'สมาชิกกิลด์';
+                        }
                     }
                 });
                 let list = Object.values(data);
@@ -1344,6 +1380,104 @@
 
         function closeStatsModal() {
             document.getElementById('statsDetailModal').classList.add('hidden');
+        }
+
+        // 12. Quick Change Class Modal Functions (สิทธิ์: ผู้จัดการ, รองหัวหน้ากิลด์, หัวหน้ากิลด์, Admin)
+        let targetClassChangeMember = null;
+
+        const AVAILABLE_CLASSES = [
+            { name: 'Lord Knight', icon: 'images/classes/lord-knight.webp' },
+            { name: 'Paladin', icon: 'images/classes/paladin.webp' },
+            { name: 'High Priest', icon: 'images/classes/high-priest.webp' },
+            { name: 'Champion', icon: 'images/classes/champion.webp' },
+            { name: 'High Wizard', icon: 'images/classes/high-wizard.webp' },
+            { name: 'Professor', icon: 'images/classes/professor.webp' },
+            { name: 'Assassin Cross', icon: 'images/classes/assassin-cross.webp' },
+            { name: 'Stalker', icon: 'images/classes/stalker.webp' },
+            { name: 'Sniper', icon: 'images/classes/sniper.webp' },
+            { name: 'Minstrel', icon: 'images/classes/minstrel.webp' },
+            { name: 'Gypsy', icon: 'images/classes/gypsy.webp' },
+            { name: 'Mastersmith', icon: 'images/classes/mastersmith.webp' },
+            { name: 'Biochemist', icon: 'images/classes/biochemist.webp' },
+            { name: 'Summoner', icon: 'images/classes/summoner.webp' },
+            { name: 'Rebellion', icon: 'images/classes/rebellion.webp' }
+        ];
+
+        function getFirebaseUidKey(uid) {
+            if (!uid) return 'unknown_user';
+            const str = String(uid).trim();
+            if (str.includes('(ตัวที่ 2)')) {
+                const base = str.replace(/\s*\(ตัวที่ 2\)/g, '').trim();
+                return `${base.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_')}__char2`;
+            }
+            return str.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
+        }
+
+        function openChangeClassModal(memberName) {
+            if (!canEditParties) {
+                alert('⚠️ เฉพาะผู้จัดการ, รองหัวหน้ากิลด์, หัวหน้ากิลด์ หรือ Admin เท่านั้นที่มีสิทธิ์เปลี่ยนอาชีพสมาชิก');
+                return;
+            }
+
+            const member = allGuildMembers.find(m => m.name === memberName || m.uid === memberName);
+            if (!member) {
+                alert('ไม่พบข้อมูลสมาชิกท่านนี้');
+                return;
+            }
+
+            targetClassChangeMember = member;
+
+            const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
+            const char2Badge = isChar2 ? ' (ตัวที่ 2)' : '';
+            document.getElementById('changeClassMemberName').innerText = `${member.name}${char2Badge}`;
+            document.getElementById('changeClassCurrentClass').innerText = member.charClass || 'ไม่ระบุ';
+
+            const grid = document.getElementById('changeClassGrid');
+            grid.innerHTML = AVAILABLE_CLASSES.map(cls => {
+                const cur = (member.charClass || '').toLowerCase().trim();
+                const isCurrent = cur === cls.name.toLowerCase() ||
+                                  (cls.name === 'High Wizard' && cur === 'wizard') ||
+                                  (cls.name === 'High Priest' && cur === 'priest') ||
+                                  (cls.name === 'Lord Knight' && cur === 'knight') ||
+                                  (cls.name === 'Assassin Cross' && cur === 'assassin') ||
+                                  (cls.name === 'Mastersmith' && cur === 'blacksmith') ||
+                                  (cls.name === 'Biochemist' && cur === 'alchemist') ||
+                                  (cls.name === 'Minstrel' && cur === 'bard') ||
+                                  (cls.name === 'Gypsy' && cur === 'dancer') ||
+                                  (cls.name === 'Professor' && cur === 'sage') ||
+                                  (cls.name === 'Stalker' && cur === 'rogue') ||
+                                  (cls.name === 'Sniper' && cur === 'hunter') ||
+                                  (cls.name === 'Champion' && cur === 'monk') ||
+                                  (cls.name === 'Paladin' && cur === 'crusader');
+
+                return `
+                    <button type="button" onclick="selectNewClass('${cls.name}')" 
+                            class="flex flex-col items-center justify-center p-2.5 rounded-2xl border transition-all ${isCurrent ? 'bg-amber-100/90 border-2 border-amber-500 shadow-md ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 hover:border-amber-400 hover:scale-105 border-stone-200 shadow-sm'}">
+                        <img src="${cls.icon}" class="w-10 h-10 object-contain drop-shadow mb-1.5" alt="${cls.name}">
+                        <span class="text-[11px] font-bold ${isCurrent ? 'text-amber-950 font-extrabold' : 'text-stone-800'} text-center leading-tight">${cls.name}</span>
+                        ${isCurrent ? '<span class="text-[8px] mt-1 bg-amber-500 text-white px-1.5 py-0.2 rounded-full font-bold">ปัจจุบัน</span>' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            document.getElementById('changeClassModal').classList.remove('hidden');
+        }
+
+        function closeChangeClassModal() {
+            targetClassChangeMember = null;
+            document.getElementById('changeClassModal').classList.add('hidden');
+        }
+
+        function selectNewClass(newClassName) {
+            if (!targetClassChangeMember) return;
+            const member = targetClassChangeMember;
+            const key = member.firebaseKey || getFirebaseUidKey(member.uid || member.name);
+
+            db.ref('members/' + key + '/charClass').set(newClassName).then(() => {
+                closeChangeClassModal();
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาดในการเปลี่ยนอาชีพ: ' + err.message);
+            });
         }
     </script>
 </body>
