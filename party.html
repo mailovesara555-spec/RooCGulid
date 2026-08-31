@@ -591,13 +591,13 @@
         };
 
         function getClassIconHtml(charClass, sizeClass = 'w-6 h-6') {
-            if (!charClass) return `<span class="inline-block text-base">👤</span>`;
+            if (!charClass) return `<span class="inline-block text-base pointer-events-none select-none">👤</span>`;
             const key = Object.keys(CLASS_ICON_FILES).find(k => k.toLowerCase() === String(charClass).trim().toLowerCase());
             const file = key ? CLASS_ICON_FILES[key] : null;
             if (file) {
-                return `<img src="${file}" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm" alt="${charClass}">`;
+                return `<img src="${file}" draggable="false" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm pointer-events-none select-none" alt="${charClass}">`;
             }
-            return `<span class="inline-block text-base">👤</span>`;
+            return `<span class="inline-block text-base pointer-events-none select-none">👤</span>`;
         }
 
         function initEmptyParties() {
@@ -787,6 +787,8 @@
                 const isLeave = isMemberOnLeave(member);
                 const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
                 const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
+                const encodedName = encodeURIComponent(member.name || member.uid || '');
+
                 return `
                     <div id="slot_${pKey}_${sNum}" 
                          draggable="${canEditParties}" 
@@ -798,19 +800,26 @@
                          onclick="handleSlotClick('${pKey}', ${sNum})"
                          class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${member.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
+                            <button type="button" 
+                                    draggable="false"
+                                    onmousedown="event.stopPropagation();"
+                                    onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
+                                    class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
+                                    title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (member.charClass || '')}">
+                                ${icon}
+                            </button>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-1 flex-wrap">
                                     <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
                                     ${char2Badge}
-                                    <button type="button" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
+                                    <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
-                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight">${member.charClass || '-'}</p>
+                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${member.charClass || '-'}</p>
                             </div>
                         </div>
                         ${canEditParties ? `
-                            <button onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded transition font-bold" title="นำออกจากปาร์ตี้">
+                            <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded transition font-bold" title="นำออกจากปาร์ตี้">
                                 ✕
                             </button>
                         ` : ''}
@@ -870,6 +879,7 @@
                     const isSelected = selectedMember && selectedMember.name === m.name && selectedMember.source === 'waitlist';
                     const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
                     const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
+                    const encodedName = encodeURIComponent(m.name || m.uid || '');
 
                     return `
                         <div draggable="${canEditParties}" 
@@ -878,14 +888,21 @@
                              onclick="handleWaitlistMemberClick('${m.name}')"
                              class="member-chip ${isSelected ? 'selected-source' : 'bg-white'} rounded-xl p-2.5 flex items-center justify-between border border-amber-200 hover:border-amber-400 shadow-sm">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${m.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
+                                <button type="button" 
+                                        draggable="false"
+                                        onmousedown="event.stopPropagation();"
+                                        onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
+                                        class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
+                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (m.charClass || '')}">
+                                    ${icon}
+                                </button>
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <p class="text-xs font-bold text-stone-900 truncate">${m.name}</p>
                                         ${char2Badge}
-                                        <button type="button" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
+                                        <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     </div>
-                                    <p class="text-[10px] text-amber-800">${m.charClass || '-'} • CP: ${cpText}</p>
+                                    <p class="text-[10px] text-amber-800 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${m.charClass || '-'} • CP: ${cpText}</p>
                                 </div>
                             </div>
                             <span class="text-[10px] ${isSelected ? 'bg-amber-500 text-white' : 'text-amber-900 bg-amber-100'} px-2 py-0.5 rounded border border-amber-300 font-bold shrink-0">
@@ -906,6 +923,7 @@
                     const isProfileLeave = (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0');
                     const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
                     const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
+                    const encodedName = encodeURIComponent(m.name || m.uid || '');
 
                     return `
                         <div draggable="${canEditParties}" 
@@ -913,19 +931,26 @@
                              ondragend="handleDragEnd(event)"
                              class="member-chip bg-white rounded-xl p-2 flex items-center justify-between border border-rose-200 hover:border-rose-400 shadow-sm">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="shrink-0 ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 transition-transform' : ''}" ${canEditParties ? `onclick="event.stopPropagation(); openChangeClassModal('${m.name}')" title="คลิกเพื่อเปลี่ยนอาชีพ"` : ''}>${icon}</span>
+                                <button type="button" 
+                                        draggable="false"
+                                        onmousedown="event.stopPropagation();"
+                                        onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
+                                        class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
+                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (m.charClass || '')}">
+                                    ${icon}
+                                </button>
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <p class="text-xs font-bold text-rose-950 truncate">${m.name}</p>
                                         ${char2Badge}
-                                        <button type="button" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-rose-500 hover:text-rose-700 text-xs px-1 py-0.5 rounded hover:bg-rose-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
+                                        <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-rose-500 hover:text-rose-700 text-xs px-1 py-0.5 rounded hover:bg-rose-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                         ${isProfileLeave ? `<span class="text-[9px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.2 rounded font-bold shrink-0">🏖️ ลาในโปรไฟล์</span>` : ''}
                                     </div>
-                                    <p class="text-[10px] text-rose-700">${m.charClass || '-'}</p>
+                                    <p class="text-[10px] text-rose-700 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${m.charClass || '-'}</p>
                                 </div>
                             </div>
                             ${canEditParties ? `
-                                <button onclick="returnFromLeave('${m.name}')" class="text-stone-600 hover:text-stone-900 text-xs px-2 py-0.5 rounded bg-stone-100 hover:bg-amber-100 font-bold transition" title="กลับไป Waitlist">
+                                <button onmousedown="event.stopPropagation();" onclick="returnFromLeave('${m.name}')" class="text-stone-600 hover:text-stone-900 text-xs px-2 py-0.5 rounded bg-stone-100 hover:bg-amber-100 font-bold transition" title="กลับไป Waitlist">
                                     คืนค่า
                                 </button>
                             ` : ''}
@@ -1419,7 +1444,12 @@
                 return;
             }
 
-            const member = allGuildMembers.find(m => m.name === memberName || m.uid === memberName);
+            let decodedName = memberName;
+            try {
+                decodedName = decodeURIComponent(memberName);
+            } catch(e) {}
+
+            const member = allGuildMembers.find(m => m.name === decodedName || m.uid === decodedName || m.name === memberName || m.uid === memberName);
             if (!member) {
                 alert('ไม่พบข้อมูลสมาชิกท่านนี้');
                 return;
