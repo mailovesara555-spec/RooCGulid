@@ -447,32 +447,35 @@
         </div>
     </div>
 
-    <!-- Modal เลือกเปลี่ยนสายอาชีพ (สำหรับผู้จัดการขึ้นไปคลิกเปลี่ยนอาชีพได้โดยตรง) -->
+    <!-- Modal เลือกเปลี่ยนสายอาชีพเฉพาะในผังจัดปาร์ตี้ (ไม่มีผลต่อโปรไฟล์หลัก) -->
     <div id="changeClassModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="roo-card w-full max-w-xl rounded-3xl p-6 sm:p-7 relative bg-white border-2 border-amber-400 shadow-2xl animate-fade-in">
             <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-4">
                 <div>
                     <h3 class="text-base font-extrabold text-amber-950 flex items-center gap-2">
-                        <span>🔄</span> เลือกเปลี่ยนสายอาชีพ
+                        <span>🔄</span> เลือกเปลี่ยนสายอาชีพ (เฉพาะในผังปาร์ตี้นี้)
                     </h3>
                     <p class="text-xs text-stone-500 mt-0.5">
                         สมาชิก: <strong id="changeClassMemberName" class="text-amber-900 font-extrabold"></strong> 
-                        • อาชีพเดิม: <span id="changeClassCurrentClass" class="text-amber-800 font-bold"></span>
+                        • อาชีพในผังปัจจุบัน: <span id="changeClassCurrentClass" class="text-amber-800 font-bold"></span>
                     </p>
                 </div>
                 <button onclick="closeChangeClassModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
             </div>
 
-            <div class="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mb-4 flex items-center gap-2">
-                <span>💡</span> คลิกที่ไอคอนอาชีพด้านล่างเพื่อเปลี่ยนอาชีพของสมาชิกท่านนี้ทันที (สิทธิ์: ผู้จัดการขึ้นไป)
+            <div class="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mb-3 flex items-center gap-2">
+                <span>💡</span> เปลี่ยนอาชีพเฉพาะในผังจัดปาร์ตี้นี้ <b>(ไม่มีผลกระทบต่ออาชีพหลักในหน้าข้อมูลส่วนตัว)</b>
             </div>
 
+            <!-- ปุ่มคืนค่าเป็นอาชีพหลัก (แสดงเมื่อมีการเปลี่ยนอาชีพในผัง) -->
+            <div id="changeClassResetContainer" class="hidden mb-3"></div>
+
             <!-- Grid 15 อาชีพ -->
-            <div id="changeClassGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-[60vh] overflow-y-auto p-1">
+            <div id="changeClassGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-[55vh] overflow-y-auto p-1">
                 <!-- Javascript will render 15 class cards here -->
             </div>
 
-            <div class="flex items-center justify-end mt-5 pt-3 border-t border-amber-200">
+            <div class="flex items-center justify-end mt-4 pt-3 border-t border-amber-200">
                 <button onclick="closeChangeClassModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition">
                     ยกเลิก / ปิด
                 </button>
@@ -783,7 +786,8 @@
             const hasActiveSelection = !!selectedMember || !!draggedMember;
 
             if (member) {
-                const icon = getClassIconHtml(member.charClass, 'w-6 h-6');
+                const effectiveClass = getMemberPartyClass(member);
+                const icon = getClassIconHtml(effectiveClass, 'w-6 h-6');
                 const isLeave = isMemberOnLeave(member);
                 const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
                 const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
@@ -805,7 +809,7 @@
                                     onmousedown="event.stopPropagation();"
                                     onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
                                     class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
-                                    title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (member.charClass || '')}">
+                                    title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
                                 ${icon}
                             </button>
                             <div class="min-w-0">
@@ -815,7 +819,7 @@
                                     <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
-                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${member.charClass || '-'}</p>
+                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</p>
                             </div>
                         </div>
                         ${canEditParties ? `
@@ -865,7 +869,9 @@
 
             // Render Waitlist
             const filteredWaitlist = waitlist.filter(m => {
+                const effClass = getMemberPartyClass(m);
                 return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
+                       (effClass && effClass.toLowerCase().includes(searchKeyword)) ||
                        (m.charClass && m.charClass.toLowerCase().includes(searchKeyword));
             });
             filteredWaitlist.sort((a, b) => getMemberCp(b) - getMemberCp(a));
@@ -874,7 +880,8 @@
                 waitlistContainer.innerHTML = `<div class="text-center py-8 text-xs text-stone-400">ไม่มีสมาชิกใน Waitlist</div>`;
             } else {
                 waitlistContainer.innerHTML = filteredWaitlist.map(m => {
-                    const icon = getClassIconHtml(m.charClass, 'w-7 h-7');
+                    const effectiveClass = getMemberPartyClass(m);
+                    const icon = getClassIconHtml(effectiveClass, 'w-7 h-7');
                     const cpText = (m.stats && m.stats.cp) ? Number(m.stats.cp).toLocaleString() : '-';
                     const isSelected = selectedMember && selectedMember.name === m.name && selectedMember.source === 'waitlist';
                     const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
@@ -893,7 +900,7 @@
                                         onmousedown="event.stopPropagation();"
                                         onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
                                         class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
-                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (m.charClass || '')}">
+                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
                                     ${icon}
                                 </button>
                                 <div class="min-w-0">
@@ -902,7 +909,7 @@
                                         ${char2Badge}
                                         <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     </div>
-                                    <p class="text-[10px] text-amber-800 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${m.charClass || '-'} • CP: ${cpText}</p>
+                                    <p class="text-[10px] text-amber-800 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'} • CP: ${cpText}</p>
                                 </div>
                             </div>
                             <span class="text-[10px] ${isSelected ? 'bg-amber-500 text-white' : 'text-amber-900 bg-amber-100'} px-2 py-0.5 rounded border border-amber-300 font-bold shrink-0">
@@ -919,7 +926,8 @@
                 leaveContainer.innerHTML = `<div class="text-center py-6 text-xs text-rose-400 font-medium">ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม</div>`;
             } else {
                 leaveContainer.innerHTML = leaveList.map(m => {
-                    const icon = getClassIconHtml(m.charClass, 'w-6 h-6');
+                    const effectiveClass = getMemberPartyClass(m);
+                    const icon = getClassIconHtml(effectiveClass, 'w-6 h-6');
                     const isProfileLeave = (m.active === false || m.active === 'false' || m.active === 0 || m.active === '0');
                     const isChar2 = m.isChar2 || (m.uid && m.uid.includes('(ตัวที่ 2)'));
                     const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
@@ -936,7 +944,7 @@
                                         onmousedown="event.stopPropagation();"
                                         onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
                                         class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
-                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพ' : (m.charClass || '')}">
+                                        title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
                                     ${icon}
                                 </button>
                                 <div class="min-w-0">
@@ -946,7 +954,7 @@
                                         <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-rose-500 hover:text-rose-700 text-xs px-1 py-0.5 rounded hover:bg-rose-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                         ${isProfileLeave ? `<span class="text-[9px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.2 rounded font-bold shrink-0">🏖️ ลาในโปรไฟล์</span>` : ''}
                                     </div>
-                                    <p class="text-[10px] text-rose-700 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพ' : ''}">${m.charClass || '-'}</p>
+                                    <p class="text-[10px] text-rose-700 ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</p>
                                 </div>
                             </div>
                             ${canEditParties ? `
@@ -1163,6 +1171,17 @@
             }
         }
 
+        let partyCustomClasses = {};
+
+        function getMemberPartyClass(member) {
+            if (!member) return '-';
+            const safeKey = getFirebaseUidKey(member.name || member.uid);
+            if (partyCustomClasses && (partyCustomClasses[safeKey] || partyCustomClasses[member.name])) {
+                return partyCustomClasses[safeKey] || partyCustomClasses[member.name];
+            }
+            return member.charClass || '-';
+        }
+
         function autoFillParties() {
             if (!canEditParties) return;
             
@@ -1204,7 +1223,7 @@
                 const indicator = document.getElementById('saveStatusIndicator');
                 indicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> กำลังบันทึก...';
 
-                db.ref(`partyLineups/${currentMode}`).set({
+                db.ref(`partyLineups/${currentMode}`).update({
                     parties: partyAssignments,
                     leave: leaveMembers,
                     lastUpdated: new Date().toISOString(),
@@ -1238,9 +1257,11 @@
                 if (data && data.parties) {
                     partyAssignments = ensureAllPartiesStructure(data.parties);
                     leaveMembers = data.leave || [];
+                    partyCustomClasses = data.customClasses || {};
                 } else {
                     partyAssignments = initEmptyParties();
                     leaveMembers = [];
+                    partyCustomClasses = (data && data.customClasses) ? data.customClasses : {};
                 }
                 renderPartiesGrid();
                 renderWaitlistAndLeave();
@@ -1300,8 +1321,8 @@
                     const memberName = pData[`slot${s}`];
                     if (memberName) {
                         const m = allGuildMembers.find(x => x.name === memberName);
-                        const cName = m ? m.charClass || '' : '';
-                        const icon = m ? (CLASS_TEXT_EMOJIS[m.charClass] || '👤') : '👤';
+                        const cName = m ? getMemberPartyClass(m) : '';
+                        const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
                         text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
                     } else {
                         text += `  Slot ${s}: [ว่าง]\n`;
@@ -1320,8 +1341,8 @@
                     const memberName = pData[`slot${s}`];
                     if (memberName) {
                         const m = allGuildMembers.find(x => x.name === memberName);
-                        const cName = m ? m.charClass || '' : '';
-                        const icon = m ? (CLASS_TEXT_EMOJIS[m.charClass] || '👤') : '👤';
+                        const cName = m ? getMemberPartyClass(m) : '';
+                        const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
                         text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
                     } else {
                         text += `  Slot ${s}: [ว่าง]\n`;
@@ -1428,16 +1449,6 @@
             { name: 'Rebellion', icon: 'images/classes/rebellion.webp' }
         ];
 
-        function getFirebaseUidKey(uid) {
-            if (!uid) return 'unknown_user';
-            const str = String(uid).trim();
-            if (str.includes('(ตัวที่ 2)')) {
-                const base = str.replace(/\s*\(ตัวที่ 2\)/g, '').trim();
-                return `${base.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_')}__char2`;
-            }
-            return str.replace(/\./g, '__dot__').replace(/[#$\[\]\/]/g, '_');
-        }
-
         function openChangeClassModal(memberName) {
             if (!canEditParties) {
                 alert('⚠️ เฉพาะผู้จัดการ, รองหัวหน้ากิลด์, หัวหน้ากิลด์ หรือ Admin เท่านั้นที่มีสิทธิ์เปลี่ยนอาชีพสมาชิก');
@@ -1459,12 +1470,32 @@
 
             const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
             const char2Badge = isChar2 ? ' (ตัวที่ 2)' : '';
+            const effectiveClass = getMemberPartyClass(member);
+            const originalProfileClass = member.charClass || 'ไม่ระบุ';
+
             document.getElementById('changeClassMemberName').innerText = `${member.name}${char2Badge}`;
-            document.getElementById('changeClassCurrentClass').innerText = member.charClass || 'ไม่ระบุ';
+            document.getElementById('changeClassCurrentClass').innerText = effectiveClass;
+
+            const resetContainer = document.getElementById('changeClassResetContainer');
+            if (resetContainer) {
+                const safeKey = getFirebaseUidKey(member.name || member.uid);
+                const hasCustomClass = partyCustomClasses && (partyCustomClasses[safeKey] || partyCustomClasses[member.name]);
+                if (hasCustomClass) {
+                    resetContainer.innerHTML = `
+                        <button type="button" onclick="resetToOriginalClass()" class="text-xs bg-stone-100 hover:bg-rose-50 text-stone-700 hover:text-rose-700 border border-stone-300 hover:border-rose-300 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                            🔄 คืนค่าเป็นอาชีพหลักตามโปรไฟล์ (${originalProfileClass})
+                        </button>
+                    `;
+                    resetContainer.classList.remove('hidden');
+                } else {
+                    resetContainer.innerHTML = '';
+                    resetContainer.classList.add('hidden');
+                }
+            }
 
             const grid = document.getElementById('changeClassGrid');
             grid.innerHTML = AVAILABLE_CLASSES.map(cls => {
-                const cur = (member.charClass || '').toLowerCase().trim();
+                const cur = (effectiveClass || '').toLowerCase().trim();
                 const isCurrent = cur === cls.name.toLowerCase() ||
                                   (cls.name === 'High Wizard' && cur === 'wizard') ||
                                   (cls.name === 'High Priest' && cur === 'priest') ||
@@ -1482,10 +1513,10 @@
 
                 return `
                     <button type="button" onclick="selectNewClass('${cls.name}')" 
-                            class="flex flex-col items-center justify-center p-2.5 rounded-2xl border transition-all ${isCurrent ? 'bg-amber-100/90 border-2 border-amber-500 shadow-md ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 hover:border-amber-400 hover:scale-105 border-stone-200 shadow-sm'}">
-                        <img src="${cls.icon}" class="w-10 h-10 object-contain drop-shadow mb-1.5" alt="${cls.name}">
+                            class="flex flex-col items-center justify-center p-2.5 rounded-2xl border transition-all ${isCurrent ? 'bg-amber-100/90 border-2 border-amber-500 shadow-md ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 hover:border-amber-400 hover:scale-105 border-stone-200 shadow-sm cursor-pointer'}">
+                        <img src="${cls.icon}" class="w-10 h-10 object-contain drop-shadow mb-1.5 pointer-events-none select-none" alt="${cls.name}">
                         <span class="text-[11px] font-bold ${isCurrent ? 'text-amber-950 font-extrabold' : 'text-stone-800'} text-center leading-tight">${cls.name}</span>
-                        ${isCurrent ? '<span class="text-[8px] mt-1 bg-amber-500 text-white px-1.5 py-0.2 rounded-full font-bold">ปัจจุบัน</span>' : ''}
+                        ${isCurrent ? '<span class="text-[8px] mt-1 bg-amber-500 text-white px-1.5 py-0.2 rounded-full font-bold">ปัจจุบันในผัง</span>' : ''}
                     </button>
                 `;
             }).join('');
@@ -1501,12 +1532,25 @@
         function selectNewClass(newClassName) {
             if (!targetClassChangeMember) return;
             const member = targetClassChangeMember;
-            const key = member.firebaseKey || getFirebaseUidKey(member.uid || member.name);
+            const safeKey = getFirebaseUidKey(member.name || member.uid);
 
-            db.ref('members/' + key + '/charClass').set(newClassName).then(() => {
+            // บันทึกเฉพาะในผังจัดปาร์ตี้ของโหมดปัจจุบัน (ไม่แก้ไขโปรไฟล์หลักใน members)
+            db.ref(`partyLineups/${currentMode}/customClasses/${safeKey}`).set(newClassName).then(() => {
                 closeChangeClassModal();
             }).catch(err => {
                 alert('❌ เกิดข้อผิดพลาดในการเปลี่ยนอาชีพ: ' + err.message);
+            });
+        }
+
+        function resetToOriginalClass() {
+            if (!targetClassChangeMember) return;
+            const member = targetClassChangeMember;
+            const safeKey = getFirebaseUidKey(member.name || member.uid);
+
+            db.ref(`partyLineups/${currentMode}/customClasses/${safeKey}`).remove().then(() => {
+                closeChangeClassModal();
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
             });
         }
     </script>
