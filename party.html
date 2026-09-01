@@ -931,40 +931,40 @@
                     : '';
 
                 // Card Auction Badges and Transfer Controls
-                let countBadge = `<span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2 py-0.5 rounded-full border">${pCount}/5</span>`;
+                let countBadge = `<span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-1.5 py-0.5 rounded border whitespace-nowrap">${pCount}/5</span>`;
                 let transferBtn = '';
 
                 if (isCardAuction) {
                     if (pCount === 5) {
-                        countBadge = `<span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 border-emerald-300 px-2 py-0.5 rounded-full border shadow-2xs">✅ พร้อมประมูล (5/5)</span>`;
+                        countBadge = `<span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 border-emerald-300 px-1.5 py-0.5 rounded border shadow-2xs whitespace-nowrap">✅ 5/5</span>`;
                     } else {
-                        countBadge = `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 border-amber-300 px-2 py-0.5 rounded-full border shadow-2xs" title="ต้องมีสมาชิกครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้">⚠️ ไม่ครบ 5 คน (${pCount}/5)</span>`;
+                        countBadge = `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 border-amber-300 px-1.5 py-0.5 rounded border shadow-2xs whitespace-nowrap" title="ต้องมีสมาชิกครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้">⚠️ ${pCount}/5</span>`;
                     }
 
                     if (canEditParties && pCount > 0) {
                         const isTransferred = (partyTransfers && partyTransfers[pKey]);
                         transferBtn = `
                             <button onclick="openTransferModal('${pKey}')" 
-                                    class="text-[10px] ${isTransferred ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-emerald-300' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300'} font-bold px-2 py-0.5 rounded-lg border transition flex items-center gap-1 shadow-2xs cursor-pointer" 
+                                    class="text-[10px] ${isTransferred ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'} font-bold px-1.5 py-0.5 rounded border transition flex items-center gap-0.5 shadow-2xs whitespace-nowrap cursor-pointer" 
                                     title="โอนสิทธิ์การประมูลการ์ด">
-                                🔄 โอนสิทธิ์ ${isTransferred ? '⭐' : ''}
+                                🔄 โอน ${isTransferred ? '⭐' : ''}
                             </button>
                         `;
                     }
                 }
 
                 card.innerHTML = `
-                    <div class="flex items-start justify-between pb-1.5 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'}">
-                        <div>
-                            <h4 class="text-xs font-bold ${isSubTeam ? 'text-indigo-950' : 'text-amber-900'} flex items-center gap-1.5">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-extrabold border ${numBadgeClass}">
-                                    ${pNum}
-                                </span>
+                    <div class="flex items-center justify-between pb-2 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'} gap-1">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-black border ${numBadgeClass} shrink-0 shadow-2xs">
+                                ${pNum}
+                            </span>
+                            <span class="text-xs font-black ${isSubTeam ? 'text-indigo-950' : 'text-amber-950'} whitespace-nowrap">
                                 Party ${pNum}
-                            </h4>
+                            </span>
                             ${subTeamLabel}
                         </div>
-                        <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                        <div class="flex items-center gap-1 shrink-0">
                             ${transferBtn}
                             ${countBadge}
                         </div>
@@ -1000,10 +1000,10 @@
 
             if (member) {
                 const effectiveClass = getMemberPartyClass(member);
-                const icon = getClassIconHtml(effectiveClass, 'w-6 h-6');
+                const icon = getClassIconHtml(effectiveClass, 'w-5 h-5');
                 const isLeave = isMemberOnLeave(member);
                 const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
-                const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
+                const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0" title="ตัวที่ 2">✌️2</span>' : '';
                 const encodedName = encodeURIComponent(member.name || member.uid || '');
 
                 const hasCard = isCardAuction && hasCardIcon(member.name);
@@ -1011,13 +1011,13 @@
                 const nextGuildItem = isCardAuction ? getNextGuildCardReceiver() : null;
                 const isNextInGuild = nextGuildItem && nextGuildItem.memberName === member.name;
 
-                const cardIconBadge = hasCard ? `<span title="ได้รับการ์ดในรอบนี้แล้ว (ล็อกไม่สามารถย้ายปาร์ตี้ได้จนกว่าจะจบรอบ)" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold inline-flex items-center gap-0.5 shadow-2xs cursor-help"><img src="images/item_card.png" class="w-3.5 h-3.5 object-contain" alt="การ์ด"> 🃏</span>` : '';
+                const cardIconBadge = hasCard ? `<span title="ได้รับการ์ดในรอบนี้แล้ว (ล็อกไม่สามารถย้ายปาร์ตี้ได้จนกว่าจะจบรอบ)" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.2 rounded font-extrabold inline-flex items-center gap-0.5 shadow-2xs shrink-0 cursor-help"><img src="images/item_card.png" class="w-3 h-3 object-contain" alt="การ์ด"> 🃏</span>` : '';
                 
                 let rightBadge = '';
                 if (isNextInGuild) {
-                    rightBadge = `<span title="คิวอันดับที่ 1 ของกิลด์ที่กำลังจะได้รับการ์ด" class="text-[9px] bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 px-1.5 py-0.2 rounded font-extrabold shadow-sm inline-flex items-center gap-0.5 animate-pulse">⭐ คิวถัดไป</span>`;
+                    rightBadge = `<span title="คิวอันดับที่ 1 ของกิลด์ที่จะได้รับการ์ด" class="text-[9px] bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 px-1.5 py-0.2 rounded font-extrabold shadow-sm inline-flex items-center gap-0.5 shrink-0 animate-pulse">⭐ คิวถัดไป</span>`;
                 } else if (isRightHolder) {
-                    rightBadge = `<span title="สมาชิกท่านนี้มีสิทธิ์รับการ์ดของปาร์ตี้นี้" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold shadow-2xs inline-flex items-center gap-0.5">🎯 สิทธิ์ในตี้</span>`;
+                    rightBadge = `<span title="สมาชิกท่านนี้มีสิทธิ์รับการ์ดของปาร์ตี้นี้" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold shadow-2xs inline-flex items-center gap-0.5 shrink-0">🎯 สิทธิ์ในตี้</span>`;
                 }
 
                 const isDraggable = canEditParties && !hasCard;
@@ -1033,33 +1033,39 @@
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
                          ${lockTooltip}
-                         class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isRightHolder ? 'ring-2 ring-amber-400/90 bg-amber-50/90' : ''} ${hasCard ? 'bg-amber-50/40 border-amber-300/80' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <button type="button" 
-                                    draggable="false"
-                                    onmousedown="event.stopPropagation();"
-                                    onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
-                                    class="shrink-0 p-0.5 rounded-full transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-125 active:scale-95 hover:ring-2 hover:ring-amber-400 hover:bg-amber-100/60' : 'cursor-default'}" 
-                                    title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
-                                ${icon}
-                            </button>
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-1 flex-wrap">
-                                    <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
+                         class="slot-box filled ${isLeave ? 'border-rose-400 bg-rose-50/90' : ''} ${isNextInGuild ? 'ring-2 ring-amber-500 border-amber-400 bg-amber-50/90 shadow-sm' : (isRightHolder ? 'ring-1 ring-amber-300 border-amber-300 bg-amber-50/50' : '')} ${hasCard ? 'bg-amber-50/30 border-amber-200' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl px-2.5 py-2 flex items-center gap-2 min-h-[54px] group transition-all">
+                        <button type="button" 
+                                draggable="false"
+                                onmousedown="event.stopPropagation();"
+                                onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
+                                class="shrink-0 w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/80 flex items-center justify-center p-0.5 transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-110 hover:border-amber-400 hover:bg-amber-100' : 'cursor-default'}" 
+                                title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
+                            ${icon}
+                        </button>
+                        <div class="min-w-0 flex-1 flex flex-col justify-center">
+                            <!-- แถวที่ 1: ชื่อตัวละคร (ชัดเจน ไม่ทับซ้อน) + ป้ายตัวที่ 2 + ไอคอนการ์ด + 🔍 + นำออก/ล็อก -->
+                            <div class="flex items-center justify-between gap-1">
+                                <div class="flex items-center gap-1 min-w-0">
+                                    <span class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</span>
                                     ${char2Badge}
                                     ${cardIconBadge}
+                                </div>
+                                <div class="flex items-center gap-0.5 shrink-0">
+                                    <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-0.5 py-0.2 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
+                                    ${canEditParties && !hasCard ? `
+                                        <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1 py-0.2 rounded transition font-bold" title="นำออกจากปาร์ตี้">✕</button>
+                                    ` : (hasCard ? `<span class="text-xs text-amber-500 font-bold opacity-60" title="ล็อกไม่สามารถนำออกได้จนกว่าจบรอบ">🔒</span>` : '')}
+                                </div>
+                            </div>
+                            <!-- แถวที่ 2: อาชีพตัวละคร + ป้ายสิทธิ์รับการ์ด / ลากิจกรรม -->
+                            <div class="flex items-center justify-between gap-1 mt-0.5">
+                                <span class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-stone-500'} font-medium truncate ${canEditParties ? 'cursor-pointer hover:text-amber-700 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</span>
+                                <div class="flex items-center gap-1 shrink-0">
                                     ${rightBadge}
-                                    <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
-                                <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</p>
                             </div>
                         </div>
-                        ${canEditParties && !hasCard ? `
-                            <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded transition font-bold" title="นำออกจากปาร์ตี้">
-                                ✕
-                            </button>
-                        ` : (hasCard ? `<span class="text-xs text-amber-500 font-bold opacity-60" title="ล็อกไม่สามารถนำออกได้จนกว่าจบรอบ">🔒</span>` : '')}
                     </div>
                 `;
             } else {
@@ -1069,7 +1075,7 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box rounded-xl p-2 text-center text-stone-400 text-[11px] font-medium min-h-[42px] flex items-center justify-center transition-all ${hasActiveSelection ? 'bg-amber-50/90 border-amber-400 hover:bg-amber-100 hover:scale-105' : 'hover:border-amber-400 hover:bg-amber-50/50'}">
+                         class="slot-box rounded-xl px-2 py-1.5 text-center text-stone-400 text-[11px] font-medium min-h-[54px] flex items-center justify-center transition-all ${hasActiveSelection ? 'bg-amber-50/90 border-amber-400 hover:bg-amber-100 hover:scale-[1.01]' : 'hover:border-amber-400 hover:bg-amber-50/50'}">
                         <span class="${hasActiveSelection ? 'text-amber-800 font-bold text-xs' : 'text-stone-400'}">
                             ${hasActiveSelection ? '➕ วางที่นี่' : `Slot ${sNum}`}
                         </span>
