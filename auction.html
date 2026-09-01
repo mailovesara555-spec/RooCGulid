@@ -248,9 +248,12 @@
                         </button>
                     </div>
 
-                    <!-- แท็บเลือกดูคิวแยกตามไอเทม (ขนขาว / ขนดำ / ทั้งหมด) -->
+                    <!-- แท็บเลือกดูคิวแยกตามไอเทม (การ์ด / ขนขาว / ขนดำ / ทั้งหมด) -->
                     <div class="flex items-center gap-1.5 mb-2.5 overflow-x-auto pb-1 text-xs">
-                        <button type="button" onclick="setQueueTab('white')" id="qTab_white" class="px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-sky-500 text-white shadow-sm border border-sky-600">
+                        <button type="button" onclick="setQueueTab('card')" id="qTab_card" class="px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-amber-500 text-white shadow-sm border border-amber-600">
+                            🃏 การ์ด (ปาร์ตี้)
+                        </button>
+                        <button type="button" onclick="setQueueTab('white')" id="qTab_white" class="px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-white text-stone-700 hover:bg-stone-100 border border-stone-200">
                             🕊️ ขนขาว
                         </button>
                         <button type="button" onclick="setQueueTab('black')" id="qTab_black" class="px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-white text-stone-700 hover:bg-stone-100 border border-stone-200">
@@ -546,6 +549,14 @@
             updateProgressBadges();
         });
 
+        // ฟังข้อมูลปาร์ตี้ประมูลการ์ด
+        let cardAuctionPartiesData = { parties: {}, transfers: {} };
+        db.ref('partyLineups/cardAuction').on('value', (snapshot) => {
+            cardAuctionPartiesData = snapshot.val() || { parties: {}, transfers: {} };
+            renderMemberPreview();
+            updateProgressBadges();
+        });
+
         // ฟังสถานะรอบประมูล
         db.ref('auctionState').on('value', (snapshot) => {
             currentAuctionState = snapshot.val() || { cardHolders: [], whiteHolders: [], blackHolders: [] };
@@ -553,19 +564,20 @@
             updateProgressBadges();
         });
 
-        let activeQueueTab = 'white';
+        let activeQueueTab = 'card';
 
         function setQueueTab(tab) {
             activeQueueTab = tab;
-            ['white', 'black', 'all'].forEach(t => {
+            ['card', 'white', 'black', 'all'].forEach(t => {
                 const btn = document.getElementById(`qTab_${t}`);
                 if (!btn) return;
                 if (t === tab) {
-                    if (t === 'white') btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-sky-500 text-white shadow-sm border border-sky-600";
+                    if (t === 'card') btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-amber-500 text-white shadow-sm border border-amber-600";
+                    else if (t === 'white') btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-sky-500 text-white shadow-sm border border-sky-600";
                     else if (t === 'black') btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-stone-700 text-white shadow-sm border border-stone-800";
                     else btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-amber-700 text-white shadow-sm border border-amber-800";
                 } else {
-                    btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-white text-stone-700 hover:bg-amber-50 border border-stone-200";
+                    btn.className = "px-2.5 py-1 rounded-lg font-bold transition text-xs flex items-center gap-1 bg-white text-stone-700 hover:bg-stone-100 border border-stone-200";
                 }
             });
             renderMemberPreview();
@@ -577,6 +589,127 @@
 
             if (sortedGuildMembers.length === 0) {
                 preview.innerHTML = '<span class="text-stone-400">ยังไม่มีสมาชิกในระบบ</span>';
+                return;
+            }
+
+            if (activeQueueTab === 'card') {
+                const parties = (cardAuctionPartiesData && cardAuctionPartiesData.parties) ? cardAuctionPartiesData.parties : {};
+                const transfers = (cardAuctionPartiesData && cardAuctionPartiesData.transfers) ? cardAuctionPartiesData.transfers : {};
+                const cardHolders = currentAuctionState.cardHolders || [];
+
+                let eligibleParties = [];
+                for (let pNum = 1; pNum <= 16; pNum++) {
+                    const pKey = `p${pNum}`;
+                    const pData = parties[pKey] || {};
+                    const members = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+                    if (members.length === 5) {
+                        eligibleParties.push({
+                            pKey: pKey,
+                            pNum: pNum,
+                            members: members,
+                            transferTarget: transfers[pKey] || null
+                        });
+                    }
+                }
+
+                if (eligibleParties.length === 0) {
+                    preview.innerHTML = `<div class="text-amber-800 bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs font-bold text-center">⚠️ ยังไม่มีปาร์ตี้ที่มีสมาชิกครบ 5 คน (ต้องมีครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้)</div>`;
+                    return;
+                }
+
+                // สร้างลำดับคิวแบบกระจายรอบปาร์ตี้ (Slot 1 ทุกปาร์ตี้ -> Slot 2 ทุกปาร์ตี้ -> ... -> Slot 5 ทุกปาร์ตี้)
+                let partyQueues = {};
+                eligibleParties.forEach(p => {
+                    let pOrder = [];
+                    if (p.transferTarget && p.members.includes(p.transferTarget)) {
+                        pOrder.push(p.transferTarget);
+                        p.members.forEach(m => {
+                            if (!pOrder.includes(m)) pOrder.push(m);
+                        });
+                    } else if (p.transferTarget) {
+                        pOrder.push(p.transferTarget);
+                        p.members.forEach(m => pOrder.push(m));
+                    } else {
+                        pOrder = [...p.members];
+                    }
+                    partyQueues[p.pKey] = pOrder;
+                });
+
+                let fullQueue = [];
+                for (let sIdx = 0; sIdx < 5; sIdx++) {
+                    for (let p of eligibleParties) {
+                        const mName = partyQueues[p.pKey][sIdx];
+                        if (mName) {
+                            fullQueue.push({
+                                partyKey: p.pKey,
+                                partyNum: p.pNum,
+                                slotNum: sIdx + 1,
+                                memberName: mName
+                            });
+                        }
+                    }
+                }
+
+                const pendingQueue = fullQueue.filter(item => !cardHolders.includes(item.memberName));
+                const doneQueue = fullQueue.filter(item => cardHolders.includes(item.memberName));
+
+                let partyRows = eligibleParties.map(p => {
+                    const transferTarget = p.transferTarget;
+                    let rightHolder = partyQueues[p.pKey].find(m => !cardHolders.includes(m)) || partyQueues[p.pKey][0];
+
+                    return `
+                        <div class="p-2.5 rounded-xl border bg-amber-50/70 border-amber-300 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-extrabold text-amber-950 text-xs flex items-center gap-1">
+                                    <span>🃏</span> Party ${p.pNum}
+                                </span>
+                                <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-300">✅ พร้อมประมูล (5/5)</span>
+                            </div>
+                            <div class="text-[11px] text-stone-700">
+                                <b>สิทธิ์รอบถัดไป:</b> <span class="text-amber-900 font-extrabold bg-amber-100 px-1.5 py-0.2 rounded border border-amber-300">${rightHolder || '-'}</span>
+                                ${transferTarget ? '<span class="text-[9px] text-emerald-700 font-bold ml-1">(โอนสิทธิ์ ⭐)</span>' : ''}
+                            </div>
+                            <div class="flex flex-wrap gap-1 pt-1 text-[10px]">
+                                ${p.members.map((m, sIdx) => {
+                                    const gotCard = cardHolders.includes(m);
+                                    const isTarget = (m === rightHolder);
+                                    let tagClass = isTarget ? 'bg-amber-500 text-white font-extrabold shadow-2xs' : (gotCard ? 'bg-amber-100 text-amber-900 line-through border border-amber-200 opacity-75' : 'bg-white text-stone-700 border border-stone-200');
+                                    return `<span class="px-1.5 py-0.2 rounded ${tagClass}">${sIdx+1}.${m}${gotCard ? ' 🃏' : ''}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                preview.innerHTML = `
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-bold text-amber-950 mb-1.5">
+                                <span>🃏 ลำดับคิวรับการ์ด (กระจายครบทุกปาร์ตี้ก่อนแล้ววนกลับมา Party 1):</span>
+                                <span class="text-[10px] text-amber-700 font-semibold">เหลืออีก ${pendingQueue.length} คิว</span>
+                            </div>
+                            ${pendingQueue.length > 0 ? `
+                                <div class="flex flex-wrap gap-1 max-h-36 overflow-y-auto p-1 bg-amber-50/50 rounded-xl border border-amber-200">
+                                    ${pendingQueue.map((item, idx) => {
+                                        let highlight = idx === 0 ? 'ring-2 ring-amber-500 bg-amber-200/90 text-amber-950 font-extrabold shadow-sm' : 'bg-white text-stone-800 border border-stone-200';
+                                        return `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${highlight}"><b class="text-amber-800">P${item.partyNum}</b> (คนที่ ${item.slotNum}): ${item.memberName}</span>`;
+                                    }).join('')}
+                                </div>
+                            ` : `
+                                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-bold flex items-center gap-2">
+                                    <span>🎉</span> สมาชิกทุกคนในปาร์ตี้ประมูลได้รับการ์ดครบทุกคนแล้ว! รอบถัดไปจะเริ่มวนใหม่ตั้งแต่ Party 1
+                                </div>
+                            `}
+                        </div>
+
+                        <div class="pt-2 border-t border-amber-200">
+                            <div class="text-xs font-bold text-amber-950 mb-1.5">👥 สรุปปาร์ตี้ที่ครบ 5 คน (${eligibleParties.length} ปาร์ตี้):</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                ${partyRows.join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
@@ -673,23 +806,18 @@
             const wCount = (currentAuctionState.whiteHolders || []).length;
             const bCount = (currentAuctionState.blackHolders || []).length;
 
-            document.getElementById('cardRoundProgress').innerText = `รอบนี้ได้แล้ว ${cCount}/${total} คน`;
+            document.getElementById('cardRoundProgress').innerText = `รอบนี้ได้แล้ว ${cCount} คน (ตามปาร์ตี้)`;
             document.getElementById('whiteRoundProgress').innerText = `รอบนี้ได้แล้ว ${wCount}/${total} คน`;
             document.getElementById('blackRoundProgress').innerText = `รอบนี้ได้แล้ว ${bCount}/${total} คน`;
 
-            // Card Lock check: ล็อกจำนวนใบต่อคนหากรอบยังไม่จบ
+            // Card Lock check: ล็อกจำนวนใบต่อคนเป็น 1 ใบต่อปาร์ตี้เสมอ
             const cardInput = document.getElementById('cardAmount');
             const cardLockBadge = document.getElementById('cardLockBadge');
-            if (cCount > 0 && cCount < total) {
-                const lockedAmt = currentAuctionState.cardRoundAmount || 1;
-                cardInput.value = lockedAmt;
+            if (cardInput) {
+                cardInput.value = 1;
                 cardInput.disabled = true;
                 cardInput.classList.add('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
-                cardLockBadge.innerHTML = `<span class="text-[10px] text-amber-900 bg-amber-200/90 font-extrabold px-2 py-0.5 rounded border border-amber-300">🔒 ล็อก ${lockedAmt} ใบ/คน</span>`;
-            } else {
-                cardInput.disabled = false;
-                cardInput.classList.remove('bg-stone-100', 'text-stone-500', 'cursor-not-allowed');
-                cardLockBadge.innerHTML = `<span class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded border border-emerald-300">🔓 ตั้งค่ารอบใหม่ได้</span>`;
+                if (cardLockBadge) cardLockBadge.innerHTML = `<span class="text-[10px] text-amber-900 bg-amber-200/90 font-extrabold px-2 py-0.5 rounded border border-amber-300">👥 ปาร์ตี้ละ 1 ใบ (ครบ 5 คน)</span>`;
             }
 
             // White Feather Lock check
@@ -731,7 +859,7 @@
 
             let totalCount = itemChunks.reduce((sum, chunk) => sum + chunk.count, 0);
 
-            let themeColors = {
+            const themeColors = {
                 card: {
                     pageBadge: "bg-amber-100 text-amber-900 border-amber-300 font-bold",
                     slotText: "text-amber-950 font-bold",
@@ -772,6 +900,29 @@
                     </div>
                 </div>
             `;
+        }
+
+        // เรียงลำดับรายการผลการประมูลตามลำดับ หน้า & ใบที่ ได้รับจริง (หน้า 1 ใบที่ 1 -> หน้า 1 ใบที่ 2 -> ...)
+        function sortAllocationsList(list) {
+            if (!list || !Array.isArray(list)) return [];
+            
+            function getEarliestItemIndex(item) {
+                let minIndex = Infinity;
+                ['cardChunks', 'whiteChunks', 'blackChunks'].forEach((type, typeIdx) => {
+                    (item[type] || []).forEach(chunk => {
+                        let idx = (typeIdx * 100000) + ((chunk.page - 1) * 4) + (chunk.startSlot - 1);
+                        if (idx < minIndex) minIndex = idx;
+                    });
+                });
+                return minIndex;
+            }
+
+            return [...list].sort((a, b) => {
+                let idxA = getEarliestItemIndex(a);
+                let idxB = getEarliestItemIndex(b);
+                if (idxA !== idxB) return idxA - idxB;
+                return (a.name || '').localeCompare(b.name || '');
+            });
         }
 
         // 5. แสดงผลตาราง Real-time จาก Firebase
@@ -858,7 +1009,8 @@
             }
 
             tbody.innerHTML = '';
-            data.structuredAllocations.forEach((item, index) => {
+            const sortedList = sortAllocationsList(data.structuredAllocations);
+            sortedList.forEach((item, index) => {
                 const cardHtml = renderItemPill(item.cardChunks, 'card');
                 const whiteHtml = renderItemPill(item.whiteChunks, 'white');
                 const blackHtml = renderItemPill(item.blackChunks, 'black');
@@ -872,7 +1024,10 @@
                         </span>
                     </td>
                     <td class="py-4 px-4 font-bold text-stone-800 text-sm">
-                        <div class="text-base text-amber-950 font-extrabold">${item.name}</div>
+                        <div class="text-base text-amber-950 font-extrabold flex items-center gap-1.5 flex-wrap">
+                            <span>${item.name}</span>
+                            ${item.partyTag ? `<span class="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-1.5 py-0.2 rounded shadow-2xs">🃏 ${item.partyTag}</span>` : ''}
+                        </div>
                         <div class="text-xs text-stone-500 font-normal mt-0.5">${item.role || 'สมาชิกกิลด์'}</div>
                     </td>
                     <td class="py-3 px-3 min-w-[140px]">${cardHtml}</td>
@@ -910,6 +1065,178 @@
                 }
             });
             return merged;
+        }
+
+        // ฟังก์ชันจัดสรรการ์ดแบบปาร์ตี้ (กระจายครบทุกปาร์ตี้ก่อนแล้วจึงวนกลับมา Party 1 • ต้องครบ 5 คนเท่านั้น)
+        function allocatePartyCardRound(partyLineupsData, cardSupply, cardStartIndex, existingCardHolders) {
+            if (cardSupply <= 0) {
+                return {
+                    allocations: {},
+                    receivers: [],
+                    updatedHolders: existingCardHolders || [],
+                    partyAllocationsInfo: {},
+                    leftoverCount: 0,
+                    leftoverChunks: []
+                };
+            }
+
+            let parties = (partyLineupsData && partyLineupsData.parties) ? partyLineupsData.parties : {};
+            let transfers = (partyLineupsData && partyLineupsData.transfers) ? partyLineupsData.transfers : {};
+
+            let currentHolders = [...(existingCardHolders || [])];
+            let allocations = {};
+            let partyAllocationsInfo = {};
+            let receivers = [];
+
+            // 1. ค้นหาปาร์ตี้ที่ครบ 5 คน (Eligible Parties) เรียงตาม Party 1 ถึง Party 16
+            let eligibleParties = [];
+            for (let pNum = 1; pNum <= 16; pNum++) {
+                const pKey = `p${pNum}`;
+                const pData = parties[pKey] || {};
+                const members = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+                if (members.length === 5) {
+                    eligibleParties.push({
+                        pKey: pKey,
+                        pNum: pNum,
+                        members: members,
+                        transferTarget: transfers[pKey] || null
+                    });
+                }
+            }
+
+            // รวบรวมสมาชิกทั้งหมดในปาร์ตี้ที่ครบ 5 คน
+            let allEligibleMembers = [];
+            eligibleParties.forEach(p => {
+                p.members.forEach(m => {
+                    if (!allEligibleMembers.includes(m)) allEligibleMembers.push(m);
+                });
+            });
+
+            if (eligibleParties.length === 0) {
+                return {
+                    allocations: {},
+                    receivers: [],
+                    updatedHolders: currentHolders,
+                    partyAllocationsInfo: {},
+                    leftoverCount: cardSupply,
+                    leftoverChunks: []
+                };
+            }
+
+            // 2. สร้างลำดับคิวแบบกระจายรอบปาร์ตี้ (Slot 1 ทุกปาร์ตี้ -> Slot 2 ทุกปาร์ตี้ -> ... -> Slot 5 ทุกปาร์ตี้)
+            let partyQueues = {};
+            eligibleParties.forEach(p => {
+                let pOrder = [];
+                if (p.transferTarget && p.members.includes(p.transferTarget)) {
+                    pOrder.push(p.transferTarget);
+                    p.members.forEach(m => {
+                        if (!pOrder.includes(m)) pOrder.push(m);
+                    });
+                } else if (p.transferTarget) {
+                    pOrder.push(p.transferTarget);
+                    p.members.forEach(m => pOrder.push(m));
+                } else {
+                    pOrder = [...p.members];
+                }
+                partyQueues[p.pKey] = pOrder;
+            });
+
+            let fullQueue = [];
+            for (let sIdx = 0; sIdx < 5; sIdx++) {
+                for (let p of eligibleParties) {
+                    const mName = partyQueues[p.pKey][sIdx];
+                    if (mName) {
+                        fullQueue.push({
+                            partyKey: p.pKey,
+                            partyNum: p.pNum,
+                            slotNum: sIdx + 1,
+                            memberName: mName
+                        });
+                    }
+                }
+            }
+
+            let currIndex = cardStartIndex;
+            let remainingSupply = cardSupply;
+
+            while (remainingSupply > 0) {
+                // กรองหาคนที่ยังไม่ได้รับการ์ดในรอบปัจจุบัน (ไม่อยู่ใน currentHolders)
+                let pendingItems = fullQueue.filter(item => !currentHolders.includes(item.memberName));
+
+                // หากทุกคนในคิวได้รับการ์ดครบแล้ว (จบรอบ) -> ล้างรอบและเริ่มวนคิวใหม่
+                if (pendingItems.length === 0) {
+                    currentHolders = [];
+                    pendingItems = [...fullQueue];
+                }
+
+                if (pendingItems.length === 0) break;
+
+                // เลือกคนถัดไปตามลำดับคิว
+                let nextItem = pendingItems[0];
+                let recipient = nextItem.memberName;
+
+                if (!allocations[recipient]) allocations[recipient] = [];
+
+                let page = Math.floor(currIndex / 4) + 1;
+                let slot = (currIndex % 4) + 1;
+
+                allocations[recipient].push({
+                    page: page,
+                    startSlot: slot,
+                    endSlot: slot,
+                    count: 1
+                });
+
+                partyAllocationsInfo[recipient] = `Party ${nextItem.partyNum}`;
+                if (!receivers.includes(recipient)) receivers.push(recipient);
+                if (!currentHolders.includes(recipient)) currentHolders.push(recipient);
+
+                currIndex++;
+                remainingSupply--;
+            }
+
+            // คำนวณของเหลือ (Leftovers)
+            let leftoverCount = remainingSupply;
+            let leftoverChunks = [];
+            if (leftoverCount > 0) {
+                let leftoverStart = currIndex;
+                let rem = leftoverCount;
+                while (rem > 0) {
+                    let page = Math.floor(leftoverStart / 4) + 1;
+                    let slot = (leftoverStart % 4) + 1;
+                    let spaceOnPage = 4 - slot + 1;
+                    let partTake = Math.min(rem, spaceOnPage);
+
+                    leftoverChunks.push({
+                        page: page,
+                        startSlot: slot,
+                        endSlot: slot + partTake - 1,
+                        count: partTake
+                    });
+
+                    rem -= partTake;
+                    leftoverStart += partTake;
+                }
+                leftoverChunks = mergeChunks(leftoverChunks);
+            }
+
+            // ตรวจสอบรอบ: หากทุกคนในปาร์ตี้ประมูลได้รับการ์ดครบแล้ว ให้ล้าง cardHolders เริ่มรอบใหม่
+            if (allEligibleMembers.length > 0 && currentHolders.length >= allEligibleMembers.length) {
+                currentHolders = [];
+            }
+
+            for (let name in allocations) {
+                allocations[name] = mergeChunks(allocations[name]);
+            }
+
+            return {
+                allocations: allocations,
+                receivers: receivers,
+                updatedHolders: currentHolders,
+                partyAllocationsInfo: partyAllocationsInfo,
+                leftoverCount: leftoverCount,
+                leftoverChunks: leftoverChunks
+            };
         }
 
         // ระบบแจกแบบต่อเนื่อง เรียงตามหน้าและ Slot ให้หมดทีละหน้า (แบ่งเท่ากันลงตัวเท่านั้น + คืนค่าของเหลือ)
@@ -1043,7 +1370,6 @@
             const cStartS = parseInt(document.getElementById('cardStartSlot').value) || 0;
             const cEndP   = parseInt(document.getElementById('cardEndPage').value) || 0;
             const cEndS   = parseInt(document.getElementById('cardEndSlot').value) || 0;
-            const cAmt    = parseInt(document.getElementById('cardAmount').value) || 1;
             const cardTotal = (cStartP > 0 && cStartS > 0 && cEndP > 0 && cEndS > 0) ? calculateTotalSupply(cStartP, cStartS, cEndP, cEndS) : 0;
             const cardStartIndex = ((cStartP - 1) * 4) + (cStartS - 1);
 
@@ -1074,7 +1400,7 @@
             const oldWhiteHolders = currentAuctionState.whiteHolders || [];
             const oldBlackHolders = currentAuctionState.blackHolders || [];
 
-            const cardAlloc  = allocatePersistentRound(allMembers, cardTotal, cAmt, cardStartIndex, oldCardHolders, currentAuctionState.cardRoundAmount);
+            const cardAlloc  = allocatePartyCardRound(cardAuctionPartiesData, cardTotal, cardStartIndex, oldCardHolders);
             const whiteAlloc = allocatePersistentRound(allMembers, whiteTotal, wAmt, whiteStartIndex, oldWhiteHolders, currentAuctionState.whiteRoundAmount);
             const blackAlloc = allocatePersistentRound(allMembers, blackTotal, bAmt, blackStartIndex, oldBlackHolders, currentAuctionState.blackRoundAmount);
 
@@ -1085,13 +1411,21 @@
             ]);
             const finalReceivers = allMembers.filter(m => allReceivers.has(m.name));
 
-            const structuredList = finalReceivers.map(member => ({
+            // หากมีผู้รับที่โอนสิทธิ์มาจากปาร์ตี้ แต่ไม่อยู่ใน allMembers ปกติ ให้รวมเข้ามาด้วย
+            cardAlloc.receivers.forEach(rName => {
+                if (!finalReceivers.some(m => m.name === rName)) {
+                    finalReceivers.push({ name: rName, role: 'สมาชิกกิลด์' });
+                }
+            });
+
+            const structuredList = sortAllocationsList(finalReceivers.map(member => ({
                 name: member.name,
                 role: member.role || 'สมาชิกกิลด์',
+                partyTag: cardAlloc.partyAllocationsInfo[member.name] || '',
                 cardChunks: cardAlloc.allocations[member.name] || [],
                 whiteChunks: whiteAlloc.allocations[member.name] || [],
                 blackChunks: blackAlloc.allocations[member.name] || []
-            }));
+            })));
 
             let summaryStatsHtml = `สมาชิก <b class="text-amber-800 font-extrabold">${allMembers.length}</b> คน | `;
             let summaryItems = [];
@@ -1102,7 +1436,7 @@
 
             db.ref('auctionState').set({
                 cardHolders: cardAlloc.updatedHolders,
-                cardRoundAmount: cardAlloc.roundAmount,
+                cardRoundAmount: 1,
                 whiteHolders: whiteAlloc.updatedHolders,
                 whiteRoundAmount: whiteAlloc.roundAmount,
                 blackHolders: blackAlloc.updatedHolders,
@@ -1204,7 +1538,8 @@
 
             let text = `📢 สรุปผลการจัดสรรประมูลกิลด์ ETERNITY\n`;
             text += `----------------------------------------\n`;
-            currentCalculatedData.structuredAllocations.forEach((item, index) => {
+            const copyList = sortAllocationsList(currentCalculatedData.structuredAllocations);
+            copyList.forEach((item, index) => {
                 text += `#${index + 1} ${item.name} (${item.role || 'สมาชิก'}):\n`;
                 if (item.cardChunks && item.cardChunks.length > 0) {
                     let cText = item.cardChunks.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');

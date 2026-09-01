@@ -214,6 +214,9 @@
             <button onclick="switchTab('emperiumOverrun')" id="tabEmperiumOverrun" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0">
                 <span>🏰</span> Emperium Overrun
             </button>
+            <button onclick="switchTab('cardAuction')" id="tabCardAuction" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0">
+                <span>🃏</span> ปาร์ตี้ประมูลการ์ด
+            </button>
         </div>
 
         <!-- Grid Layout: Left 16 Parties (Main 1-8 + Sub 9-16) + Right Waitlist -->
@@ -224,11 +227,11 @@
                 
                 <!-- Main Team (ทีมหลัก 1 - 8) -->
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between bg-amber-50/80 px-4 py-2.5 rounded-2xl border border-amber-200 shadow-sm">
-                        <h3 class="text-sm font-extrabold text-amber-900 flex items-center gap-2">
-                            <span class="text-amber-600">🛡️</span> ทีมหลัก (Main Team) - <span id="assignedMainCount" class="text-amber-700">0</span>/40 คน
+                    <div id="sectionHeaderMain" class="flex items-center justify-between bg-amber-50/80 px-4 py-2.5 rounded-2xl border border-amber-200 shadow-sm">
+                        <h3 id="sectionTitleMain" class="text-sm font-extrabold text-amber-900 flex items-center gap-2">
+                            <span id="sectionIconMain" class="text-amber-600">🛡️</span> <span id="sectionLabelMain">ทีมหลัก (Main Team)</span> - <span id="assignedMainCount" class="text-amber-700">0</span>/<span id="assignedMainMax">40</span> คน
                         </h3>
-                        <span class="text-xs bg-amber-200/80 text-amber-900 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
+                        <span id="sectionBadgeMain" class="text-xs bg-amber-200/80 text-amber-900 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
                             ปาร์ตี้ 1 - 8
                         </span>
                     </div>
@@ -240,12 +243,12 @@
                 </div>
 
                 <!-- Sub Team (ทีมรอง 9 - 16) -->
-                <div class="space-y-3 pt-4 border-t-2 border-dashed border-indigo-200/80">
-                    <div class="flex items-center justify-between bg-indigo-50/80 px-4 py-2.5 rounded-2xl border border-indigo-200 shadow-sm">
-                        <h3 class="text-sm font-extrabold text-indigo-950 flex items-center gap-2">
-                            <span class="text-indigo-600">⚔️</span> ทีมรอง (Sub Team) - <span id="assignedSubCount" class="text-indigo-700">0</span>/40 คน
+                <div id="sectionSubWrapper" class="space-y-3 pt-4 border-t-2 border-dashed border-indigo-200/80">
+                    <div id="sectionHeaderSub" class="flex items-center justify-between bg-indigo-50/80 px-4 py-2.5 rounded-2xl border border-indigo-200 shadow-sm">
+                        <h3 id="sectionTitleSub" class="text-sm font-extrabold text-indigo-950 flex items-center gap-2">
+                            <span id="sectionIconSub" class="text-indigo-600">⚔️</span> <span id="sectionLabelSub">ทีมรอง (Sub Team)</span> - <span id="assignedSubCount" class="text-indigo-700">0</span>/<span id="assignedSubMax">40</span> คน
                         </h3>
-                        <span class="text-xs bg-indigo-200/80 text-indigo-950 font-bold px-2.5 py-0.5 rounded-full border border-indigo-300">
+                        <span id="sectionBadgeSub" class="text-xs bg-indigo-200/80 text-indigo-950 font-bold px-2.5 py-0.5 rounded-full border border-indigo-300">
                             ปาร์ตี้ 9 - 16
                         </span>
                     </div>
@@ -483,6 +486,69 @@
         </div>
     </div>
 
+    <!-- Modal โอนสิทธิ์การประมูลการ์ด (Transfer Card Right Modal) -->
+    <div id="transferModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-7 relative bg-white border-2 border-amber-400 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-4">
+                <div>
+                    <h3 class="text-base font-extrabold text-amber-950 flex items-center gap-2">
+                        <span>🔄</span> โอนสิทธิ์การประมูลการ์ด - <span id="transferPartyTitle" class="text-amber-700">Party 1</span>
+                    </h3>
+                    <p class="text-xs text-stone-500 mt-0.5">
+                        ผู้ถือสิทธิ์ปัจจุบัน: <strong id="transferCurrentHolder" class="text-amber-900 font-extrabold"></strong>
+                    </p>
+                </div>
+                <button onclick="closeTransferModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="text-xs text-amber-900 bg-amber-50/80 p-3 rounded-xl border border-amber-200 flex items-start gap-2">
+                    <span class="text-base">💡</span>
+                    <span>สามารถเลือกโอนสิทธิ์ให้สมาชิก<b>ภายในปาร์ตี้เดียวกัน</b> หรือเลือกโอนให้สมาชิกคนอื่นในกิลด์ได้</span>
+                </div>
+
+                <!-- สมาชิกในปาร์ตี้เดียวกัน (ลำดับแรก) -->
+                <div>
+                    <label class="block text-xs font-extrabold text-amber-950 mb-2 flex items-center gap-1.5">
+                        <span>👥</span> สมาชิกในปาร์ตี้เดียวกัน (แนะนำ):
+                    </label>
+                    <div id="transferPartyMembersList" class="space-y-1.5">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- สมาชิกคนอื่นในกิลด์ -->
+                <div class="pt-2 border-t border-amber-200/70">
+                    <label class="block text-xs font-bold text-stone-700 mb-1.5 flex items-center gap-1">
+                        <span>🌐</span> หรือเลือกสมาชิกอื่นในกิลด์:
+                    </label>
+                    <select id="transferOtherMemberSelect" onchange="selectTransferOtherMember()" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:outline-none focus:border-amber-500 shadow-sm">
+                        <option value="">-- เลือกจากสมาชิกกิลด์ทั้งหมด --</option>
+                    </select>
+                </div>
+
+                <div id="transferSelectedPreview" class="p-3 bg-amber-100/70 border border-amber-300 rounded-xl text-xs text-amber-950 font-bold hidden flex items-center justify-between">
+                    <span>โอนสิทธิ์ให้: <span id="transferTargetName" class="text-amber-800 font-extrabold"></span></span>
+                    <span class="text-[10px] bg-amber-300 px-2 py-0.5 rounded-full">ยืนยันแล้วจะได้รับสิทธิ์</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-amber-200">
+                <button type="button" id="btnResetTransfer" onclick="resetPartyTransfer()" class="text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3.5 py-2 rounded-xl transition">
+                    🔄 คืนค่าสิทธิ์เดิม
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeTransferModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="confirmPartyTransfer()" class="roo-button px-5 py-2 rounded-xl text-white font-bold text-xs shadow-md flex items-center gap-1.5">
+                        💾 ยืนยันโอนสิทธิ์
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 1. Firebase Initializer
         const firebaseConfig = {
@@ -524,12 +590,101 @@
         ];
 
         // 3. State Management
-        let currentMode = 'guildLeague'; // 'guildLeague' | 'emperiumOverrun'
+        let currentMode = 'guildLeague'; // 'guildLeague' | 'emperiumOverrun' | 'cardAuction'
         let allGuildMembers = [];
         let partyAssignments = {};
         let leaveMembers = [];
         let draggedMember = null;
         let selectedMember = null; // For Click-to-Move fallback
+        let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
+        let partyTransfers = {};
+        let partyCustomClasses = {};
+
+        function hasCardIcon(memberName) {
+            if (!memberName) return false;
+            return (currentAuctionState.cardHolders || []).includes(memberName);
+        }
+
+        // ค้นหาผู้มีสิทธิ์รับการ์ดในปาร์ตี้นั้นๆ สำหรับโหมด cardAuction
+        function getPartyCardRightHolder(pKey) {
+            const pData = partyAssignments[pKey] || {};
+            const membersInParty = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+            if (membersInParty.length === 0) return null;
+
+            // 1. ถ้ามีการโอนสิทธิ์ที่ระบุไว้
+            if (partyTransfers && partyTransfers[pKey]) {
+                return partyTransfers[pKey];
+            }
+
+            // 2. ถ้าไม่มีการโอนสิทธิ์ ให้เลือกสมาชิกคนแรกตามลำดับ Slot 1..5 ที่ยังไม่ได้รับการ์ด (ไม่อยู่ใน cardHolders)
+            const cardHolders = currentAuctionState.cardHolders || [];
+            for (let s = 1; s <= 5; s++) {
+                const mName = pData[`slot${s}`];
+                if (mName && !cardHolders.includes(mName)) {
+                    return mName;
+                }
+            }
+
+            // ถ้าทุกคนได้รับการ์ดหมดแล้วในรอบนี้ ให้แสดงคนแรก
+            return membersInParty[0];
+        }
+
+        // ค้นหาคิวอันดับที่ 1 ถัดไปของกิลด์ในโหมดประมูลการ์ด (เรียงตาม Party 1..N คนที่ 1 -> คนที่ 2 ...)
+        function getNextGuildCardReceiver() {
+            if (currentMode !== 'cardAuction') return null;
+            let eligibleParties = [];
+            for (let pNum = 1; pNum <= 16; pNum++) {
+                const pKey = `p${pNum}`;
+                const pData = partyAssignments[pKey] || {};
+                const members = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+                if (members.length === 5) {
+                    eligibleParties.push({
+                        pKey: pKey,
+                        pNum: pNum,
+                        members: members,
+                        transferTarget: (partyTransfers && partyTransfers[pKey]) || null
+                    });
+                }
+            }
+
+            if (eligibleParties.length === 0) return null;
+
+            let partyQueues = {};
+            eligibleParties.forEach(p => {
+                let pOrder = [];
+                if (p.transferTarget && p.members.includes(p.transferTarget)) {
+                    pOrder.push(p.transferTarget);
+                    p.members.forEach(m => {
+                        if (!pOrder.includes(m)) pOrder.push(m);
+                    });
+                } else if (p.transferTarget) {
+                    pOrder.push(p.transferTarget);
+                    p.members.forEach(m => pOrder.push(m));
+                } else {
+                    pOrder = [...p.members];
+                }
+                partyQueues[p.pKey] = pOrder;
+            });
+
+            let fullQueue = [];
+            for (let sIdx = 0; sIdx < 5; sIdx++) {
+                for (let p of eligibleParties) {
+                    const mName = partyQueues[p.pKey][sIdx];
+                    if (mName) {
+                        fullQueue.push({
+                            partyKey: p.pKey,
+                            partyNum: p.pNum,
+                            slotNum: sIdx + 1,
+                            memberName: mName
+                        });
+                    }
+                }
+            }
+
+            const cardHolders = currentAuctionState.cardHolders || [];
+            const nextItem = fullQueue.find(item => !cardHolders.includes(item.memberName));
+            return nextItem || (fullQueue.length > 0 ? fullQueue[0] : null);
+        }
 
         const CLASS_ICON_FILES = {
             'Lord Knight': 'images/classes/lord-knight.webp',
@@ -707,8 +862,41 @@
         function renderPartiesGrid() {
             const containerMain = document.getElementById('partiesContainerMain');
             const containerSub = document.getElementById('partiesContainerSub');
+            const subWrapper = document.getElementById('sectionSubWrapper');
             if (containerMain) containerMain.innerHTML = '';
             if (containerSub) containerSub.innerHTML = '';
+
+            const isCardAuction = (currentMode === 'cardAuction');
+
+            // Update section header labels and icons according to mode
+            const iconMain = document.getElementById('sectionIconMain');
+            const labelMain = document.getElementById('sectionLabelMain');
+            const badgeMain = document.getElementById('sectionBadgeMain');
+            const maxMain = document.getElementById('assignedMainMax');
+            
+            const iconSub = document.getElementById('sectionIconSub');
+            const labelSub = document.getElementById('sectionLabelSub');
+            const badgeSub = document.getElementById('sectionBadgeSub');
+            const maxSub = document.getElementById('assignedSubMax');
+
+            if (isCardAuction) {
+                if (subWrapper) subWrapper.classList.add('hidden');
+                if (iconMain) iconMain.innerText = '🃏';
+                if (labelMain) labelMain.innerText = 'ปาร์ตี้ประมูลการ์ด (ปาร์ตี้ละ 1 ใบ • ต้องครบ 5 คน)';
+                if (badgeMain) badgeMain.innerText = 'ปาร์ตี้ 1 - 16';
+                if (maxMain) maxMain.innerText = '80';
+            } else {
+                if (subWrapper) subWrapper.classList.remove('hidden');
+                if (iconMain) iconMain.innerText = '🛡️';
+                if (labelMain) labelMain.innerText = 'ทีมหลัก (Main Team)';
+                if (badgeMain) badgeMain.innerText = 'ปาร์ตี้ 1 - 8';
+                if (maxMain) maxMain.innerText = '40';
+                
+                if (iconSub) iconSub.innerText = '⚔️';
+                if (labelSub) labelSub.innerText = 'ทีมรอง (Sub Team)';
+                if (badgeSub) badgeSub.innerText = 'ปาร์ตี้ 9 - 16';
+                if (maxSub) maxSub.innerText = '40';
+            }
 
             let assignedMainTotal = 0;
             let assignedSubTotal = 0;
@@ -716,7 +904,7 @@
             for (let pNum = 1; pNum <= 16; pNum++) {
                 const pKey = `p${pNum}`;
                 const partyData = partyAssignments[pKey] || {};
-                const isSubTeam = (pNum >= 9);
+                const isSubTeam = (!isCardAuction && pNum >= 9);
 
                 let pCount = 0;
                 for (let s = 1; s <= 5; s++) {
@@ -742,6 +930,29 @@
                     ? '<div class="text-[10px] text-indigo-600 font-semibold flex items-center gap-0.5 mt-0.5"><span>⚔️</span> ทีมรอง (40 คน)</div>'
                     : '';
 
+                // Card Auction Badges and Transfer Controls
+                let countBadge = `<span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2 py-0.5 rounded-full border">${pCount}/5</span>`;
+                let transferBtn = '';
+
+                if (isCardAuction) {
+                    if (pCount === 5) {
+                        countBadge = `<span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 border-emerald-300 px-2 py-0.5 rounded-full border shadow-2xs">✅ พร้อมประมูล (5/5)</span>`;
+                    } else {
+                        countBadge = `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 border-amber-300 px-2 py-0.5 rounded-full border shadow-2xs" title="ต้องมีสมาชิกครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้">⚠️ ไม่ครบ 5 คน (${pCount}/5)</span>`;
+                    }
+
+                    if (canEditParties && pCount > 0) {
+                        const isTransferred = (partyTransfers && partyTransfers[pKey]);
+                        transferBtn = `
+                            <button onclick="openTransferModal('${pKey}')" 
+                                    class="text-[10px] ${isTransferred ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-emerald-300' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300'} font-bold px-2 py-0.5 rounded-lg border transition flex items-center gap-1 shadow-2xs cursor-pointer" 
+                                    title="โอนสิทธิ์การประมูลการ์ด">
+                                🔄 โอนสิทธิ์ ${isTransferred ? '⭐' : ''}
+                            </button>
+                        `;
+                    }
+                }
+
                 card.innerHTML = `
                     <div class="flex items-start justify-between pb-1.5 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'}">
                         <div>
@@ -753,9 +964,10 @@
                             </h4>
                             ${subTeamLabel}
                         </div>
-                        <span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2 py-0.5 rounded-full border">
-                            ${pCount}/5
-                        </span>
+                        <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                            ${transferBtn}
+                            ${countBadge}
+                        </div>
                     </div>
                     <div class="space-y-1.5" id="partySlots_${pKey}">
                         ${[1,2,3,4,5].map(sNum => renderSlotHtml(pKey, sNum, partyData[`slot${sNum}`])).join('')}
@@ -784,6 +996,7 @@
             const member = allGuildMembers.find(m => m.name === assignedMemberName || m.uid === assignedMemberName);
             const isSelected = selectedMember && selectedMember.source === pKey && selectedMember.slot === sNum;
             const hasActiveSelection = !!selectedMember || !!draggedMember;
+            const isCardAuction = (currentMode === 'cardAuction');
 
             if (member) {
                 const effectiveClass = getMemberPartyClass(member);
@@ -793,17 +1006,35 @@
                 const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
                 const encodedName = encodeURIComponent(member.name || member.uid || '');
 
+                const hasCard = isCardAuction && hasCardIcon(member.name);
+                const isRightHolder = isCardAuction && (getPartyCardRightHolder(pKey) === member.name);
+                const nextGuildItem = isCardAuction ? getNextGuildCardReceiver() : null;
+                const isNextInGuild = nextGuildItem && nextGuildItem.memberName === member.name;
+
+                const cardIconBadge = hasCard ? `<span title="ได้รับการ์ดในรอบนี้แล้ว (ล็อกไม่สามารถย้ายปาร์ตี้ได้จนกว่าจะจบรอบ)" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold inline-flex items-center gap-0.5 shadow-2xs cursor-help"><img src="images/item_card.png" class="w-3.5 h-3.5 object-contain" alt="การ์ด"> 🃏</span>` : '';
+                
+                let rightBadge = '';
+                if (isNextInGuild) {
+                    rightBadge = `<span title="คิวอันดับที่ 1 ของกิลด์ที่กำลังจะได้รับการ์ด" class="text-[9px] bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 px-1.5 py-0.2 rounded font-extrabold shadow-sm inline-flex items-center gap-0.5 animate-pulse">⭐ คิวถัดไป</span>`;
+                } else if (isRightHolder) {
+                    rightBadge = `<span title="สมาชิกท่านนี้มีสิทธิ์รับการ์ดของปาร์ตี้นี้" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold shadow-2xs inline-flex items-center gap-0.5">🎯 สิทธิ์ในตี้</span>`;
+                }
+
+                const isDraggable = canEditParties && !hasCard;
+                const lockTooltip = hasCard ? ' title="🔒 ได้รับการ์ดในรอบนี้แล้ว (ล็อกปาร์ตี้จนกว่าจบรอบ)"' : '';
+
                 return `
                     <div id="slot_${pKey}_${sNum}" 
-                         draggable="${canEditParties}" 
+                         draggable="${isDraggable}" 
                          ondragstart="handleDragStart(event, '${member.name}', '${pKey}', ${sNum})"
                          ondragend="handleDragEnd(event)"
                          ondragover="handleDragOver(event)" 
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
-                        <div class="flex items-center gap-2.5 min-w-0">
+                         ${lockTooltip}
+                         class="slot-box filled ${isLeave ? 'border-2 border-rose-400 bg-rose-50/90' : ''} ${isRightHolder ? 'ring-2 ring-amber-400/90 bg-amber-50/90' : ''} ${hasCard ? 'bg-amber-50/40 border-amber-300/80' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl p-2 flex items-center justify-between group transition-all">
+                        <div class="flex items-center gap-2 min-w-0">
                             <button type="button" 
                                     draggable="false"
                                     onmousedown="event.stopPropagation();"
@@ -816,17 +1047,19 @@
                                 <div class="flex items-center gap-1 flex-wrap">
                                     <p class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</p>
                                     ${char2Badge}
+                                    ${cardIconBadge}
+                                    ${rightBadge}
                                     <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-1 py-0.5 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
                                 <p class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-amber-800'} font-medium leading-tight ${canEditParties ? 'cursor-pointer hover:text-amber-600 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</p>
                             </div>
                         </div>
-                        ${canEditParties ? `
+                        ${canEditParties && !hasCard ? `
                             <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded transition font-bold" title="นำออกจากปาร์ตี้">
                                 ✕
                             </button>
-                        ` : ''}
+                        ` : (hasCard ? `<span class="text-xs text-amber-500 font-bold opacity-60" title="ล็อกไม่สามารถนำออกได้จนกว่าจบรอบ">🔒</span>` : '')}
                     </div>
                 `;
             } else {
@@ -974,6 +1207,11 @@
                 e.preventDefault();
                 return false;
             }
+            if (currentMode === 'cardAuction' && hasCardIcon(memberName)) {
+                alert(`🔒 สมาชิก "${memberName}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายปาร์ตี้ได้จนกว่าไอคอนการ์ดหลังชื่อจะหาย (จบรอบ)`);
+                e.preventDefault();
+                return false;
+            }
             draggedMember = {
                 name: memberName,
                 source: sourceContainer, // 'waitlist' | 'leave' | 'p1'...'p8'
@@ -1015,6 +1253,23 @@
             }
 
             const targetCurrentMember = partyAssignments[targetPartyKey][`slot${targetSlotNum}`];
+
+            if (currentMode === 'cardAuction') {
+                if (hasCardIcon(activeM.name)) {
+                    alert(`🔒 สมาชิก "${activeM.name}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายปาร์ตี้ได้จนกว่าไอคอนการ์ดหลังชื่อจะหาย (จบรอบ)`);
+                    draggedMember = null;
+                    selectedMember = null;
+                    renderPartiesGrid();
+                    return;
+                }
+                if (targetCurrentMember && hasCardIcon(targetCurrentMember)) {
+                    alert(`🔒 สมาชิกปลายทาง "${targetCurrentMember}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายหรือสลับปาร์ตี้ได้`);
+                    draggedMember = null;
+                    selectedMember = null;
+                    renderPartiesGrid();
+                    return;
+                }
+            }
 
             // If same slot, do nothing
             if (activeM.source === targetPartyKey && activeM.slot === targetSlotNum) {
@@ -1059,6 +1314,14 @@
             const activeM = draggedMember || selectedMember;
             if (!canEditParties || !activeM) return;
 
+            if (currentMode === 'cardAuction' && hasCardIcon(activeM.name)) {
+                alert(`🔒 สมาชิก "${activeM.name}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายออกจากปาร์ตี้ได้`);
+                draggedMember = null;
+                selectedMember = null;
+                renderPartiesGrid();
+                return;
+            }
+
             if (activeM.source.startsWith('p')) {
                 partyAssignments[activeM.source][`slot${activeM.slot}`] = null;
             } else if (activeM.source === 'leave') {
@@ -1084,6 +1347,14 @@
 
             const activeM = draggedMember || selectedMember;
             if (!canEditParties || !activeM) return;
+
+            if (currentMode === 'cardAuction' && hasCardIcon(activeM.name)) {
+                alert(`🔒 สมาชิก "${activeM.name}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายออกจากปาร์ตี้ได้`);
+                draggedMember = null;
+                selectedMember = null;
+                renderPartiesGrid();
+                return;
+            }
 
             if (activeM.source.startsWith('p')) {
                 partyAssignments[activeM.source][`slot${activeM.slot}`] = null;
@@ -1119,11 +1390,30 @@
 
             // If we already selected someone, move/swap them into this slot
             if (selectedMember) {
+                const targetCurrentMember = partyAssignments[pKey] && partyAssignments[pKey][`slot${sNum}`];
+                if (currentMode === 'cardAuction') {
+                    if (hasCardIcon(selectedMember.name)) {
+                        alert(`🔒 สมาชิก "${selectedMember.name}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายปาร์ตี้ได้จนกว่าไอคอนการ์ดหลังชื่อจะหาย (จบรอบ)`);
+                        selectedMember = null;
+                        renderPartiesGrid();
+                        return;
+                    }
+                    if (targetCurrentMember && hasCardIcon(targetCurrentMember)) {
+                        alert(`🔒 สมาชิกปลายทาง "${targetCurrentMember}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายหรือสลับปาร์ตี้ได้`);
+                        selectedMember = null;
+                        renderPartiesGrid();
+                        return;
+                    }
+                }
                 handleDropSlot(null, pKey, sNum);
             } else {
                 // If this slot has a member, select them as source
-                const memberName = partyAssignments[pKey][`slot${sNum}`];
+                const memberName = partyAssignments[pKey] && partyAssignments[pKey][`slot${sNum}`];
                 if (memberName) {
+                    if (currentMode === 'cardAuction' && hasCardIcon(memberName)) {
+                        alert(`🔒 สมาชิก "${memberName}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถย้ายปาร์ตี้ได้จนกว่าไอคอนการ์ดหลังชื่อจะหาย (จบรอบ)`);
+                        return;
+                    }
                     selectedMember = {
                         name: memberName,
                         source: pKey,
@@ -1137,6 +1427,11 @@
 
         function removeFromParty(pKey, sNum) {
             if (!canEditParties) return;
+            const memberName = partyAssignments[pKey] && partyAssignments[pKey][`slot${sNum}`];
+            if (currentMode === 'cardAuction' && memberName && hasCardIcon(memberName)) {
+                alert(`🔒 สมาชิก "${memberName}" ได้รับสิทธิ์การ์ดในรอบนี้แล้ว ไม่สามารถนำออกจากปาร์ตี้ได้จนกว่าไอคอนการ์ดหลังชื่อจะหาย (จบรอบ)`);
+                return;
+            }
             partyAssignments[pKey][`slot${sNum}`] = null;
             selectedMember = null;
             saveAndRender();
@@ -1170,8 +1465,6 @@
                 saveAndRender();
             }
         }
-
-        let partyCustomClasses = {};
 
         function getMemberPartyClass(member) {
             if (!member) return '-';
@@ -1240,13 +1533,17 @@
         function switchTab(mode) {
             currentMode = mode;
             selectedMember = null;
-            if (mode === 'guildLeague') {
-                document.getElementById('tabGuildLeague').className = 'roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0 shadow-sm';
-                document.getElementById('tabEmperiumOverrun').className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0';
-            } else {
-                document.getElementById('tabGuildLeague').className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0';
-                document.getElementById('tabEmperiumOverrun').className = 'roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0 shadow-sm';
-            }
+
+            const tabGL = document.getElementById('tabGuildLeague');
+            const tabEO = document.getElementById('tabEmperiumOverrun');
+            const tabCA = document.getElementById('tabCardAuction');
+
+            const activeClass = 'roo-button px-5 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shrink-0 shadow-sm';
+            const inactiveClass = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-amber-100 text-stone-700 border border-amber-200 transition flex items-center gap-2 shrink-0';
+
+            if (tabGL) tabGL.className = (mode === 'guildLeague') ? activeClass : inactiveClass;
+            if (tabEO) tabEO.className = (mode === 'emperiumOverrun') ? activeClass : inactiveClass;
+            if (tabCA) tabCA.className = (mode === 'cardAuction') ? activeClass : inactiveClass;
             
             listenPartyData();
         }
@@ -1258,15 +1555,24 @@
                     partyAssignments = ensureAllPartiesStructure(data.parties);
                     leaveMembers = data.leave || [];
                     partyCustomClasses = data.customClasses || {};
+                    partyTransfers = data.transfers || {};
                 } else {
                     partyAssignments = initEmptyParties();
                     leaveMembers = [];
                     partyCustomClasses = (data && data.customClasses) ? data.customClasses : {};
+                    partyTransfers = (data && data.transfers) ? data.transfers : {};
                 }
                 renderPartiesGrid();
                 renderWaitlistAndLeave();
             });
         }
+
+        // ฟังสถานะรอบประมูลและ Card Holders
+        db.ref('auctionState').on('value', (snapshot) => {
+            currentAuctionState = snapshot.val() || { cardHolders: [], whiteHolders: [], blackHolders: [] };
+            renderPartiesGrid();
+            renderWaitlistAndLeave();
+        });
 
         // 9. Load Master Members from Firebase
         db.ref('members').on('value', (snapshot) => {
@@ -1305,50 +1611,202 @@
 
         document.getElementById('waitlistSearch').addEventListener('input', renderWaitlistAndLeave);
 
+        // === Transfer Card Right Modal Functions ===
+        let activeTransferPartyKey = null;
+        let selectedTransferTarget = null;
+
+        function openTransferModal(pKey) {
+            activeTransferPartyKey = pKey;
+            selectedTransferTarget = null;
+
+            const pNum = pKey.replace('p', '');
+            document.getElementById('transferPartyTitle').innerText = `Party ${pNum}`;
+
+            const currentHolder = getPartyCardRightHolder(pKey) || 'ยังไม่มี';
+            document.getElementById('transferCurrentHolder').innerText = currentHolder;
+
+            const pData = partyAssignments[pKey] || {};
+            const membersInParty = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+
+            const listEl = document.getElementById('transferPartyMembersList');
+            const selectOtherEl = document.getElementById('transferOtherMemberSelect');
+            const previewEl = document.getElementById('transferSelectedPreview');
+            if (previewEl) previewEl.classList.add('hidden');
+
+            // Render party members
+            if (membersInParty.length === 0) {
+                listEl.innerHTML = '<div class="text-xs text-stone-400 py-2">ไม่มีสมาชิกในปาร์ตี้นี้</div>';
+            } else {
+                listEl.innerHTML = membersInParty.map((mName, idx) => {
+                    const mObj = allGuildMembers.find(x => x.name === mName);
+                    const cName = mObj ? getMemberPartyClass(mObj) : '';
+                    const isCur = (mName === currentHolder);
+                    const isTransferred = (partyTransfers && partyTransfers[pKey] === mName);
+                    const hasCard = hasCardIcon(mName);
+
+                    return `
+                        <div onclick="selectTransferPartyMember('${mName}')" 
+                             class="p-2.5 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${isCur ? 'bg-amber-100/80 border-amber-400 shadow-sm' : 'bg-white hover:bg-amber-50 border-stone-200'}">
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-extrabold flex items-center justify-center">${idx + 1}</span>
+                                <div>
+                                    <span class="text-xs font-bold text-stone-900">${mName}</span>
+                                    <span class="text-[10px] text-stone-500 ml-1">(${cName || '-'})</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${hasCard ? '<span class="text-[9px] bg-amber-200 text-amber-950 font-bold px-1.5 py-0.2 rounded border border-amber-300">🃏 ได้การ์ดแล้ว</span>' : ''}
+                                ${isTransferred ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-300">🎯 โอนสิทธิ์แล้ว</span>' : (isCur ? '<span class="text-[9px] bg-amber-500 text-white font-bold px-1.5 py-0.2 rounded">ผู้ถือสิทธิ์ปัจจุบัน</span>' : '')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Populate other guild members
+            const otherMembers = allGuildMembers.filter(m => !membersInParty.includes(m.name));
+            selectOtherEl.innerHTML = '<option value="">-- เลือกจากสมาชิกกิลด์ทั้งหมด --</option>' + 
+                otherMembers.map(m => `<option value="${m.name}">${m.name} (${m.role || 'สมาชิก'} - ${getMemberPartyClass(m)})</option>`).join('');
+
+            document.getElementById('transferModal').classList.remove('hidden');
+        }
+
+        function closeTransferModal() {
+            activeTransferPartyKey = null;
+            selectedTransferTarget = null;
+            document.getElementById('transferModal').classList.add('hidden');
+        }
+
+        function selectTransferPartyMember(memberName) {
+            selectedTransferTarget = memberName;
+            const selectOtherEl = document.getElementById('transferOtherMemberSelect');
+            if (selectOtherEl) selectOtherEl.value = '';
+
+            const previewEl = document.getElementById('transferSelectedPreview');
+            document.getElementById('transferTargetName').innerText = memberName;
+            previewEl.classList.remove('hidden');
+        }
+
+        function selectTransferOtherMember() {
+            const selectOtherEl = document.getElementById('transferOtherMemberSelect');
+            const memberName = selectOtherEl.value;
+            if (memberName) {
+                selectedTransferTarget = memberName;
+                const previewEl = document.getElementById('transferSelectedPreview');
+                document.getElementById('transferTargetName').innerText = `${memberName} (สมาชิกนอกปาร์ตี้)`;
+                previewEl.classList.remove('hidden');
+            } else {
+                selectedTransferTarget = null;
+                document.getElementById('transferSelectedPreview').classList.add('hidden');
+            }
+        }
+
+        function confirmPartyTransfer() {
+            if (!canEditParties) {
+                alert('⚠️ เฉพาะผู้จัดการ, รองหัวหน้ากิลด์, หัวหน้ากิลด์ หรือ Admin เท่านั้นที่มีสิทธิ์โอนสิทธิ์การประมูล');
+                return;
+            }
+            if (!activeTransferPartyKey || !selectedTransferTarget) {
+                alert('กรุณาเลือกสมาชิกที่ต้องการโอนสิทธิ์ให้ก่อนครับ');
+                return;
+            }
+
+            if (!partyTransfers) partyTransfers = {};
+            partyTransfers[activeTransferPartyKey] = selectedTransferTarget;
+
+            db.ref(`partyLineups/cardAuction/transfers/${activeTransferPartyKey}`).set(selectedTransferTarget).then(() => {
+                alert(`✨ โอนสิทธิ์การประมูลการ์ดของ ${activeTransferPartyKey.toUpperCase()} ให้กับ "${selectedTransferTarget}" เรียบร้อยแล้ว!`);
+                closeTransferModal();
+                renderPartiesGrid();
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
+        function resetPartyTransfer() {
+            if (!canEditParties) return;
+            if (!activeTransferPartyKey) return;
+
+            if (confirm('ต้องการคืนค่าสิทธิ์การรับการ์ดกลับเป็นลำดับเดิมของปาร์ตี้นี้ใช่หรือไม่?')) {
+                db.ref(`partyLineups/cardAuction/transfers/${activeTransferPartyKey}`).remove().then(() => {
+                    if (partyTransfers) delete partyTransfers[activeTransferPartyKey];
+                    alert('🔄 คืนค่าสิทธิ์เป็นลำดับปกติเรียบร้อยแล้ว!');
+                    closeTransferModal();
+                    renderPartiesGrid();
+                }).catch(err => {
+                    alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+                });
+            }
+        }
+
         // 10. Export Functions
         function exportPartyLineup() {
-            const modeName = currentMode === 'guildLeague' ? '🏆 Guild League (40v40)' : '🏰 Emperium Overrun';
+            let modeName = '🏆 Guild League (40v40)';
+            if (currentMode === 'emperiumOverrun') modeName = '🏰 Emperium Overrun';
+            if (currentMode === 'cardAuction') modeName = '🃏 ปาร์ตี้ประมูลการ์ด';
             let text = `📢 ผังจัดปาร์ตี้กิลด์ ETERNITY - ${modeName}\n`;
             text += `=========================================\n\n`;
 
-            text += `🛡️ 【 ทีมหลัก (Main Team) - ปาร์ตี้ 1 - 8 】\n`;
-            text += `-----------------------------------------\n`;
-            for (let pNum = 1; pNum <= 8; pNum++) {
-                const pKey = `p${pNum}`;
-                const pData = partyAssignments[pKey] || {};
-                text += `Party ${pNum}:\n`;
-                for (let s = 1; s <= 5; s++) {
-                    const memberName = pData[`slot${s}`];
-                    if (memberName) {
-                        const m = allGuildMembers.find(x => x.name === memberName);
-                        const cName = m ? getMemberPartyClass(m) : '';
-                        const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
-                        text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
-                    } else {
-                        text += `  Slot ${s}: [ว่าง]\n`;
+            if (currentMode === 'cardAuction') {
+                text += `🃏 【 ปาร์ตี้ประมูลการ์ด 1 - 16 】\n`;
+                text += `-----------------------------------------\n`;
+                for (let pNum = 1; pNum <= 16; pNum++) {
+                    const pKey = `p${pNum}`;
+                    const pData = partyAssignments[pKey] || {};
+                    text += `Party ${pNum}:\n`;
+                    for (let s = 1; s <= 5; s++) {
+                        const memberName = pData[`slot${s}`];
+                        if (memberName) {
+                            const m = allGuildMembers.find(x => x.name === memberName);
+                            const cName = m ? getMemberPartyClass(m) : '';
+                            const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
+                            text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
+                        } else {
+                            text += `  Slot ${s}: [ว่าง]\n`;
+                        }
                     }
+                    text += `\n`;
                 }
-                text += `\n`;
-            }
+            } else {
+                text += `🛡️ 【 ทีมหลัก (Main Team) - ปาร์ตี้ 1 - 8 】\n`;
+                text += `-----------------------------------------\n`;
+                for (let pNum = 1; pNum <= 8; pNum++) {
+                    const pKey = `p${pNum}`;
+                    const pData = partyAssignments[pKey] || {};
+                    text += `Party ${pNum}:\n`;
+                    for (let s = 1; s <= 5; s++) {
+                        const memberName = pData[`slot${s}`];
+                        if (memberName) {
+                            const m = allGuildMembers.find(x => x.name === memberName);
+                            const cName = m ? getMemberPartyClass(m) : '';
+                            const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
+                            text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
+                        } else {
+                            text += `  Slot ${s}: [ว่าง]\n`;
+                        }
+                    }
+                    text += `\n`;
+                }
 
-            text += `⚔️ 【 ทีมรอง (Sub Team) - ปาร์ตี้ 9 - 16 】\n`;
-            text += `-----------------------------------------\n`;
-            for (let pNum = 9; pNum <= 16; pNum++) {
-                const pKey = `p${pNum}`;
-                const pData = partyAssignments[pKey] || {};
-                text += `Party ${pNum} (ทีมรอง):\n`;
-                for (let s = 1; s <= 5; s++) {
-                    const memberName = pData[`slot${s}`];
-                    if (memberName) {
-                        const m = allGuildMembers.find(x => x.name === memberName);
-                        const cName = m ? getMemberPartyClass(m) : '';
-                        const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
-                        text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
-                    } else {
-                        text += `  Slot ${s}: [ว่าง]\n`;
+                text += `⚔️ 【 ทีมรอง (Sub Team) - ปาร์ตี้ 9 - 16 】\n`;
+                text += `-----------------------------------------\n`;
+                for (let pNum = 9; pNum <= 16; pNum++) {
+                    const pKey = `p${pNum}`;
+                    const pData = partyAssignments[pKey] || {};
+                    text += `Party ${pNum} (ทีมรอง):\n`;
+                    for (let s = 1; s <= 5; s++) {
+                        const memberName = pData[`slot${s}`];
+                        if (memberName) {
+                            const m = allGuildMembers.find(x => x.name === memberName);
+                            const cName = m ? getMemberPartyClass(m) : '';
+                            const icon = m ? (CLASS_TEXT_EMOJIS[cName] || '👤') : '👤';
+                            text += `  Slot ${s}: ${icon} ${memberName} (${cName})\n`;
+                        } else {
+                            text += `  Slot ${s}: [ว่าง]\n`;
+                        }
                     }
+                    text += `\n`;
                 }
-                text += `\n`;
             }
 
             const allLeaveNames = new Set([
