@@ -655,6 +655,7 @@
                             partyKey: p.pKey,
                             partyNum: p.pNum,
                             guildRound: guildRound,
+                            roundNum: guildRound,
                             memberName: mName
                         });
                     });
@@ -713,7 +714,7 @@
                                 <div class="flex flex-wrap gap-1 max-h-36 overflow-y-auto p-1.5 bg-[#120724] rounded-xl border border-purple-800/60">
                                     ${pendingQueue.map((item, idx) => {
                                         let highlight = idx === 0 ? 'ring-2 ring-fuchsia-500 bg-gradient-to-r from-purple-900 to-fuchsia-900 text-purple-100 font-extrabold shadow-md' : 'bg-[#1b0d35] text-purple-200 border border-purple-800/50';
-                                        return `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${highlight}"><b class="text-fuchsia-400">P${item.partyNum}</b> (รอบที่ ${item.roundNum || item.slotNum}): ${item.memberName}</span>`;
+                                        return `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${highlight}"><b class="text-fuchsia-400">P${item.partyNum}</b> (รอบที่ ${item.guildRound || item.roundNum || 1}): ${item.memberName}</span>`;
                                     }).join('')}
                                 </div>
                             ` : `
