@@ -109,7 +109,7 @@
                             ⚡ Admin (daffodil2693)
                         </span>
                     </h2>
-                    <p class="text-xs text-purple-300/80 mt-1">เรียงลำดับ: ⚡ Admin &rarr; 👑 หัวหน้ากิลด์ &rarr; ⚔️ รองหัวหน้ากิลด์ &rarr; 📋 ผู้จัดการ &rarr; ⭐ สมาชิกพิเศษ &rarr; 🛡️ สมาชิกกิลด์</p>
+                    <p class="text-xs text-purple-300/80 mt-1">เรียงลำดับ: 🚩 Party 1 &rarr; Party 2 &rarr; ... &rarr; Party 16 &rarr; สมาชิกที่ยังไม่ระบุปาร์ตี้</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -189,6 +189,15 @@
                         <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
                         <option value="สมาชิกกิลด์">🛡️ สมาชิกกิลด์</option>
                     </select>
+                </div>
+
+                <!-- ตำแหน่งรอง (Sub Role / Party) - เชื่อมโยงอัตโนมัติตามผังประมูลการ์ด -->
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1 flex items-center justify-between">
+                        <span>🚩 ตำแหน่งรอง (Sub Role)</span>
+                        <span class="text-xs text-fuchsia-400 font-normal">✨ เชื่อมโยงตามผังประมูลการ์ดอัตโนมัติ</span>
+                    </label>
+                    <input type="text" id="editSubRole" readonly class="w-full bg-[#120724] border border-purple-800/60 rounded-xl px-4 py-2.5 text-sm font-bold text-fuchsia-200 cursor-not-allowed select-none shadow-inner" placeholder="-- ยังไม่ถูกจัดเข้าปาร์ตี้ประมูลการ์ด --">
                 </div>
 
                 <div>
@@ -567,6 +576,12 @@
             }
         }
 
+        // Badge ตำแหน่งรอง (Sub Role Badge)
+        function getSubRoleBadge(subRole) {
+            if (!subRole) return '';
+            return `<span class="whitespace-nowrap bg-purple-900/90 text-fuchsia-200 border border-fuchsia-600/50 px-2 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 shadow-xs">🚩 ${subRole}</span>`;
+        }
+
         // 3. Render Table
         function renderTable() {
             const tbody = document.getElementById('memberTableBody');
@@ -583,6 +598,7 @@
                 return (m.name && m.name.toLowerCase().includes(searchKeyword)) ||
                        (m.charClass && m.charClass.toLowerCase().includes(searchKeyword)) ||
                        (m.role && m.role.toLowerCase().includes(searchKeyword)) ||
+                       (m.subRole && m.subRole.toLowerCase().includes(searchKeyword)) ||
                        (m.uid && m.uid.toLowerCase().includes(searchKeyword));
             });
 
@@ -612,6 +628,8 @@
 
                 const cp = (member.stats && member.stats.cp) ? Number(member.stats.cp).toLocaleString() : '-';
                 const roleBadge = getRoleBadge(member.role);
+                const subRoleBadge = getSubRoleBadge(member.subRole);
+                const roleCombined = subRoleBadge ? `<div class="flex flex-col items-center gap-1">${roleBadge}${subRoleBadge}</div>` : roleBadge;
 
                 const rawBaseUid = String(member.uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
                 const isMyCharacter = (currentUser.toLowerCase() === rawBaseUid);
@@ -628,7 +646,7 @@
                         </div>
                         ${iconDisplay}
                     </td>
-                    <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleBadge}</td>
+                    <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleCombined}</td>
                     <td class="py-3.5 px-3 text-sm text-purple-200 font-medium whitespace-nowrap">
                         <div class="flex items-center gap-2">
                             ${getClassIconHtml(member.charClass, 'w-6 h-6')}
@@ -673,6 +691,7 @@
             document.getElementById('editUid').value = member.uid;
             document.getElementById('editName').value = member.name || '';
             document.getElementById('editClass').value = member.charClass || 'Sniper';
+            document.getElementById('editSubRole').value = member.subRole ? `🚩 ${member.subRole}` : '';
             document.getElementById('editActive').checked = (member.active !== false);
 
             const roleSelect = document.getElementById('editRole');
@@ -726,8 +745,9 @@
             const member = allMembersData.find(m => m.uid === uid);
             if (!member) return;
 
+            const subRoleText = member.subRole ? ` • 🚩 ${member.subRole}` : '';
             document.getElementById('modalMemberName').innerText = member.name || member.uid;
-            document.getElementById('modalMemberSub').innerText = `${member.charClass || 'ไม่ระบุอาชีพ'} • ${member.role || 'สมาชิกกิลด์'}`;
+            document.getElementById('modalMemberSub').innerText = `${member.charClass || 'ไม่ระบุอาชีพ'} • ${member.role || 'สมาชิกกิลด์'}${subRoleText}`;
 
             const avatarImg = document.getElementById('modalAvatarImg');
             const avatarIcon = document.getElementById('modalAvatarIcon');
@@ -866,62 +886,114 @@
             return 0;
         }
 
-        // 5. Real-time Listeners with Role-based Sorting
-        db.ref('members').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                // บังคับให้ตัวละครตัวที่ 2 ทุกตัวในระบบ (ทั้งเก่าและใหม่) มีตำแหน่งเป็น 'สมาชิกกิลด์' เท่านั้น
-                Object.keys(data).forEach(key => {
-                    const m = data[key];
-                    if (m) {
-                        const isChar2 = m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)'));
-                        if (isChar2) {
-                            m.isChar2 = true;
-                            if (m.role !== 'สมาชิกกิลด์') {
-                                m.role = 'สมาชิกกิลด์';
-                                // แก้ไขข้อมูลเดิมบน Firebase ให้อัตโนมัติทันที
-                                db.ref('members/' + key + '/role').set('สมาชิกกิลด์');
-                            }
+        // ลำดับความสำคัญของตำแหน่งรอง (Party 1 -> Party 2 -> ... -> Party 16)
+        function getSubRolePriority(subRole) {
+            if (!subRole) return 999;
+            const match = String(subRole).match(/Party\s*(\d+)/i);
+            if (match) {
+                return parseInt(match[1]);
+            }
+            return 900;
+        }
+
+        let rawMembersData = null;
+        let cardAuctionPartyMap = {};
+
+        function processAndRenderMembers() {
+            if (!rawMembersData) {
+                allMembersData = [];
+                renderTable();
+                return;
+            }
+
+            // บังคับให้ตัวละครตัวที่ 2 ทุกตัวในระบบ (ทั้งเก่าและใหม่) มีตำแหน่งเป็น 'สมาชิกกิลด์' เท่านั้น
+            Object.keys(rawMembersData).forEach(key => {
+                const m = rawMembersData[key];
+                if (m) {
+                    const isChar2 = m.isChar2 || key.endsWith('__char2') || (m.uid && m.uid.includes('(ตัวที่ 2)'));
+                    if (isChar2) {
+                        m.isChar2 = true;
+                        if (m.role !== 'สมาชิกกิลด์') {
+                            m.role = 'สมาชิกกิลด์';
+                            db.ref('members/' + key + '/role').set('สมาชิกกิลด์');
                         }
                     }
-                });
-
-                let list = Object.values(data).filter(m => m && m.name && m.name !== 'undefined' && String(m.name).trim() !== '');
-                
-                // ตรวจสอบยศของผู้ใช้ปัจจุบัน
-                const myRecord = list.find(m => m.uid && m.uid.toLowerCase() === currentUser.toLowerCase() && !m.isChar2);
-                if (myRecord && myRecord.role) {
-                    currentUserRole = myRecord.role;
-                } else if (isAdmin) {
-                    currentUserRole = 'Admin';
                 }
-                document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
-                updatePermissionsUI();
+            });
 
-                // เรียงลำดับ: 
-                // 1. ตำแหน่ง (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
-                // 2. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ลำดับท้ายสุดเสมอ)
-                list.sort((a, b) => {
-                    const pA = getRolePriority(a.role);
-                    const pB = getRolePriority(b.role);
-                    if (pA !== pB) return pA - pB;
+            let list = Object.values(rawMembersData).filter(m => m && m.name && m.name !== 'undefined' && String(m.name).trim() !== '');
 
-                    const tA = getMemberTimestamp(a);
-                    const tB = getMemberTimestamp(b);
-                    if (tA !== tB) return tA - tB; // เวลาน้อยกว่า (มาก่อน) อยู่ก่อน, เวลามากกว่า (มาทีหลัง) อยู่ท้ายสุด
+            // กำหนดตำแหน่งรอง (Sub Role) อัตโนมัติตามปาร์ตี้ประมูลการ์ด
+            list.forEach(m => {
+                const mNameKey = (m.name || '').trim().toLowerCase();
+                if (cardAuctionPartyMap[mNameKey]) {
+                    m.subRole = cardAuctionPartyMap[mNameKey];
+                } else {
+                    // หากไม่ได้อยู่ในปาร์ตี้ประมูลการ์ด ให้เป็นค่าว่าง
+                    m.subRole = '';
+                }
+            });
 
-                    return (a.name || '').localeCompare(b.name || '');
-                });
-                
-                allMembersData = list;
-            } else {
-                allMembersData = [];
+            // ตรวจสอบยศของผู้ใช้ปัจจุบัน
+            const myRecord = list.find(m => m.uid && m.uid.toLowerCase() === currentUser.toLowerCase() && !m.isChar2);
+            if (myRecord && myRecord.role) {
+                currentUserRole = myRecord.role;
+            } else if (isAdmin) {
+                currentUserRole = 'Admin';
             }
+            document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
+            updatePermissionsUI();
+
+            // เรียงลำดับ: 
+            // 1. ตำแหน่งรอง (Party 1 -> Party 2 -> ... -> Party 16 -> ไม่มีตำแหน่งรอง)
+            // 2. ตำแหน่งหลัก (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
+            // 3. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ท้ายสุด)
+            list.sort((a, b) => {
+                const sA = getSubRolePriority(a.subRole);
+                const sB = getSubRolePriority(b.subRole);
+                if (sA !== sB) return sA - sB;
+
+                const pA = getRolePriority(a.role);
+                const pB = getRolePriority(b.role);
+                if (pA !== pB) return pA - pB;
+
+                const tA = getMemberTimestamp(a);
+                const tB = getMemberTimestamp(b);
+                if (tA !== tB) return tA - tB;
+
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            allMembersData = list;
             renderTable();
             renderWhitelistList();
+        }
+
+        // 5. Real-time Listeners: Members & Card Auction Parties
+        db.ref('members').on('value', (snapshot) => {
+            rawMembersData = snapshot.val();
+            processAndRenderMembers();
         }, (error) => {
             console.error("Firebase Read Error:", error);
             document.getElementById('memberTableBody').innerHTML = `<tr><td colspan="8" class="py-10 text-center text-red-500 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</td></tr>`;
+        });
+
+        // ดึงผังปาร์ตี้ประมูลการ์ดแบบเรียลไทม์ เพื่อให้ตำแหน่งรองตรงกับปาร์ตี้ที่สมาชิกอยู่เสมอ
+        db.ref('partyLineups/cardAuction/parties').on('value', (snapshot) => {
+            const partiesVal = snapshot.val() || {};
+            cardAuctionPartyMap = {};
+            Object.keys(partiesVal).forEach(pKey => {
+                const pNum = parseInt(pKey.replace(/\D/g, ''));
+                const pName = `Party ${pNum}`;
+                const pSlots = partiesVal[pKey] || {};
+                Object.keys(pSlots).forEach(sKey => {
+                    const memberName = pSlots[sKey];
+                    if (memberName && typeof memberName === 'string') {
+                        cardAuctionPartyMap[memberName.trim().toLowerCase()] = pName;
+                    }
+                });
+            });
+            processAndRenderMembers();
         });
 
         // ฟังผลและสถานะรอบการประมูลล่าสุด

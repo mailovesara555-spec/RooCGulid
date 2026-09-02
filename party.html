@@ -1050,6 +1050,7 @@
                             <div class="flex items-center justify-between gap-1.5">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-1">
                                     <span class="text-xs font-bold ${isLeave ? 'text-rose-200' : 'text-purple-100'} truncate">${member.name}</span>
+                                    ${(member.subRole) ? `<span class="text-[9px] bg-purple-950 text-fuchsia-300 border border-fuchsia-600/50 px-1 py-0.2 rounded font-bold shrink-0" title="ตำแหน่งรอง">🚩 ${member.subRole}</span>` : ''}
                                     ${char2Badge}
                                     ${cardIconBadge}
                                 </div>

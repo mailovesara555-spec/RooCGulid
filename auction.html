@@ -422,9 +422,11 @@
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="block text-[11px] font-bold text-indigo-300">แบ่งรอบละกี่ใบ / คน</label>
-                                    <span class="text-[10px] bg-indigo-900 text-indigo-300 px-1.5 py-0.2 rounded border border-indigo-700">🔒 ล็อก 3 ใบ</span>
+                                    <button type="button" id="btnToggleWhiteLock" onclick="toggleFeatherAmountLock('white')" class="text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded-lg border border-indigo-700/60 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
+                                        <span id="whiteLockIcon">🔒</span> <span id="whiteLockText">ล็อก 3 ใบ</span>
+                                    </button>
                                 </div>
-                                <input type="number" id="whiteAmount" value="3" disabled class="w-full bg-[#0d071a] border border-indigo-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-300 cursor-not-allowed opacity-90">
+                                <input type="number" id="whiteAmount" value="3" min="1" disabled class="w-full bg-[#0d071a] border border-indigo-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-300 cursor-not-allowed opacity-90 transition focus:outline-none">
                             </div>
                         </div>
 
@@ -458,9 +460,11 @@
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="block text-[11px] font-bold text-purple-300">แบ่งรอบละกี่ใบ / คน</label>
-                                    <span class="text-[10px] bg-purple-900 text-purple-300 px-1.5 py-0.2 rounded border border-purple-700">🔒 ล็อก 4 ใบ</span>
+                                    <button type="button" id="btnToggleBlackLock" onclick="toggleFeatherAmountLock('black')" class="text-[10px] bg-purple-900 hover:bg-purple-800 text-purple-200 px-2 py-0.5 rounded-lg border border-purple-700/60 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
+                                        <span id="blackLockIcon">🔒</span> <span id="blackLockText">ล็อก 4 ใบ</span>
+                                    </button>
                                 </div>
-                                <input type="number" id="blackAmount" value="4" disabled class="w-full bg-[#0d071a] border border-purple-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-300 cursor-not-allowed opacity-90">
+                                <input type="number" id="blackAmount" value="4" min="1" disabled class="w-full bg-[#0d071a] border border-purple-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-300 cursor-not-allowed opacity-90 transition focus:outline-none">
                             </div>
                         </div>
 
@@ -485,7 +489,7 @@
                     <div class="roo-card rounded-3xl p-5 border border-purple-800/60 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-purple-900/60 pb-3">
                             <h3 class="text-sm font-extrabold text-purple-100 flex items-center gap-2">
-                                <span>👥</span> ลำดับคิวสมาชิกกิลด์ (เรียงตามยศและประวัติ)
+                                <span>👥</span> ลำดับคิวสมาชิกกิลด์ (เรียงตามหน้าสมาชิก Party 1 - 16)
                             </h3>
                             <!-- Tabs: White / Black / All -->
                             <div class="flex items-center gap-1 bg-[#120724] p-1 rounded-xl border border-purple-800/60">
@@ -912,6 +916,60 @@
             return 0;
         }
 
+        // 1. Helpers for Sub Role & Party-based Sorting
+        function getSubRolePriority(subRole) {
+            if (!subRole) return 999;
+            const match = String(subRole).match(/Party\s*(\d+)/i);
+            if (match) {
+                return parseInt(match[1]);
+            }
+            return 900;
+        }
+
+        function getMemberSubRole(memberName) {
+            if (!memberName) return '';
+            const parties = cardAuctionPartiesData.parties || {};
+            for (let p = 1; p <= 16; p++) {
+                const pData = parties[`p${p}`] || {};
+                if (Object.values(pData).some(name => name && name.trim().toLowerCase() === memberName.trim().toLowerCase())) {
+                    return `Party ${p}`;
+                }
+            }
+            const m = allGuildMembers.find(x => x.name && x.name.trim().toLowerCase() === memberName.trim().toLowerCase());
+            return (m && m.subRole) ? m.subRole : '';
+        }
+
+        function updateSortedGuildMembers() {
+            let list = allGuildMembers.filter(m => m && m.name && m.active !== false);
+            
+            // Sync each member's subRole based on Card Auction Parties
+            list.forEach(m => {
+                m.subRole = getMemberSubRole(m.name);
+            });
+
+            // เรียงลำดับตามหน้าสมาชิก:
+            // 1. ตำแหน่งรอง (Party 1 -> Party 2 -> ... -> Party 16 -> ไม่มีปาร์ตี้)
+            // 2. ตำแหน่งหลัก (Admin -> หัวหน้ากิลด์ -> รองหัวหน้ากิลด์ -> ผู้จัดการ -> สมาชิกพิเศษ -> สมาชิกกิลด์)
+            // 3. ลำดับเวลา (คนที่มาก่อนอยู่บน / คนที่มาทีหลังจะอยู่ท้ายสุด)
+            list.sort((a, b) => {
+                const sA = getSubRolePriority(a.subRole);
+                const sB = getSubRolePriority(b.subRole);
+                if (sA !== sB) return sA - sB;
+
+                const pA = getRolePriority(a.role);
+                const pB = getRolePriority(b.role);
+                if (pA !== pB) return pA - pB;
+
+                const tA = getMemberTimestamp(a);
+                const tB = getMemberTimestamp(b);
+                if (tA !== tB) return tA - tB;
+
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            sortedGuildMembers = list;
+        }
+
         // 1. Members Listener
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -925,21 +983,7 @@
                 });
 
                 allGuildMembers = Object.values(data).filter(m => m && m.name && m.name !== 'undefined' && String(m.name).trim() !== '');
-                
-                let list = allGuildMembers.filter(m => m.active !== false);
-                list.sort((a, b) => {
-                    const pA = getRolePriority(a.role);
-                    const pB = getRolePriority(b.role);
-                    if (pA !== pB) return pA - pB;
-
-                    const tA = getMemberTimestamp(a);
-                    const tB = getMemberTimestamp(b);
-                    if (tA !== tB) return tA - tB;
-
-                    return (a.name || '').localeCompare(b.name || '');
-                });
-
-                sortedGuildMembers = list;
+                updateSortedGuildMembers();
             } else {
                 allGuildMembers = [];
                 sortedGuildMembers = [];
@@ -961,9 +1005,11 @@
             if (!cardAuctionPartiesData.leave) cardAuctionPartiesData.leave = {};
             if (!cardAuctionPartiesData.customClasses) cardAuctionPartiesData.customClasses = {};
 
+            updateSortedGuildMembers();
             renderCardParties();
             renderCardWaitlist();
             renderCardQueue();
+            renderFeatherQueue();
             updateProgressBadges();
         });
 
@@ -1168,7 +1214,10 @@
                                     <div class="flex items-center gap-1.5 min-w-0">
                                         ${classIcon}
                                         <div class="min-w-0">
-                                            <span class="text-xs font-bold text-purple-100 truncate block leading-none">${memberName}</span>
+                                            <div class="flex items-center gap-1 min-w-0">
+                                                <span class="text-xs font-bold text-purple-100 truncate block leading-none">${memberName}</span>
+                                                ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-purple-950 text-fuchsia-300 border border-fuchsia-600/50 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${mObj.subRole}</span>` : ''}
+                                            </div>
                                             <span class="text-[10px] text-fuchsia-300 font-medium">${effectiveClass || '-'} • CP: ${cpText}</span>
                                         </div>
                                     </div>
@@ -1831,6 +1880,60 @@
             renderFeatherQueue();
         }
 
+        let isWhiteAmountLocked = true;
+        let isBlackAmountLocked = true;
+
+        function toggleFeatherAmountLock(type) {
+            if (!canEditParties) {
+                alert('⚠️ เฉพาะยศผู้จัดการขึ้นไปเท่านั้นที่สามารถปลดล็อกหรือปรับเปลี่ยนจำนวนใบขนนกได้ครับ');
+                return;
+            }
+
+            if (type === 'white') {
+                isWhiteAmountLocked = !isWhiteAmountLocked;
+                const input = document.getElementById('whiteAmount');
+                const icon = document.getElementById('whiteLockIcon');
+                const text = document.getElementById('whiteLockText');
+                const btn = document.getElementById('btnToggleWhiteLock');
+
+                if (isWhiteAmountLocked) {
+                    input.disabled = true;
+                    input.className = "w-full bg-[#0d071a] border border-indigo-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-300 cursor-not-allowed opacity-90 transition focus:outline-none";
+                    if (icon) icon.innerText = "🔒";
+                    if (text) text.innerText = `ล็อก ${input.value || 3} ใบ`;
+                    if (btn) btn.className = "text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded-lg border border-indigo-700/60 font-bold transition flex items-center gap-1 cursor-pointer";
+                } else {
+                    input.disabled = false;
+                    input.className = "w-full bg-[#120724] border border-fuchsia-500 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100 focus:border-fuchsia-400 focus:outline-none ring-1 ring-fuchsia-400";
+                    if (icon) icon.innerText = "🔓";
+                    if (text) text.innerText = "ปลดล็อกแล้ว (แก้ไขได้)";
+                    if (btn) btn.className = "text-[10px] bg-fuchsia-900 hover:bg-fuchsia-800 text-fuchsia-200 px-2 py-0.5 rounded-lg border border-fuchsia-500 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
+                    input.focus();
+                }
+            } else if (type === 'black') {
+                isBlackAmountLocked = !isBlackAmountLocked;
+                const input = document.getElementById('blackAmount');
+                const icon = document.getElementById('blackLockIcon');
+                const text = document.getElementById('blackLockText');
+                const btn = document.getElementById('btnToggleBlackLock');
+
+                if (isBlackAmountLocked) {
+                    input.disabled = true;
+                    input.className = "w-full bg-[#0d071a] border border-purple-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-300 cursor-not-allowed opacity-90 transition focus:outline-none";
+                    if (icon) icon.innerText = "🔒";
+                    if (text) text.innerText = `ล็อก ${input.value || 4} ใบ`;
+                    if (btn) btn.className = "text-[10px] bg-purple-900 hover:bg-purple-800 text-purple-200 px-2 py-0.5 rounded-lg border border-purple-700/60 font-bold transition flex items-center gap-1 cursor-pointer";
+                } else {
+                    input.disabled = false;
+                    input.className = "w-full bg-[#120724] border border-fuchsia-500 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100 focus:border-fuchsia-400 focus:outline-none ring-1 ring-fuchsia-400";
+                    if (icon) icon.innerText = "🔓";
+                    if (text) text.innerText = "ปลดล็อกแล้ว (แก้ไขได้)";
+                    if (btn) btn.className = "text-[10px] bg-fuchsia-900 hover:bg-fuchsia-800 text-fuchsia-200 px-2 py-0.5 rounded-lg border border-fuchsia-500 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
+                    input.focus();
+                }
+            }
+        }
+
         function renderFeatherQueue() {
             const container = document.getElementById('featherQueueMembersContainer');
             if (!container) return;
@@ -1869,7 +1972,10 @@
                             <div class="flex items-center gap-1.5">
                                 ${classIcon}
                                 <div>
-                                    <span class="text-xs font-bold text-purple-100">${m.name}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs font-bold text-purple-100">${m.name}</span>
+                                        ${m.subRole ? `<span class="text-[9px] bg-purple-950 text-fuchsia-300 border border-fuchsia-600/50 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${m.subRole}</span>` : ''}
+                                    </div>
                                     <span class="text-[10px] text-purple-400 block leading-none">${m.role || 'สมาชิกกิลด์'}</span>
                                 </div>
                             </div>
@@ -1904,7 +2010,7 @@
                 return;
             }
 
-            if (confirm(`คุณต้องการยืนยันว่าได้รับขนนก (ขนขาว 3 ใบ & ขนดำ 4 ใบ) เรียบร้อยแล้ว ใช่หรือไม่?`)) {
+            if (confirm(`คุณต้องการยืนยันว่าได้รับขนนก (ขนขาว & ขนดำ) เรียบร้อยแล้ว ใช่หรือไม่?`)) {
                 db.ref(`auctionResults/feather/confirmations/${safeKey}`).set({
                     confirmed: true,
                     confirmedAt: Date.now(),
@@ -1928,13 +2034,13 @@
             const wStartS = parseInt(document.getElementById('whiteStartSlot').value) || 1;
             const wEndP = parseInt(document.getElementById('whiteEndPage').value) || 0;
             const wEndS = parseInt(document.getElementById('whiteEndSlot').value) || 0;
-            const wAmount = 3; // ล็อก 3 ใบต่อคน
+            const wAmount = parseInt(document.getElementById('whiteAmount').value) || 3;
 
             const bStartP = parseInt(document.getElementById('blackStartPage').value) || 0;
             const bStartS = parseInt(document.getElementById('blackStartSlot').value) || 0;
             const bEndP = parseInt(document.getElementById('blackEndPage').value) || 0;
             const bEndS = parseInt(document.getElementById('blackEndSlot').value) || 0;
-            const bAmount = 4; // ล็อก 4 ใบต่อคน
+            const bAmount = parseInt(document.getElementById('blackAmount').value) || 4;
 
             const wSupply = (wEndP > 0 && wEndS > 0) ? calculateTotalSupply(wStartP, wStartS, wEndP, wEndS) : 0;
             const bSupply = (bStartP > 0 && bStartS > 0 && bEndP > 0 && bEndS > 0) ? calculateTotalSupply(bStartP, bStartS, bEndP, bEndS) : 0;
@@ -1957,6 +2063,52 @@
             let currentWhiteHolders = [...(currentAuctionState.whiteHolders || [])];
             let currentBlackHolders = [...(currentAuctionState.blackHolders || [])];
 
+            let pendingMembers = sortedGuildMembers.filter(m => !currentWhiteHolders.includes(m.name) && !currentBlackHolders.includes(m.name));
+            if (pendingMembers.length === 0) {
+                currentWhiteHolders = [];
+                currentBlackHolders = [];
+                pendingMembers = [...sortedGuildMembers];
+            }
+
+            // จัดกลุ่มสมาชิกตามปาร์ตี้ เพื่อแจกแบบ "ครบยกปาร์ตี้เท่านั้น" (ถ้าไม่ครบทั้งตี้ ให้ตัดออกเป็นเศษ)
+            let partyGroups = [];
+            let currentGroup = null;
+
+            pendingMembers.forEach(m => {
+                const partyKey = m.subRole || `Unassigned_${m.name}`;
+                if (!currentGroup || currentGroup.key !== partyKey) {
+                    currentGroup = { key: partyKey, isParty: !!m.subRole, members: [] };
+                    partyGroups.push(currentGroup);
+                }
+                currentGroup.members.push(m);
+            });
+
+            let allocatedMembers = [];
+            let pairsRemaining = totalPairs;
+
+            for (const group of partyGroups) {
+                const groupSize = group.members.length;
+                if (group.isParty) {
+                    // ตรวจสอบว่ามีจำนวนคู่ขนนกพอแจกทุกคนในปาร์ตี้นี้หรือไม่
+                    if (pairsRemaining >= groupSize) {
+                        allocatedMembers.push(...group.members);
+                        pairsRemaining -= groupSize;
+                    } else {
+                        // ถ้าไม่พอแจกครบทุกคนในปาร์ตี้ ให้ตัดปาร์ตี้นี้ออกและหยุดแจกทันที (เศษขนนกทั้งหมดตัดออก)
+                        break;
+                    }
+                } else {
+                    if (pairsRemaining >= 1) {
+                        allocatedMembers.push(group.members[0]);
+                        pairsRemaining -= 1;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            const actualPairsAllocated = allocatedMembers.length;
+
             let whiteAllocations = {};
             let blackAllocations = {};
             let whiteLeftovers = [];
@@ -1965,17 +2117,10 @@
             let wIndex = ((wStartP - 1) * 4) + (wStartS - 1);
             let bIndex = ((bStartP - 1) * 4) + (bStartS - 1);
 
-            for (let i = 0; i < totalPairs; i++) {
-                let pendingMembers = sortedGuildMembers.filter(m => !currentWhiteHolders.includes(m.name) && !currentBlackHolders.includes(m.name));
-                if (pendingMembers.length === 0) {
-                    currentWhiteHolders = [];
-                    currentBlackHolders = [];
-                    pendingMembers = [...sortedGuildMembers];
-                }
+            allocatedMembers.forEach(m => {
+                const recipient = m.name;
 
-                let recipient = pendingMembers[0].name;
-
-                // 1. Allocate White Feathers (3 ใบ)
+                // 1. Allocate White Feathers
                 if (!whiteAllocations[recipient]) whiteAllocations[recipient] = [];
                 let remW = wAmount;
                 let chunkW = wIndex;
@@ -1995,7 +2140,7 @@
                 }
                 wIndex += wAmount;
 
-                // 2. Allocate Black Feathers (4 ใบ)
+                // 2. Allocate Black Feathers
                 if (!blackAllocations[recipient]) blackAllocations[recipient] = [];
                 let remB = bAmount;
                 let chunkB = bIndex;
@@ -2017,10 +2162,10 @@
 
                 currentWhiteHolders.push(recipient);
                 currentBlackHolders.push(recipient);
-            }
+            });
 
-            // เศษขนขาวที่เหลือจากการตัดออก
-            const wRemaining = wSupply - (totalPairs * wAmount);
+            // เศษขนขาวที่เหลือจากการตัดออก (รวมถึงปาร์ตี้ที่ไม่ครบทั้งตี้)
+            const wRemaining = wSupply - (actualPairsAllocated * wAmount);
             if (wRemaining > 0) {
                 let rem = wRemaining;
                 let chunkStart = wIndex;
@@ -2040,8 +2185,8 @@
                 }
             }
 
-            // เศษขนดำที่เหลือจากการตัดออก
-            const bRemaining = bSupply - (totalPairs * bAmount);
+            // เศษขนดำที่เหลือจากการตัดออก (รวมถึงปาร์ตี้ที่ไม่ครบทั้งตี้)
+            const bRemaining = bSupply - (actualPairsAllocated * bAmount);
             if (bRemaining > 0) {
                 let rem = bRemaining;
                 let chunkStart = bIndex;
@@ -2074,7 +2219,11 @@
             };
 
             db.ref().update(updates).then(() => {
-                alert(`🎉 คำนวณและจัดสรรขนนกสำเร็จ ${totalPairs} คู่ (คนละ ขนขาว 3 ใบ + ขนดำ 4 ใบ) เรียบร้อยแล้ว!`);
+                if (actualPairsAllocated > 0) {
+                    alert(`🎉 คำนวณและจัดสรรขนนกสำเร็จ ${actualPairsAllocated} คน (ครบยกปาร์ตี้) คนละ ขนขาว ${wAmount} ใบ + ขนดำ ${bAmount} ใบ (เศษตัดออก ${wRemaining} ขาว / ${bRemaining} ดำ) เรียบร้อยแล้ว!`);
+                } else {
+                    alert(`⚠️ ขนนกไม่เพียงพอสำหรับแจกให้ครบทั้งปาร์ตี้แรก (ตัดออกเป็นเศษทั้งหมด ${wRemaining} ขาว / ${bRemaining} ดำ)`);
+                }
             }).catch(err => {
                 alert('เกิดข้อผิดพลาด: ' + err.message);
             });
@@ -2260,7 +2409,10 @@
                             <div class="flex items-center gap-2">
                                 ${classIcon}
                                 <div>
-                                    <span class="block leading-none">${name}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="block leading-none">${name}</span>
+                                        ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-purple-950 text-fuchsia-300 border border-fuchsia-600/50 px-1 py-0.2 rounded font-bold">🚩 ${mObj.subRole}</span>` : ''}
+                                    </div>
                                     <span class="text-[10px] text-purple-400 font-normal">(${roleText})</span>
                                 </div>
                             </div>
