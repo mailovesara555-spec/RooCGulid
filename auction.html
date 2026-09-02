@@ -540,8 +540,11 @@
                                 <th colspan="4" class="py-2 px-2 text-center bg-indigo-950/90 text-indigo-200 border-r border-indigo-700/60">
                                     🕊️ ขนขาว (White Feather)
                                 </th>
-                                <th colspan="4" class="py-2 px-2 text-center bg-[#250d24] text-rose-200">
+                                <th colspan="4" class="py-2 px-2 text-center bg-[#250d24] text-rose-200 border-r border-purple-800/60">
                                     🦅 ขนดำ (Black Feather)
+                                </th>
+                                <th rowspan="2" class="py-2.5 px-3 text-center min-w-[130px] bg-purple-950/80 text-fuchsia-200">
+                                    สถานะรับของ
                                 </th>
                             </tr>
                             <tr class="bg-[#130726] text-[11px] font-extrabold border-b border-purple-900/80">
@@ -557,12 +560,12 @@
                                 <th class="py-1.5 px-2 bg-[#1f0b20] text-rose-300 border-r border-rose-900/50 min-w-[110px]">ลำดับที่ (ใบที่)</th>
                                 <!-- Black Part 2 -->
                                 <th class="py-1.5 px-2 bg-[#18081a] text-rose-300/80 border-r border-rose-900/50 w-16">หน้าที่</th>
-                                <th class="py-1.5 px-2 bg-[#18081a] text-rose-300/80 min-w-[110px]">ลำดับที่ (ใบที่)</th>
+                                <th class="py-1.5 px-2 bg-[#18081a] text-rose-300/80 border-r border-purple-800/60 min-w-[110px]">ลำดับที่ (ใบที่)</th>
                             </tr>
                         </thead>
                         <tbody id="featherResultTableBody" class="divide-y divide-purple-900/40 text-xs">
                             <tr>
-                                <td colspan="10" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td>
+                                <td colspan="11" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td>
                             </tr>
                         </tbody>
                     </table>
@@ -777,6 +780,7 @@
         }
 
         // Global State
+        let currentMemberName = currentUser;
         let currentRole = 'สมาชิกกิลด์';
         let canEditParties = false;
         let activeAuctionMode = 'card'; // 'card' or 'feather'
@@ -807,6 +811,9 @@
 
             db.ref(`members/${safeUid}`).once('value', (snap) => {
                 const memberData = snap.val();
+                if (memberData && memberData.name) {
+                    currentMemberName = memberData.name;
+                }
                 let role = (memberData && memberData.role) ? memberData.role : (isSuper ? 'Admin' : 'สมาชิกกิลด์');
                 if (isSuper) role = 'Admin';
                 currentRole = role;
@@ -1040,6 +1047,53 @@
         // =========================================================================
         // CARD PARTY LINEUP RENDERING & DRAG/DROP
         // =========================================================================
+        function toggleCardHolder(encodedName) {
+            if (!canEditParties) {
+                alert('⚠️ เฉพาะตำแหน่งผู้จัดการกิลด์ขึ้นไปเท่านั้นที่สามารถกำหนดสถานะผู้ได้รับการ์ดได้ครับ');
+                return;
+            }
+            const memberName = decodeURIComponent(encodedName);
+            let currentHolders = [...(currentAuctionState.cardHolders || [])];
+            const parties = cardAuctionPartiesData.parties || {};
+            let transfers = { ...(cardAuctionPartiesData.transfers || {}) };
+
+            if (currentHolders.includes(memberName)) {
+                if (confirm(`คุณต้องการยกเลิกสถานะ "ได้การ์ดแล้ว" ของคุณ ${memberName} ใช่หรือไม่?`)) {
+                    currentHolders = currentHolders.filter(m => m !== memberName);
+                } else {
+                    return;
+                }
+            } else {
+                if (confirm(`คุณต้องการกำหนดให้คุณ ${memberName} "ได้การ์ดแล้ว" ในรอบนี้ ใช่หรือไม่?`)) {
+                    currentHolders.push(memberName);
+
+                    // Check if all 5 members in this party completed, auto clear transfer
+                    for (let p = 1; p <= 16; p++) {
+                        const pKey = `p${p}`;
+                        const pData = parties[pKey] || {};
+                        const mList = [pData.slot1, pData.slot2, pData.slot3, pData.slot4, pData.slot5].filter(Boolean);
+                        if (mList.includes(memberName)) {
+                            let allDone = mList.every(m => currentHolders.includes(m));
+                            if (allDone && transfers[pKey]) {
+                                delete transfers[pKey];
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    return;
+                }
+            }
+
+            let updates = {};
+            updates['auctionState/cardHolders'] = currentHolders;
+            updates['partyLineups/cardAuction/transfers'] = transfers;
+
+            db.ref().update(updates).catch(err => {
+                alert('เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
         function renderCardParties() {
             const container = document.getElementById('cardPartiesContainer');
             if (!container) return;
@@ -1077,7 +1131,28 @@
                         const gotCard = cardHolders.includes(memberName);
                         const isTarget = (memberName === rightHolder);
 
-                        let cardStatusBadge = gotCard ? '<span class="text-[10px] bg-purple-950 text-purple-300 font-bold px-1.5 py-0.2 rounded border border-purple-700/60 shrink-0">🃏 ได้แล้ว</span>' : (isTarget ? '<span class="text-[10px] bg-gradient-to-r from-purple-600 to-pink-600 text-white font-extrabold px-1.5 py-0.2 rounded shadow-2xs shrink-0">คิวถัดไป ⭐</span>' : '');
+                        let cardStatusBadge = '';
+                        if (canEditParties) {
+                            if (gotCard) {
+                                cardStatusBadge = `
+                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] bg-purple-900 hover:bg-rose-950 text-purple-200 hover:text-rose-300 font-bold px-2 py-0.5 rounded-lg border border-purple-600/60 hover:border-rose-600/60 transition shadow-xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อยกเลิกสถานะได้การ์ด">
+                                        <span>🃏 ได้แล้ว ✓</span>
+                                    </button>
+                                `;
+                            } else {
+                                cardStatusBadge = `
+                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] ${isTarget ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black shadow-xs ring-1 ring-fuchsia-400' : 'bg-[#1b0d35] hover:bg-purple-900 text-purple-300 hover:text-white'} font-bold px-2 py-0.5 rounded-lg border border-purple-700/60 hover:border-purple-500 transition shadow-2xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อทำเครื่องหมายว่าได้การ์ดแล้ว">
+                                        <span>${isTarget ? 'คิวถัดไป ⭐' : '+ รับการ์ด'}</span>
+                                    </button>
+                                `;
+                            }
+                        } else {
+                            if (gotCard) {
+                                cardStatusBadge = '<span class="text-[10px] bg-purple-950 text-purple-300 font-bold px-1.5 py-0.2 rounded border border-purple-700/60 shrink-0">🃏 ได้แล้ว</span>';
+                            } else if (isTarget) {
+                                cardStatusBadge = '<span class="text-[10px] bg-gradient-to-r from-purple-600 to-pink-600 text-white font-extrabold px-1.5 py-0.2 rounded shadow-2xs shrink-0">คิวถัดไป ⭐</span>';
+                            }
+                        }
 
                         slotsHtml += `
                             <div id="${slotId}" 
@@ -1460,7 +1535,7 @@
                 }
 
                 orderRemaining.forEach((mName, k) => {
-                    let guildRound = completedCount + 1 + k;
+                    let guildRound = 1 + k; // สมาชิกที่เหลือในปาร์ตี้ยังคงเริ่มรับคิวตั้งแต่รอบที่ 1 (การกดรับการ์ดนอกรอบไม่ตัดสิทธิ์รอบของปาร์ตี้)
                     allQueueItems.push({
                         partyKey: p.pKey,
                         partyNum: p.pNum,
@@ -1485,9 +1560,11 @@
 
             container.innerHTML = allQueueItems.map((item, idx) => {
                 let isFirst = (idx === 0);
-                let tagClass = isFirst ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-black shadow-md ring-1 ring-fuchsia-400' : 'bg-[#15092a] text-purple-200 border border-purple-800/60';
+                let tagClass = isFirst ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-black shadow-md ring-1 ring-fuchsia-400' : 'bg-[#15092a] text-purple-200 border border-purple-800/60 hover:bg-purple-900/60';
+                let cursorStyle = canEditParties ? 'cursor-pointer' : '';
+                let clickAttr = canEditParties ? `onclick="toggleCardHolder('${encodeURIComponent(item.memberName)}')"` : '';
                 return `
-                    <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${tagClass}">
+                    <span ${clickAttr} class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${tagClass} ${cursorStyle} transition" title="${canEditParties ? 'คลิกเพื่อกำหนดสถานะได้การ์ดแล้ว' : ''}">
                         <b class="text-fuchsia-300">P${item.partyNum}</b> (รอบที่ ${item.guildRound || 1}): ${item.memberName}
                     </span>
                 `;
@@ -1538,11 +1615,12 @@
             let allocations = {};
             let currIndex = ((startPage - 1) * 4) + (startSlot - 1);
             let remainingSupply = supply;
+            let partyCardsAllocated = {};
+            eligibleParties.forEach(p => { partyCardsAllocated[p.pKey] = 0; });
 
             while (remainingSupply > 0) {
                 let allQueueItems = [];
                 eligibleParties.forEach(p => {
-                    let completedCount = p.members.filter(m => currentHolders.includes(m)).length;
                     let remaining = p.members.filter(m => !currentHolders.includes(m));
                     let transferTarget = p.transferTarget;
                     let orderRemaining = [];
@@ -1555,8 +1633,9 @@
                         orderRemaining = [...remaining];
                     }
 
+                    const allocatedCountForParty = partyCardsAllocated[p.pKey] || 0;
                     orderRemaining.forEach((mName, k) => {
-                        let guildRound = completedCount + 1 + k;
+                        let guildRound = allocatedCountForParty + 1 + k;
                         allQueueItems.push({
                             partyKey: p.pKey,
                             partyNum: p.pNum,
@@ -1573,6 +1652,7 @@
 
                 if (allQueueItems.length === 0) {
                     currentHolders = [];
+                    eligibleParties.forEach(p => { partyCardsAllocated[p.pKey] = 0; });
                     continue;
                 }
 
@@ -1585,6 +1665,7 @@
 
                 allocations[recipient].push({ page, startSlot: slot, endSlot: slot, count: 1 });
                 currentHolders.push(recipient);
+                partyCardsAllocated[nextItem.partyKey] = (partyCardsAllocated[nextItem.partyKey] || 0) + 1;
 
                 let pObj = eligibleParties.find(p => p.pKey === nextItem.partyKey);
                 if (pObj) {
@@ -1802,6 +1883,41 @@
             }).join('');
         }
 
+        function isUserMatch(name) {
+            if (!name || !currentUser) return false;
+            const safeName = getFirebaseUidKey(name);
+            const userSafe = currentUser.toLowerCase().trim();
+            if (name.toLowerCase() === currentUser.toLowerCase()) return true;
+            if (safeName === userSafe) return true;
+            if (currentMemberName && currentMemberName.toLowerCase() === name.toLowerCase()) return true;
+            const mObj = allGuildMembers.find(x => x.name === name);
+            if (mObj && mObj.uid && mObj.uid.toLowerCase().trim() === userSafe) return true;
+            return false;
+        }
+
+        function confirmReceiveFeather(encodedName) {
+            const memberName = decodeURIComponent(encodedName);
+            const safeKey = getFirebaseUidKey(memberName);
+
+            if (!isUserMatch(memberName) && !canEditParties) {
+                alert(`⚠️ เฉพาะคุณ ${memberName} เท่านั้นที่สามารถกดยืนยันรับของได้ครับ`);
+                return;
+            }
+
+            if (confirm(`คุณต้องการยืนยันว่าได้รับขนนก (ขนขาว 3 ใบ & ขนดำ 4 ใบ) เรียบร้อยแล้ว ใช่หรือไม่?`)) {
+                db.ref(`auctionResults/feather/confirmations/${safeKey}`).set({
+                    confirmed: true,
+                    confirmedAt: Date.now(),
+                    confirmedBy: currentUser,
+                    memberName: memberName
+                }).then(() => {
+                    alert(`🎉 ยืนยันรับของเรียบร้อยแล้ว!`);
+                }).catch(err => {
+                    alert('เกิดข้อผิดพลาด: ' + err.message);
+                });
+            }
+        }
+
         function calculateFeatherAuction() {
             if (!canEditParties) {
                 alert('⚠️ คุณไม่มีสิทธิ์คำนวณผลประมูล');
@@ -1812,19 +1928,29 @@
             const wStartS = parseInt(document.getElementById('whiteStartSlot').value) || 1;
             const wEndP = parseInt(document.getElementById('whiteEndPage').value) || 0;
             const wEndS = parseInt(document.getElementById('whiteEndSlot').value) || 0;
-            const wAmount = parseInt(document.getElementById('whiteAmount').value) || 3;
+            const wAmount = 3; // ล็อก 3 ใบต่อคน
 
             const bStartP = parseInt(document.getElementById('blackStartPage').value) || 0;
             const bStartS = parseInt(document.getElementById('blackStartSlot').value) || 0;
             const bEndP = parseInt(document.getElementById('blackEndPage').value) || 0;
             const bEndS = parseInt(document.getElementById('blackEndSlot').value) || 0;
-            const bAmount = parseInt(document.getElementById('blackAmount').value) || 4;
+            const bAmount = 4; // ล็อก 4 ใบต่อคน
 
             const wSupply = (wEndP > 0 && wEndS > 0) ? calculateTotalSupply(wStartP, wStartS, wEndP, wEndS) : 0;
             const bSupply = (bStartP > 0 && bStartS > 0 && bEndP > 0 && bEndS > 0) ? calculateTotalSupply(bStartP, bStartS, bEndP, bEndS) : 0;
 
-            if (wSupply <= 0 && bSupply <= 0) {
-                alert('กรุณากรอกข้อมูลหน้าและใบของขนขาว หรือ ขนดำ อย่างน้อย 1 รายการครับ');
+            if (wSupply <= 0 || bSupply <= 0) {
+                alert('กรุณากรอกข้อมูลหน้าและใบของทั้ง ขนขาว และ ขนดำ ให้ครบถ้วนเพื่อแบ่งคู่กันครับ');
+                return;
+            }
+
+            // คำนวณจำนวนคู่ที่แบ่งได้ (ต้องได้ทั้งขนขาว 3 ใบ และขนดำ 4 ใบพร้อมกัน)
+            const maxWhitePeople = Math.floor(wSupply / wAmount);
+            const maxBlackPeople = Math.floor(bSupply / bAmount);
+            const totalPairs = Math.min(maxWhitePeople, maxBlackPeople);
+
+            if (totalPairs <= 0) {
+                alert('ขนนกไม่เพียงพอสำหรับจัดสรรคู่กัน (ต้องมีขนขาวอย่างน้อย 3 ใบ และขนดำอย่างน้อย 4 ใบครับ)');
                 return;
             }
 
@@ -1836,129 +1962,102 @@
             let whiteLeftovers = [];
             let blackLeftovers = [];
 
-            // Allocate White Feathers (คนละ wAmount = 3 ใบเท่านั้น เศษเหลือตัดออก)
-            if (wSupply > 0) {
-                let wIndex = ((wStartP - 1) * 4) + (wStartS - 1);
-                let wRemaining = wSupply;
+            let wIndex = ((wStartP - 1) * 4) + (wStartS - 1);
+            let bIndex = ((bStartP - 1) * 4) + (bStartS - 1);
 
-                while (wRemaining >= wAmount) {
-                    let pendingMembers = sortedGuildMembers.filter(m => !currentWhiteHolders.includes(m.name));
-                    if (pendingMembers.length === 0) {
-                        currentWhiteHolders = [];
-                        pendingMembers = [...sortedGuildMembers];
-                    }
-
-                    let recipient = pendingMembers[0].name;
-                    let countToGive = wAmount;
-
-                    if (!whiteAllocations[recipient]) whiteAllocations[recipient] = [];
-                    let rem = countToGive;
-                    let chunkStart = wIndex;
-                    while (rem > 0) {
-                        let p = Math.floor(chunkStart / 4) + 1;
-                        let s = (chunkStart % 4) + 1;
-                        let spaceOnPage = 4 - s + 1;
-                        let partTake = Math.min(rem, spaceOnPage);
-
-                        whiteAllocations[recipient].push({
-                            page: p,
-                            startSlot: s,
-                            endSlot: s + partTake - 1,
-                            count: partTake
-                        });
-
-                        rem -= partTake;
-                        chunkStart += partTake;
-                    }
-
-                    currentWhiteHolders.push(recipient);
-                    wRemaining -= countToGive;
-                    wIndex += countToGive;
+            for (let i = 0; i < totalPairs; i++) {
+                let pendingMembers = sortedGuildMembers.filter(m => !currentWhiteHolders.includes(m.name) && !currentBlackHolders.includes(m.name));
+                if (pendingMembers.length === 0) {
+                    currentWhiteHolders = [];
+                    currentBlackHolders = [];
+                    pendingMembers = [...sortedGuildMembers];
                 }
 
-                // เศษเหลือที่ตัดออก (wRemaining < 3)
-                if (wRemaining > 0) {
-                    let rem = wRemaining;
-                    let chunkStart = wIndex;
-                    while (rem > 0) {
-                        let p = Math.floor(chunkStart / 4) + 1;
-                        let s = (chunkStart % 4) + 1;
-                        let spaceOnPage = 4 - s + 1;
-                        let partTake = Math.min(rem, spaceOnPage);
+                let recipient = pendingMembers[0].name;
 
-                        whiteLeftovers.push({
-                            page: p,
-                            startSlot: s,
-                            endSlot: s + partTake - 1,
-                            count: partTake
-                        });
+                // 1. Allocate White Feathers (3 ใบ)
+                if (!whiteAllocations[recipient]) whiteAllocations[recipient] = [];
+                let remW = wAmount;
+                let chunkW = wIndex;
+                while (remW > 0) {
+                    let p = Math.floor(chunkW / 4) + 1;
+                    let s = (chunkW % 4) + 1;
+                    let space = 4 - s + 1;
+                    let take = Math.min(remW, space);
+                    whiteAllocations[recipient].push({
+                        page: p,
+                        startSlot: s,
+                        endSlot: s + take - 1,
+                        count: take
+                    });
+                    remW -= take;
+                    chunkW += take;
+                }
+                wIndex += wAmount;
 
-                        rem -= partTake;
-                        chunkStart += partTake;
-                    }
+                // 2. Allocate Black Feathers (4 ใบ)
+                if (!blackAllocations[recipient]) blackAllocations[recipient] = [];
+                let remB = bAmount;
+                let chunkB = bIndex;
+                while (remB > 0) {
+                    let p = Math.floor(chunkB / 4) + 1;
+                    let s = (chunkB % 4) + 1;
+                    let space = 4 - s + 1;
+                    let take = Math.min(remB, space);
+                    blackAllocations[recipient].push({
+                        page: p,
+                        startSlot: s,
+                        endSlot: s + take - 1,
+                        count: take
+                    });
+                    remB -= take;
+                    chunkB += take;
+                }
+                bIndex += bAmount;
+
+                currentWhiteHolders.push(recipient);
+                currentBlackHolders.push(recipient);
+            }
+
+            // เศษขนขาวที่เหลือจากการตัดออก
+            const wRemaining = wSupply - (totalPairs * wAmount);
+            if (wRemaining > 0) {
+                let rem = wRemaining;
+                let chunkStart = wIndex;
+                while (rem > 0) {
+                    let p = Math.floor(chunkStart / 4) + 1;
+                    let s = (chunkStart % 4) + 1;
+                    let spaceOnPage = 4 - s + 1;
+                    let partTake = Math.min(rem, spaceOnPage);
+                    whiteLeftovers.push({
+                        page: p,
+                        startSlot: s,
+                        endSlot: s + partTake - 1,
+                        count: partTake
+                    });
+                    rem -= partTake;
+                    chunkStart += partTake;
                 }
             }
 
-            // Allocate Black Feathers (คนละ bAmount = 3 ใบเท่านั้น เศษเหลือตัดออก)
-            if (bSupply > 0) {
-                let bIndex = ((bStartP - 1) * 4) + (bStartS - 1);
-                let bRemaining = bSupply;
-
-                while (bRemaining >= bAmount) {
-                    let pendingMembers = sortedGuildMembers.filter(m => !currentBlackHolders.includes(m.name));
-                    if (pendingMembers.length === 0) {
-                        currentBlackHolders = [];
-                        pendingMembers = [...sortedGuildMembers];
-                    }
-
-                    let recipient = pendingMembers[0].name;
-                    let countToGive = bAmount;
-
-                    if (!blackAllocations[recipient]) blackAllocations[recipient] = [];
-                    let rem = countToGive;
-                    let chunkStart = bIndex;
-                    while (rem > 0) {
-                        let p = Math.floor(chunkStart / 4) + 1;
-                        let s = (chunkStart % 4) + 1;
-                        let spaceOnPage = 4 - s + 1;
-                        let partTake = Math.min(rem, spaceOnPage);
-
-                        blackAllocations[recipient].push({
-                            page: p,
-                            startSlot: s,
-                            endSlot: s + partTake - 1,
-                            count: partTake
-                        });
-
-                        rem -= partTake;
-                        chunkStart += partTake;
-                    }
-
-                    currentBlackHolders.push(recipient);
-                    bRemaining -= countToGive;
-                    bIndex += countToGive;
-                }
-
-                // เศษเหลือที่ตัดออก (bRemaining < 3)
-                if (bRemaining > 0) {
-                    let rem = bRemaining;
-                    let chunkStart = bIndex;
-                    while (rem > 0) {
-                        let p = Math.floor(chunkStart / 4) + 1;
-                        let s = (chunkStart % 4) + 1;
-                        let spaceOnPage = 4 - s + 1;
-                        let partTake = Math.min(rem, spaceOnPage);
-
-                        blackLeftovers.push({
-                            page: p,
-                            startSlot: s,
-                            endSlot: s + partTake - 1,
-                            count: partTake
-                        });
-
-                        rem -= partTake;
-                        chunkStart += partTake;
-                    }
+            // เศษขนดำที่เหลือจากการตัดออก
+            const bRemaining = bSupply - (totalPairs * bAmount);
+            if (bRemaining > 0) {
+                let rem = bRemaining;
+                let chunkStart = bIndex;
+                while (rem > 0) {
+                    let p = Math.floor(chunkStart / 4) + 1;
+                    let s = (chunkStart % 4) + 1;
+                    let spaceOnPage = 4 - s + 1;
+                    let partTake = Math.min(rem, spaceOnPage);
+                    blackLeftovers.push({
+                        page: p,
+                        startSlot: s,
+                        endSlot: s + partTake - 1,
+                        count: partTake
+                    });
+                    rem -= partTake;
+                    chunkStart += partTake;
                 }
             }
 
@@ -1970,11 +2069,12 @@
                 blackAllocations: blackAllocations,
                 whiteLeftovers: whiteLeftovers,
                 blackLeftovers: blackLeftovers,
+                confirmations: {},
                 timestamp: Date.now()
             };
 
             db.ref().update(updates).then(() => {
-                alert('🎉 คำนวณและจัดสรรขนนกเรียบร้อยแล้ว!');
+                alert(`🎉 คำนวณและจัดสรรขนนกสำเร็จ ${totalPairs} คู่ (คนละ ขนขาว 3 ใบ + ขนดำ 4 ใบ) เรียบร้อยแล้ว!`);
             }).catch(err => {
                 alert('เกิดข้อผิดพลาด: ' + err.message);
             });
@@ -2041,6 +2141,7 @@
             const bAlloc = fData.blackAllocations || {};
             const wLeft = fData.whiteLeftovers || [];
             const bLeft = fData.blackLeftovers || [];
+            const confirmations = fData.confirmations || {};
 
             // Render Leftovers
             if (leftoverBox && leftoverContent) {
@@ -2095,7 +2196,7 @@
             if (countBadge) countBadge.innerText = `จัดสรรแล้ว ${allNames.length} คน`;
 
             if (allNames.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td></tr>`;
                 return;
             }
 
@@ -2126,6 +2227,32 @@
                 const bPage2 = bC2 ? `<span class="font-black text-rose-200 bg-[#250d24] px-2 py-0.5 rounded border border-rose-700/60 text-xs">${bC2.page}</span>` : '<span class="text-purple-400/30 font-bold">-</span>';
                 const bSlots2 = renderSlotBlocks(bC2, 'black');
 
+                // Confirmation Button / Status
+                const safeKey = getFirebaseUidKey(name);
+                const isConfirmed = !!(confirmations[safeKey] || confirmations[name]);
+                const isOwner = isUserMatch(name) || canEditParties;
+
+                let confirmHtml = '';
+                if (isConfirmed) {
+                    confirmHtml = `
+                        <div class="inline-flex items-center justify-center gap-1 bg-emerald-950 text-emerald-300 border border-emerald-500/60 px-2.5 py-1 rounded-xl font-black text-[11px] shadow-sm">
+                            <span>✅</span> ได้รับแล้ว
+                        </div>
+                    `;
+                } else if (isOwner) {
+                    confirmHtml = `
+                        <button type="button" onclick="confirmReceiveFeather('${encodeURIComponent(name)}')" class="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-[11px] border border-emerald-400/50 shadow-md transition transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 mx-auto">
+                            <span>📦</span> กดยืนยันรับของ
+                        </button>
+                    `;
+                } else {
+                    confirmHtml = `
+                        <button type="button" onclick="alert('เฉพาะคุณ ${name} เท่านั้นที่สามารถกดยืนยันรับของได้ครับ')" class="px-2 py-1 bg-purple-950/40 text-purple-400/50 rounded-xl text-[10px] font-bold border border-purple-900/40 cursor-not-allowed flex items-center justify-center gap-1 mx-auto" title="เฉพาะคุณ ${name} เท่านั้น">
+                            <span>🔒</span> รอยืนยัน
+                        </button>
+                    `;
+                }
+
                 return `
                     <tr class="hover:bg-purple-950/40 transition">
                         <td class="py-2.5 px-3 text-center font-bold text-purple-400/70 border-r border-purple-900/60">${idx + 1}</td>
@@ -2153,7 +2280,12 @@
 
                         <!-- Black Feather 2 (Cont.) -->
                         <td class="py-2.5 px-2 bg-[#18081a]/15 border-r border-rose-900/40">${bPage2}</td>
-                        <td class="py-2.5 px-2 bg-[#18081a]/15">${bSlots2}</td>
+                        <td class="py-2.5 px-2 bg-[#18081a]/15 border-r border-purple-800/60">${bSlots2}</td>
+
+                        <!-- Confirmation Status -->
+                        <td class="py-2.5 px-3 text-center bg-purple-950/30">
+                            ${confirmHtml}
+                        </td>
                     </tr>
                 `;
             }).join('');
