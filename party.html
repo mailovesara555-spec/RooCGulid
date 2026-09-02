@@ -223,7 +223,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left 16 Parties (Main Team 40 คน + Sub Team 40 คน) -->
-            <div class="lg:col-span-8 space-y-8">
+            <div class="lg:col-span-8 xl:col-span-9 space-y-8">
                 
                 <!-- Main Team (ทีมหลัก 1 - 8) -->
                 <div class="space-y-3">
@@ -236,8 +236,8 @@
                         </span>
                     </div>
 
-                    <!-- 8 Parties Grid (Main) -->
-                    <div id="partiesContainerMain" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <!-- 8 Parties Grid (Main) - ขยายเป็น 3 คอลัมน์เพื่อให้การ์ดกว้างและตัวหนังสือไม่เบียดกัน -->
+                    <div id="partiesContainerMain" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                         <!-- Party 1 to 8 rendered dynamically -->
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                     </div>
 
                     <!-- 8 Parties Grid (Sub) -->
-                    <div id="partiesContainerSub" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div id="partiesContainerSub" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                         <!-- Party 9 to 16 rendered dynamically -->
                     </div>
                 </div>
@@ -262,7 +262,7 @@
             </div>
 
             <!-- Right Sidebar: Waitlist & On-Leave (Sticky ตามการเลื่อนหน้าจอ) -->
-            <div class="lg:col-span-4 space-y-5 lg:sticky lg:top-20 lg:self-start">
+            <div class="lg:col-span-4 xl:col-span-3 space-y-5 lg:sticky lg:top-20 lg:self-start">
                 
                 <!-- Waitlist (รอจัดปาร์ตี้) -->
                 <div class="roo-card rounded-3xl p-5 space-y-4 shadow-md border border-amber-200">
@@ -486,33 +486,35 @@
         </div>
     </div>
 
-    <!-- Modal โอนสิทธิ์การประมูลการ์ด (Transfer Card Right Modal) -->
+    <!-- Modal โอนคิว / โอนสิทธิ์การประมูลการ์ด (Queue & Right Transfer Modal) -->
     <div id="transferModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-7 relative bg-white border-2 border-amber-400 shadow-2xl animate-fade-in">
             <div class="flex items-center justify-between border-b border-amber-200 pb-4 mb-4">
                 <div>
-                    <h3 class="text-base font-extrabold text-amber-950 flex items-center gap-2">
-                        <span>🔄</span> โอนสิทธิ์การประมูลการ์ด - <span id="transferPartyTitle" class="text-amber-700">Party 1</span>
+                    <h3 class="text-base font-black text-amber-950 flex items-center gap-2">
+                        <span class="text-lg">🔄</span> ระบบโอนคิวประมูลการ์ด - <span id="transferPartyTitle" class="text-amber-700">Party 1</span>
                     </h3>
-                    <p class="text-xs text-stone-500 mt-0.5">
-                        ผู้ถือสิทธิ์ปัจจุบัน: <strong id="transferCurrentHolder" class="text-amber-900 font-extrabold"></strong>
+                    <p class="text-xs text-stone-600 mt-1">
+                        ผู้มีสิทธิ์รับการ์ดรอบปัจจุบัน: <strong id="transferCurrentHolder" class="text-amber-900 font-extrabold bg-amber-100 px-2 py-0.5 rounded border border-amber-300"></strong>
                     </p>
                 </div>
-                <button onclick="closeTransferModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+                <button onclick="closeTransferModal()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs text-amber-900 bg-amber-50/80 p-3 rounded-xl border border-amber-200 flex items-start gap-2">
+                <div class="text-xs text-amber-900 bg-amber-50/90 p-3 rounded-2xl border border-amber-200 flex items-start gap-2.5">
                     <span class="text-base">💡</span>
-                    <span>สามารถเลือกโอนสิทธิ์ให้สมาชิก<b>ภายในปาร์ตี้เดียวกัน</b> หรือเลือกโอนให้สมาชิกคนอื่นในกิลด์ได้</span>
+                    <div class="leading-relaxed">
+                        ท่านสามารถเลือก<b>โอนคิวรับการ์ด</b>ให้สมาชิกท่านอื่นในปาร์ตี้ (Slot 1-5) เพื่อรับสิทธิ์ก่อน หรือโอนให้สมาชิกอื่นในกิลด์ได้
+                    </div>
                 </div>
 
-                <!-- สมาชิกในปาร์ตี้เดียวกัน (ลำดับแรก) -->
+                <!-- สมาชิกในปาร์ตี้เดียวกัน (แนะนำ) -->
                 <div>
-                    <label class="block text-xs font-extrabold text-amber-950 mb-2 flex items-center gap-1.5">
-                        <span>👥</span> สมาชิกในปาร์ตี้เดียวกัน (แนะนำ):
+                    <label class="block text-xs font-black text-amber-950 mb-2 flex items-center gap-1.5">
+                        <span>👥</span> เลือกผู้รับคิวในปาร์ตี้เดียวกัน:
                     </label>
-                    <div id="transferPartyMembersList" class="space-y-1.5">
+                    <div id="transferPartyMembersList" class="space-y-2">
                         <!-- Rendered by JS -->
                     </div>
                 </div>
@@ -520,29 +522,29 @@
                 <!-- สมาชิกคนอื่นในกิลด์ -->
                 <div class="pt-2 border-t border-amber-200/70">
                     <label class="block text-xs font-bold text-stone-700 mb-1.5 flex items-center gap-1">
-                        <span>🌐</span> หรือเลือกสมาชิกอื่นในกิลด์:
+                        <span>🌐</span> หรือเลือกโอนคิวให้สมาชิกอื่นในกิลด์:
                     </label>
                     <select id="transferOtherMemberSelect" onchange="selectTransferOtherMember()" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 focus:outline-none focus:border-amber-500 shadow-sm">
                         <option value="">-- เลือกจากสมาชิกกิลด์ทั้งหมด --</option>
                     </select>
                 </div>
 
-                <div id="transferSelectedPreview" class="p-3 bg-amber-100/70 border border-amber-300 rounded-xl text-xs text-amber-950 font-bold hidden flex items-center justify-between">
-                    <span>โอนสิทธิ์ให้: <span id="transferTargetName" class="text-amber-800 font-extrabold"></span></span>
-                    <span class="text-[10px] bg-amber-300 px-2 py-0.5 rounded-full">ยืนยันแล้วจะได้รับสิทธิ์</span>
+                <div id="transferSelectedPreview" class="p-3 bg-amber-100/90 border border-amber-300 rounded-2xl text-xs text-amber-950 font-bold hidden flex items-center justify-between shadow-2xs">
+                    <span>🔄 เตรียมโอนคิวให้: <span id="transferTargetName" class="text-amber-900 font-black text-sm ml-1"></span></span>
+                    <span class="text-[10px] bg-amber-500 text-white font-extrabold px-2 py-0.5 rounded-full shadow-2xs">พร้อมบันทึก</span>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-amber-200">
-                <button type="button" id="btnResetTransfer" onclick="resetPartyTransfer()" class="text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 font-bold px-3.5 py-2 rounded-xl transition">
-                    🔄 คืนค่าสิทธิ์เดิม
+            <div class="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-amber-200">
+                <button type="button" id="btnResetTransfer" onclick="resetPartyTransfer()" class="text-xs text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-300 font-bold px-3.5 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-1">
+                    <span>🔄</span> คืนค่าคิวเดิม
                 </button>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="closeTransferModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition">
+                    <button type="button" onclick="closeTransferModal()" class="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs font-bold transition cursor-pointer">
                         ยกเลิก
                     </button>
-                    <button type="button" onclick="confirmPartyTransfer()" class="roo-button px-5 py-2 rounded-xl text-white font-bold text-xs shadow-md flex items-center gap-1.5">
-                        💾 ยืนยันโอนสิทธิ์
+                    <button type="button" onclick="confirmPartyTransfer()" class="roo-button px-5 py-2.5 rounded-xl text-white font-black text-xs shadow-md flex items-center gap-1.5 cursor-pointer">
+                        💾 บันทึกโอนคิว
                     </button>
                 </div>
             </div>
@@ -919,8 +921,8 @@
 
                 const card = document.createElement('div');
                 card.className = isSubTeam 
-                    ? 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-indigo-200 bg-white/95 shadow-sm'
-                    : 'roo-card rounded-2xl p-3.5 space-y-2.5 border border-amber-200 bg-white/95 shadow-sm';
+                    ? 'roo-card rounded-2xl p-4 space-y-3 border border-indigo-200 bg-white/95 shadow-sm'
+                    : 'roo-card rounded-2xl p-4 space-y-3 border border-amber-200 bg-white/95 shadow-sm';
                 
                 const numBadgeClass = isSubTeam
                     ? 'bg-indigo-100 text-indigo-900 border-indigo-300'
@@ -931,45 +933,45 @@
                     : '';
 
                 // Card Auction Badges and Transfer Controls
-                let countBadge = `<span class="text-[10px] font-bold ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-1.5 py-0.5 rounded border whitespace-nowrap">${pCount}/5</span>`;
+                let countBadge = `<span class="text-xs font-black ${pCount === 5 ? 'text-emerald-800 bg-emerald-100 border-emerald-300' : 'text-stone-600 bg-stone-100 border-stone-200'} px-2.5 py-1 rounded-lg border whitespace-nowrap">${pCount}/5</span>`;
                 let transferBtn = '';
 
                 if (isCardAuction) {
                     if (pCount === 5) {
-                        countBadge = `<span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 border-emerald-300 px-1.5 py-0.5 rounded border shadow-2xs whitespace-nowrap">✅ 5/5</span>`;
+                        countBadge = `<span class="text-xs font-black text-emerald-800 bg-emerald-100 border-emerald-300 px-2.5 py-1 rounded-lg border shadow-2xs whitespace-nowrap">✅ 5/5</span>`;
                     } else {
-                        countBadge = `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 border-amber-300 px-1.5 py-0.5 rounded border shadow-2xs whitespace-nowrap" title="ต้องมีสมาชิกครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้">⚠️ ${pCount}/5</span>`;
+                        countBadge = `<span class="text-xs font-black text-amber-800 bg-amber-100 border-amber-300 px-2.5 py-1 rounded-lg border shadow-2xs whitespace-nowrap" title="ต้องมีสมาชิกครบ 5 คนจึงจะเข้าร่วมการประมูลการ์ดได้">⚠️ ${pCount}/5</span>`;
                     }
 
                     if (canEditParties && pCount > 0) {
                         const isTransferred = (partyTransfers && partyTransfers[pKey]);
                         transferBtn = `
                             <button onclick="openTransferModal('${pKey}')" 
-                                    class="text-[10px] ${isTransferred ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'} font-bold px-1.5 py-0.5 rounded border transition flex items-center gap-0.5 shadow-2xs whitespace-nowrap cursor-pointer" 
-                                    title="โอนสิทธิ์การประมูลการ์ด">
-                                🔄 โอน ${isTransferred ? '⭐' : ''}
+                                    class="text-xs ${isTransferred ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-emerald-300' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300'} font-extrabold px-2.5 py-1 rounded-lg border transition flex items-center gap-1 shadow-2xs whitespace-nowrap cursor-pointer" 
+                                    title="โอนคิว / สิทธิ์การประมูลการ์ด">
+                                <span>🔄 โอนคิว</span> ${isTransferred ? '<span class="text-emerald-700 font-black">⭐</span>' : ''}
                             </button>
                         `;
                     }
                 }
 
                 card.innerHTML = `
-                    <div class="flex items-center justify-between pb-2 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'} gap-1">
-                        <div class="flex items-center gap-1.5 min-w-0">
-                            <span class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-black border ${numBadgeClass} shrink-0 shadow-2xs">
+                    <div class="flex items-center justify-between pb-2.5 border-b ${isSubTeam ? 'border-indigo-200' : 'border-amber-200'} gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black border ${numBadgeClass} shrink-0 shadow-2xs">
                                 ${pNum}
                             </span>
-                            <span class="text-xs font-black ${isSubTeam ? 'text-indigo-950' : 'text-amber-950'} whitespace-nowrap">
+                            <span class="text-sm font-black ${isSubTeam ? 'text-indigo-950' : 'text-amber-950'} whitespace-nowrap">
                                 Party ${pNum}
                             </span>
                             ${subTeamLabel}
                         </div>
-                        <div class="flex items-center gap-1 shrink-0">
+                        <div class="flex items-center gap-1.5 shrink-0">
                             ${transferBtn}
                             ${countBadge}
                         </div>
                     </div>
-                    <div class="space-y-1.5" id="partySlots_${pKey}">
+                    <div class="space-y-2" id="partySlots_${pKey}">
                         ${[1,2,3,4,5].map(sNum => renderSlotHtml(pKey, sNum, partyData[`slot${sNum}`])).join('')}
                     </div>
                 `;
@@ -1000,10 +1002,10 @@
 
             if (member) {
                 const effectiveClass = getMemberPartyClass(member);
-                const icon = getClassIconHtml(effectiveClass, 'w-5 h-5');
+                const icon = getClassIconHtml(effectiveClass, 'w-6 h-6');
                 const isLeave = isMemberOnLeave(member);
                 const isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
-                const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1 py-0.2 rounded font-extrabold shrink-0" title="ตัวที่ 2">✌️2</span>' : '';
+                const char2Badge = isChar2 ? '<span class="text-[9px] bg-teal-100 text-teal-900 border border-teal-300 px-1.5 py-0.2 rounded font-extrabold shrink-0" title="ตัวที่ 2">✌️2</span>' : '';
                 const encodedName = encodeURIComponent(member.name || member.uid || '');
 
                 const hasCard = isCardAuction && hasCardIcon(member.name);
@@ -1011,13 +1013,13 @@
                 const nextGuildItem = isCardAuction ? getNextGuildCardReceiver() : null;
                 const isNextInGuild = nextGuildItem && nextGuildItem.memberName === member.name;
 
-                const cardIconBadge = hasCard ? `<span title="ได้รับการ์ดในรอบนี้แล้ว (ล็อกไม่สามารถย้ายปาร์ตี้ได้จนกว่าจะจบรอบ)" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.2 rounded font-extrabold inline-flex items-center gap-0.5 shadow-2xs shrink-0 cursor-help"><img src="images/item_card.png" class="w-3 h-3 object-contain" alt="การ์ด"> 🃏</span>` : '';
+                const cardIconBadge = hasCard ? `<span title="ได้รับการ์ดในรอบนี้แล้ว (ล็อกไม่สามารถย้ายปาร์ตี้ได้จนกว่าจะจบรอบ)" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold inline-flex items-center gap-0.5 shadow-2xs shrink-0 cursor-help"><img src="images/item_card.png" class="w-3.5 h-3.5 object-contain" alt="การ์ด"> 🃏</span>` : '';
                 
                 let rightBadge = '';
                 if (isNextInGuild) {
-                    rightBadge = `<span title="คิวอันดับที่ 1 ของกิลด์ที่จะได้รับการ์ด" class="text-[9px] bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 px-1.5 py-0.2 rounded font-extrabold shadow-sm inline-flex items-center gap-0.5 shrink-0 animate-pulse">⭐ คิวถัดไป</span>`;
+                    rightBadge = `<span title="คิวอันดับที่ 1 ของกิลด์ที่จะได้รับการ์ด" class="text-[9px] bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 px-2 py-0.5 rounded font-extrabold shadow-sm inline-flex items-center gap-0.5 shrink-0 animate-pulse">⭐ คิวถัดไป</span>`;
                 } else if (isRightHolder) {
-                    rightBadge = `<span title="สมาชิกท่านนี้มีสิทธิ์รับการ์ดของปาร์ตี้นี้" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-extrabold shadow-2xs inline-flex items-center gap-0.5 shrink-0">🎯 สิทธิ์ในตี้</span>`;
+                    rightBadge = `<span title="สมาชิกท่านนี้มีสิทธิ์รับการ์ดของปาร์ตี้นี้" class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded font-extrabold shadow-2xs inline-flex items-center gap-0.5 shrink-0">🎯 สิทธิ์ในตี้</span>`;
                 }
 
                 const isDraggable = canEditParties && !hasCard;
@@ -1033,36 +1035,36 @@
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
                          ${lockTooltip}
-                         class="slot-box filled ${isLeave ? 'border-rose-400 bg-rose-50/90' : ''} ${isNextInGuild ? 'ring-2 ring-amber-500 border-amber-400 bg-amber-50/90 shadow-sm' : (isRightHolder ? 'ring-1 ring-amber-300 border-amber-300 bg-amber-50/50' : '')} ${hasCard ? 'bg-amber-50/30 border-amber-200' : ''} ${isSelected ? 'selected-source' : ''} rounded-xl px-2.5 py-2 flex items-center gap-2 min-h-[54px] group transition-all">
+                         class="slot-box filled ${isLeave ? 'border-rose-400 bg-rose-50/90' : ''} ${isNextInGuild ? 'ring-2 ring-amber-500 border-amber-400 bg-amber-50/90 shadow-sm' : (isRightHolder ? 'ring-1 ring-amber-300 border-amber-300 bg-amber-50/50' : '')} ${hasCard ? 'bg-amber-50/30 border-amber-200' : ''} ${isSelected ? 'selected-source' : ''} rounded-2xl px-3 py-2 flex items-center gap-2.5 min-h-[58px] group transition-all">
                         <button type="button" 
                                 draggable="false"
                                 onmousedown="event.stopPropagation();"
                                 onclick="event.stopPropagation(); openChangeClassModal('${encodedName}')" 
-                                class="shrink-0 w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/80 flex items-center justify-center p-0.5 transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-110 hover:border-amber-400 hover:bg-amber-100' : 'cursor-default'}" 
+                                class="shrink-0 w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center p-0.5 transition-all focus:outline-none ${canEditParties ? 'cursor-pointer hover:scale-110 hover:border-amber-400 hover:bg-amber-100' : 'cursor-default'}" 
                                 title="${canEditParties ? 'คลิกที่ไอคอนเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : effectiveClass}">
                             ${icon}
                         </button>
                         <div class="min-w-0 flex-1 flex flex-col justify-center">
                             <!-- แถวที่ 1: ชื่อตัวละคร (ชัดเจน ไม่ทับซ้อน) + ป้ายตัวที่ 2 + ไอคอนการ์ด + 🔍 + นำออก/ล็อก -->
-                            <div class="flex items-center justify-between gap-1">
-                                <div class="flex items-center gap-1 min-w-0">
+                            <div class="flex items-center justify-between gap-1.5">
+                                <div class="flex items-center gap-1.5 min-w-0 flex-1">
                                     <span class="text-xs font-bold ${isLeave ? 'text-rose-950' : 'text-stone-900'} truncate">${member.name}</span>
                                     ${char2Badge}
                                     ${cardIconBadge}
                                 </div>
-                                <div class="flex items-center gap-0.5 shrink-0">
-                                    <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs px-0.5 py-0.2 rounded hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <button type="button" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); openStatsModal('${member.name}')" class="text-amber-500 hover:text-amber-700 text-xs p-1 rounded-md hover:bg-amber-100 transition inline-flex items-center" title="ส่องข้อมูลสเตตัส">🔍</button>
                                     ${canEditParties && !hasCard ? `
-                                        <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs px-1 py-0.2 rounded transition font-bold" title="นำออกจากปาร์ตี้">✕</button>
+                                        <button onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); removeFromParty('${pKey}', ${sNum})" class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-600 text-xs p-1 rounded-md transition font-bold cursor-pointer" title="นำออกจากปาร์ตี้">✕</button>
                                     ` : (hasCard ? `<span class="text-xs text-amber-500 font-bold opacity-60" title="ล็อกไม่สามารถนำออกได้จนกว่าจบรอบ">🔒</span>` : '')}
                                 </div>
                             </div>
                             <!-- แถวที่ 2: อาชีพตัวละคร + ป้ายสิทธิ์รับการ์ด / ลากิจกรรม -->
-                            <div class="flex items-center justify-between gap-1 mt-0.5">
-                                <span class="text-[10px] ${isLeave ? 'text-rose-700' : 'text-stone-500'} font-medium truncate ${canEditParties ? 'cursor-pointer hover:text-amber-700 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</span>
+                            <div class="flex items-center justify-between gap-1.5 mt-0.5">
+                                <span class="text-[11px] ${isLeave ? 'text-rose-700' : 'text-stone-500'} font-medium truncate ${canEditParties ? 'cursor-pointer hover:text-amber-700 hover:underline' : ''}" onmousedown="if(${canEditParties}) event.stopPropagation();" onclick="if(${canEditParties}) { event.stopPropagation(); openChangeClassModal('${encodedName}'); }" title="${canEditParties ? 'คลิกเพื่อเปลี่ยนอาชีพเฉพาะในผังนี้' : ''}">${effectiveClass || '-'}</span>
                                 <div class="flex items-center gap-1 shrink-0">
                                     ${rightBadge}
-                                    ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
+                                    ${isLeave ? '<span class="text-[9px] bg-rose-200 text-rose-900 px-1.5 py-0.2 rounded font-bold shrink-0">🏖️ ลา</span>' : ''}
                                 </div>
                             </div>
                         </div>
@@ -1075,7 +1077,7 @@
                          ondragleave="handleDragLeave(event)" 
                          ondrop="handleDropSlot(event, '${pKey}', ${sNum})"
                          onclick="handleSlotClick('${pKey}', ${sNum})"
-                         class="slot-box rounded-xl px-2 py-1.5 text-center text-stone-400 text-[11px] font-medium min-h-[54px] flex items-center justify-center transition-all ${hasActiveSelection ? 'bg-amber-50/90 border-amber-400 hover:bg-amber-100 hover:scale-[1.01]' : 'hover:border-amber-400 hover:bg-amber-50/50'}">
+                         class="slot-box rounded-2xl px-3 py-2 text-center text-stone-400 text-[11px] font-medium min-h-[58px] flex items-center justify-center transition-all ${hasActiveSelection ? 'bg-amber-50/90 border-amber-400 hover:bg-amber-100 hover:scale-[1.01]' : 'hover:border-amber-400 hover:bg-amber-50/50'}">
                         <span class="${hasActiveSelection ? 'text-amber-800 font-bold text-xs' : 'text-stone-400'}">
                             ${hasActiveSelection ? '➕ วางที่นี่' : `Slot ${sNum}`}
                         </span>
