@@ -424,7 +424,7 @@
                                     <label class="block text-[11px] font-bold text-indigo-300">แบ่งรอบละกี่ใบ / คน</label>
                                     <span class="text-[10px] bg-indigo-900 text-indigo-300 px-1.5 py-0.2 rounded border border-indigo-700">🔒 ล็อก 3 ใบ</span>
                                 </div>
-                                <input type="number" id="whiteAmount" value="3" min="1" class="w-full bg-[#120724] border border-indigo-700/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100">
+                                <input type="number" id="whiteAmount" value="3" disabled class="w-full bg-[#0d071a] border border-indigo-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-300 cursor-not-allowed opacity-90">
                             </div>
                         </div>
 
@@ -458,9 +458,9 @@
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="block text-[11px] font-bold text-purple-300">แบ่งรอบละกี่ใบ / คน</label>
-                                    <span class="text-[10px] bg-purple-900 text-purple-300 px-1.5 py-0.2 rounded border border-purple-700">🔒 ล็อก 3 ใบ</span>
+                                    <span class="text-[10px] bg-purple-900 text-purple-300 px-1.5 py-0.2 rounded border border-purple-700">🔒 ล็อก 4 ใบ</span>
                                 </div>
-                                <input type="number" id="blackAmount" value="3" min="1" class="w-full bg-[#120724] border border-purple-700/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100">
+                                <input type="number" id="blackAmount" value="4" disabled class="w-full bg-[#0d071a] border border-purple-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-300 cursor-not-allowed opacity-90">
                             </div>
                         </div>
 
@@ -507,14 +507,6 @@
                         </div>
                     </div>
 
-                    <!-- Leftovers Box for Feathers -->
-                    <div id="featherLeftoverBox" class="hidden roo-card rounded-3xl p-5 border border-purple-800/60 shadow-xl space-y-2">
-                        <h4 class="text-xs font-extrabold text-purple-200 flex items-center gap-1.5">
-                            <span>🎁</span> ขนนกที่เหลือจากการประมูล (Leftovers):
-                        </h4>
-                        <div id="featherLeftoverContent" class="flex flex-wrap gap-2 text-xs"></div>
-                    </div>
-
                 </div>
 
             </div>
@@ -528,6 +520,14 @@
                     <div id="featherResultCountBadge" class="text-xs font-bold text-fuchsia-300">
                         จัดสรรแล้ว 0 คน
                     </div>
+                </div>
+
+                <!-- Leftovers Box for Feathers (เศษเหลือจากการตัดออก) -->
+                <div id="featherLeftoverBox" class="hidden bg-[#180a2b] rounded-2xl p-4 border border-fuchsia-500/40 shadow-lg space-y-2">
+                    <h4 class="text-xs font-extrabold text-fuchsia-200 flex items-center gap-1.5">
+                        <span>🎁</span> ขนนกเศษเหลือที่ถูกตัดออก (Leftovers):
+                    </h4>
+                    <div id="featherLeftoverContent" class="flex flex-wrap gap-2 text-xs"></div>
                 </div>
 
                 <!-- Feather Result Table -->
@@ -1818,7 +1818,7 @@
             const bStartS = parseInt(document.getElementById('blackStartSlot').value) || 0;
             const bEndP = parseInt(document.getElementById('blackEndPage').value) || 0;
             const bEndS = parseInt(document.getElementById('blackEndSlot').value) || 0;
-            const bAmount = parseInt(document.getElementById('blackAmount').value) || 3;
+            const bAmount = parseInt(document.getElementById('blackAmount').value) || 4;
 
             const wSupply = (wEndP > 0 && wEndS > 0) ? calculateTotalSupply(wStartP, wStartS, wEndP, wEndS) : 0;
             const bSupply = (bStartP > 0 && bStartS > 0 && bEndP > 0 && bEndS > 0) ? calculateTotalSupply(bStartP, bStartS, bEndP, bEndS) : 0;
@@ -1833,13 +1833,15 @@
 
             let whiteAllocations = {};
             let blackAllocations = {};
+            let whiteLeftovers = [];
+            let blackLeftovers = [];
 
-            // Allocate White Feathers
+            // Allocate White Feathers (คนละ wAmount = 3 ใบเท่านั้น เศษเหลือตัดออก)
             if (wSupply > 0) {
                 let wIndex = ((wStartP - 1) * 4) + (wStartS - 1);
                 let wRemaining = wSupply;
 
-                while (wRemaining > 0) {
+                while (wRemaining >= wAmount) {
                     let pendingMembers = sortedGuildMembers.filter(m => !currentWhiteHolders.includes(m.name));
                     if (pendingMembers.length === 0) {
                         currentWhiteHolders = [];
@@ -1847,7 +1849,7 @@
                     }
 
                     let recipient = pendingMembers[0].name;
-                    let countToGive = Math.min(wAmount, wRemaining);
+                    let countToGive = wAmount;
 
                     if (!whiteAllocations[recipient]) whiteAllocations[recipient] = [];
                     let rem = countToGive;
@@ -1873,14 +1875,36 @@
                     wRemaining -= countToGive;
                     wIndex += countToGive;
                 }
+
+                // เศษเหลือที่ตัดออก (wRemaining < 3)
+                if (wRemaining > 0) {
+                    let rem = wRemaining;
+                    let chunkStart = wIndex;
+                    while (rem > 0) {
+                        let p = Math.floor(chunkStart / 4) + 1;
+                        let s = (chunkStart % 4) + 1;
+                        let spaceOnPage = 4 - s + 1;
+                        let partTake = Math.min(rem, spaceOnPage);
+
+                        whiteLeftovers.push({
+                            page: p,
+                            startSlot: s,
+                            endSlot: s + partTake - 1,
+                            count: partTake
+                        });
+
+                        rem -= partTake;
+                        chunkStart += partTake;
+                    }
+                }
             }
 
-            // Allocate Black Feathers
+            // Allocate Black Feathers (คนละ bAmount = 3 ใบเท่านั้น เศษเหลือตัดออก)
             if (bSupply > 0) {
                 let bIndex = ((bStartP - 1) * 4) + (bStartS - 1);
                 let bRemaining = bSupply;
 
-                while (bRemaining > 0) {
+                while (bRemaining >= bAmount) {
                     let pendingMembers = sortedGuildMembers.filter(m => !currentBlackHolders.includes(m.name));
                     if (pendingMembers.length === 0) {
                         currentBlackHolders = [];
@@ -1888,7 +1912,7 @@
                     }
 
                     let recipient = pendingMembers[0].name;
-                    let countToGive = Math.min(bAmount, bRemaining);
+                    let countToGive = bAmount;
 
                     if (!blackAllocations[recipient]) blackAllocations[recipient] = [];
                     let rem = countToGive;
@@ -1914,6 +1938,28 @@
                     bRemaining -= countToGive;
                     bIndex += countToGive;
                 }
+
+                // เศษเหลือที่ตัดออก (bRemaining < 3)
+                if (bRemaining > 0) {
+                    let rem = bRemaining;
+                    let chunkStart = bIndex;
+                    while (rem > 0) {
+                        let p = Math.floor(chunkStart / 4) + 1;
+                        let s = (chunkStart % 4) + 1;
+                        let spaceOnPage = 4 - s + 1;
+                        let partTake = Math.min(rem, spaceOnPage);
+
+                        blackLeftovers.push({
+                            page: p,
+                            startSlot: s,
+                            endSlot: s + partTake - 1,
+                            count: partTake
+                        });
+
+                        rem -= partTake;
+                        chunkStart += partTake;
+                    }
+                }
             }
 
             let updates = {};
@@ -1922,6 +1968,8 @@
             updates['auctionResults/feather'] = {
                 whiteAllocations: whiteAllocations,
                 blackAllocations: blackAllocations,
+                whiteLeftovers: whiteLeftovers,
+                blackLeftovers: blackLeftovers,
                 timestamp: Date.now()
             };
 
@@ -1984,11 +2032,49 @@
         function renderFeatherResultTable(results) {
             const tbody = document.getElementById('featherResultTableBody');
             const countBadge = document.getElementById('featherResultCountBadge');
+            const leftoverBox = document.getElementById('featherLeftoverBox');
+            const leftoverContent = document.getElementById('featherLeftoverContent');
             if (!tbody) return;
 
             const fData = results.feather || {};
             const wAlloc = fData.whiteAllocations || {};
             const bAlloc = fData.blackAllocations || {};
+            const wLeft = fData.whiteLeftovers || [];
+            const bLeft = fData.blackLeftovers || [];
+
+            // Render Leftovers
+            if (leftoverBox && leftoverContent) {
+                if (wLeft.length > 0 || bLeft.length > 0) {
+                    let leftHtml = '';
+                    if (wLeft.length > 0) {
+                        const wNorm = normalizeMemberChunks(wLeft);
+                        const wTxt = wNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
+                        const wCount = wNorm.reduce((acc, c) => acc + c.count, 0);
+                        leftHtml += `
+                            <div class="inline-flex items-center gap-2 bg-indigo-950/80 text-indigo-200 border border-indigo-700/60 px-3 py-1.5 rounded-xl font-bold">
+                                <span>🕊️ ขนขาวคงเหลือ (${wCount} ใบ):</span>
+                                <span class="text-white font-extrabold">${wTxt}</span>
+                            </div>
+                        `;
+                    }
+                    if (bLeft.length > 0) {
+                        const bNorm = normalizeMemberChunks(bLeft);
+                        const bTxt = bNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
+                        const bCount = bNorm.reduce((acc, c) => acc + c.count, 0);
+                        leftHtml += `
+                            <div class="inline-flex items-center gap-2 bg-[#250d24] text-rose-200 border border-rose-700/60 px-3 py-1.5 rounded-xl font-bold">
+                                <span>🦅 ขนดำคงเหลือ (${bCount} ใบ):</span>
+                                <span class="text-white font-extrabold">${bTxt}</span>
+                            </div>
+                        `;
+                    }
+                    leftoverContent.innerHTML = leftHtml;
+                    leftoverBox.classList.remove('hidden');
+                } else {
+                    leftoverBox.classList.add('hidden');
+                    leftoverContent.innerHTML = '';
+                }
+            }
 
             function getEarliestFeatherIndex(name) {
                 let minIdx = Infinity;
@@ -2110,6 +2196,20 @@
                     let b = (bNorm.length > 0) ? bNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ') : '-';
                     text += `${i + 1}. ${name}\n   🕊️ ขนขาว: ${w}\n   🦅 ขนดำ: ${b}\n`;
                 });
+
+                if (fData.whiteLeftovers && fData.whiteLeftovers.length > 0) {
+                    const wNorm = normalizeMemberChunks(fData.whiteLeftovers);
+                    const wTxt = wNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
+                    const wCount = wNorm.reduce((acc, c) => acc + c.count, 0);
+                    text += `\n🎁 ขนขาวคงเหลือ (${wCount} ใบ): ${wTxt}\n`;
+                }
+                if (fData.blackLeftovers && fData.blackLeftovers.length > 0) {
+                    const bNorm = normalizeMemberChunks(fData.blackLeftovers);
+                    const bTxt = bNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
+                    const bCount = bNorm.reduce((acc, c) => acc + c.count, 0);
+                    text += `\n🎁 ขนดำคงเหลือ (${bCount} ใบ): ${bTxt}\n`;
+                }
+
                 text += `=====================================\n`;
 
                 navigator.clipboard.writeText(text).then(() => {
