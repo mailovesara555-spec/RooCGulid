@@ -1899,7 +1899,7 @@
             const memberName = decodeURIComponent(encodedName);
             const safeKey = getFirebaseUidKey(memberName);
 
-            if (!isUserMatch(memberName) && !canEditParties) {
+            if (!isUserMatch(memberName)) {
                 alert(`⚠️ เฉพาะคุณ ${memberName} เท่านั้นที่สามารถกดยืนยันรับของได้ครับ`);
                 return;
             }
@@ -2230,7 +2230,7 @@
                 // Confirmation Button / Status
                 const safeKey = getFirebaseUidKey(name);
                 const isConfirmed = !!(confirmations[safeKey] || confirmations[name]);
-                const isOwner = isUserMatch(name) || canEditParties;
+                const isOwner = isUserMatch(name);
 
                 let confirmHtml = '';
                 if (isConfirmed) {
