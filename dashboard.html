@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้อมูลส่วนตัว - ROOC GUILD</title>
+    <title>Wendell Guild - ระบบจัดการข้อมูลและสถิติ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -17,8 +17,8 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #fdf6e7;
-            color: #292524;
+            background-color: #0b0614;
+            color: #f3e8ff;
             position: relative;
             min-height: 100vh;
         }
@@ -29,48 +29,50 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('images/bg_banner.png');
+            background-image: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.12) 0%, transparent 50%), url('images/bg_banner.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.52;
+            opacity: 0.35;
             pointer-events: none;
             z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #fdf6e7; }
-        ::-webkit-scrollbar-thumb { background: #d4c4a8; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #b8a37e; }
+        ::-webkit-scrollbar-track { background: #0f071a; }
+        ::-webkit-scrollbar-thumb { background: #581c87; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7e22ce; }
         
         .roo-card { 
-            background: rgba(255, 255, 255, 0.92); 
-            backdrop-filter: blur(8px); 
-            border: 1px solid #e5d3b3; 
-            box-shadow: 0 4px 6px -1px rgba(184, 163, 126, 0.1), 0 2px 4px -1px rgba(184, 163, 126, 0.06); 
+            background: rgba(22, 12, 38, 0.88); 
+            backdrop-filter: blur(14px); 
+            border: 1px solid rgba(168, 85, 247, 0.28); 
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 15px rgba(168, 85, 247, 0.1); 
         }
         .roo-button { 
-            background: linear-gradient(to bottom, #fbbf24, #d97706); 
-            box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); 
-            border: 1px solid #b45309; 
-            text-shadow: 1px 1px 2px rgba(180, 83, 9, 0.5); 
+            background: linear-gradient(135deg, #7c3aed, #c026d3, #db2777); 
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
+            border: 1px solid rgba(192, 132, 252, 0.4); 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
         }
         .roo-button:hover { 
-            background: linear-gradient(to bottom, #fcd34d, #ea580c); 
+            background: linear-gradient(135deg, #8b5cf6, #d946ef, #e11d48); 
+            box-shadow: 0 6px 18px rgba(217, 70, 239, 0.5);
+            transform: translateY(-1px);
         }
         
         .stat-input-card {
-            background: #ffffff;
-            border: 1px solid #e5d3b3;
+            background: #190d30;
+            border: 1px solid rgba(168, 85, 247, 0.25);
             transition: all 0.2s ease;
         }
         .stat-input-card:focus-within {
-            border-color: #d97706;
-            box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+            border-color: #d946ef;
+            box-shadow: 0 0 0 2px rgba(217, 70, 239, 0.3);
         }
         .stat-input-card.highlight {
-            border-color: #f59e0b;
-            background: #fffbeb;
+            border-color: #d946ef;
+            background: rgba(88, 28, 135, 0.35);
         }
 
         .animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
@@ -80,29 +82,30 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-[#130b24]/90 backdrop-blur-md border-b border-purple-900/60 sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Links -->
                 <div class="flex items-center gap-8">
-                    <h1 class="text-xl font-extrabold tracking-tight text-amber-600 drop-shadow-sm flex items-center gap-2">
-                        ETERNITY<span class="text-stone-700 font-bold">Guild</span>
+                    <h1 class="text-xl font-extrabold tracking-tight drop-shadow-sm flex items-center gap-2.5">
+                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-purple-400 shadow-2xs">
+                        <span class="bg-gradient-to-r from-purple-200 via-fuchsia-200 to-pink-300 bg-clip-text text-transparent font-black">Wendell<span class="text-purple-400 font-bold ml-1">Guild</span></span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="party.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">จัดปาร์ตี้</a>
-                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">วางแผน</a>
-                        <a href="#" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">กิลด์</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-lg text-sm font-semibold bg-amber-100 text-amber-800 shadow-sm border border-amber-200">ข้อมูลส่วนตัว</a>
-                        <a href="members.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">สมาชิก</a>
-                        <a href="auction.html" class="px-3 py-2 rounded-lg text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-amber-100 transition-colors">ประมูล</a>
+                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">จัดปาร์ตี้</a>
+                        <a href="#" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">วางแผน</a>
+                        <a href="#" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">กิลด์</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-md border border-purple-400/50">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">สมาชิก</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">ประมูล</a>
                     </div>
                 </div>
                 <!-- User Profile & Logout -->
                 <div class="flex items-center gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p id="navUsername" class="font-medium text-stone-700 leading-none">กำลังเชื่อมต่อ...</p>
+                        <p id="navUsername" class="font-medium text-purple-200 leading-none">กำลังเชื่อมต่อ...</p>
                     </div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-stone-500 hover:text-red-600 bg-white hover:bg-red-50 border border-stone-200 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-purple-300 hover:text-rose-400 bg-purple-950/60 hover:bg-rose-950/50 border border-purple-800/60 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
                         ออกจากระบบ
                     </a>
                 </div>
@@ -116,29 +119,31 @@
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-900 drop-shadow-sm">จัดการข้อมูลส่วนตัว</h2>
-                <p class="text-sm text-stone-600 mt-1">อัปเดตข้อมูลตัวละครและสเตตัส (รองรับระบบ AI อ่านภาพหลายรูปพร้อมกัน)</p>
+                <h2 class="text-2xl sm:text-3xl font-black drop-shadow-sm">
+                    <span class="bg-gradient-to-r from-purple-100 via-fuchsia-200 to-pink-200 bg-clip-text text-transparent">จัดการข้อมูลส่วนตัว</span>
+                </h2>
+                <p class="text-sm text-purple-300/80 mt-1">อัปเดตข้อมูลตัวละครและสเตตัส (รองรับระบบ AI อ่านภาพหลายรูปพร้อมกัน)</p>
             </div>
             <div class="flex items-center gap-2">
-                <span id="dbStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                <span id="dbStatus" class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold bg-purple-950 text-purple-300 border border-purple-700/60 shadow-inner">
                     🟡 กำลังเชื่อมต่อ Cloud...
                 </span>
             </div>
         </div>
 
         <!-- Character Selector Tabs (ตัวละครที่ 1 & ตัวละครที่ 2) -->
-        <div class="flex items-center justify-between flex-wrap gap-3 bg-white/90 backdrop-blur-sm p-3 rounded-2xl border border-amber-200 shadow-sm animate-fade-in">
+        <div class="flex items-center justify-between flex-wrap gap-3 bg-[#130b24]/90 backdrop-blur-md p-3 rounded-2xl border border-purple-800/60 shadow-xl animate-fade-in">
             <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" id="btnChar1Tab" onclick="switchCharacterTab(1)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-600 cursor-pointer">
+                <button type="button" id="btnChar1Tab" onclick="switchCharacterTab(1)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-md roo-button text-white border border-purple-400/50 cursor-pointer">
                     <span>👤</span> ตัวละครหลัก (ตัวที่ 1)
                 </button>
-                <button type="button" id="btnChar2Tab" onclick="switchCharacterTab(2)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-900 border border-stone-200 cursor-pointer">
+                <button type="button" id="btnChar2Tab" onclick="switchCharacterTab(2)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-purple-950/80 text-purple-300 hover:text-white hover:bg-purple-900 border border-purple-800/60 cursor-pointer">
                     <span>✌️</span> ตัวละครรอง (ตัวที่ 2)
-                    <span id="char2LockBadge" class="hidden text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold border border-amber-300">🔒 สิทธิ์พิเศษ</span>
+                    <span id="char2LockBadge" class="hidden text-[10px] bg-purple-900 text-purple-200 px-2 py-0.5 rounded-full font-bold border border-purple-600/50">🔒 สิทธิ์พิเศษ</span>
                 </button>
             </div>
-            <div id="charTabHint" class="text-xs font-semibold text-amber-800 flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-xl border border-amber-200">
-                <span>🛡️</span> กำลังจัดการ: <strong id="activeCharLabel" class="text-amber-950 font-extrabold">ตัวละครหลัก (ตัวที่ 1)</strong>
+            <div id="charTabHint" class="text-xs font-semibold text-purple-200 flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-950/80 rounded-xl border border-purple-700/60 shadow-inner">
+                <span>🛡️</span> กำลังจัดการ: <strong id="activeCharLabel" class="text-fuchsia-300 font-extrabold">ตัวละครหลัก (ตัวที่ 1)</strong>
             </div>
         </div>
 
@@ -149,46 +154,46 @@
             <div class="lg:col-span-7 roo-card rounded-3xl p-6 sm:p-7 space-y-5">
                 
                 <!-- ลากิจกรรม Toggle -->
-                <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl flex items-center justify-between shadow-inner">
+                <div class="p-4 bg-purple-950/70 border border-purple-800/60 rounded-2xl flex items-center justify-between shadow-inner">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span id="leaveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                            <h4 id="leaveStatusText" class="text-xs font-extrabold text-emerald-800">สะดวกเข้าร่วมกิจกรรม</h4>
+                            <span id="leaveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            <h4 id="leaveStatusText" class="text-xs font-extrabold text-emerald-300">สะดวกเข้าร่วมกิจกรรม</h4>
                         </div>
-                        <p class="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
+                        <p class="text-[11px] text-purple-300/80 mt-0.5 leading-relaxed">
                             *หากเปิดลากิจกรรม ระบบจะแสดงกรอบสีแดงในระบบ และหัวหน้ากิลด์จะไม่สามารถจัดคุณเข้าปาร์ตี้กิจกรรมได้
                         </p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                         <input type="checkbox" id="toggleLeave" class="sr-only peer">
-                        <div class="w-11 h-6 bg-emerald-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500 shadow-inner"></div>
+                        <div class="w-11 h-6 bg-emerald-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-purple-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600 shadow-inner"></div>
                     </label>
                 </div>
 
                 <!-- ข้อมูลตัวละคร Form -->
                 <div>
-                    <h3 class="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-purple-100 mb-3 flex items-center gap-2">
                         <span>👤</span> ข้อมูลตัวละคร
                     </h3>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-semibold text-stone-500 mb-1">UID (อ้างอิงระบบ)</label>
-                            <input type="text" id="charUid" readonly class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-600 font-bold cursor-not-allowed select-none shadow-inner">
+                            <label class="block text-xs font-semibold text-purple-300 mb-1">UID (อ้างอิงระบบ)</label>
+                            <input type="text" id="charUid" readonly class="w-full bg-[#120724] border border-purple-900/60 rounded-xl px-3.5 py-2 text-xs text-purple-300 font-bold cursor-not-allowed select-none shadow-inner">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1">ชื่อตัวละคร <span class="text-red-500">*</span></label>
-                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-3.5 py-2 text-xs font-bold text-stone-800 transition shadow-sm">
+                            <label class="block text-xs font-semibold text-purple-200 mb-1">ชื่อตัวละคร <span class="text-rose-400">*</span></label>
+                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-[#170c2d] border border-purple-700/60 focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 rounded-xl px-3.5 py-2 text-xs font-bold text-purple-100 transition shadow-inner">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-stone-700 mb-1">สายอาชีพ</label>
+                        <label class="block text-xs font-semibold text-purple-200 mb-1">สายอาชีพ</label>
                         <div class="flex items-center gap-2.5">
-                            <div id="classIconPreview" class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-300 flex items-center justify-center p-1 shrink-0 shadow-sm">
+                            <div id="classIconPreview" class="w-10 h-10 rounded-xl bg-purple-950 border border-purple-700/60 flex items-center justify-center p-1 shrink-0 shadow-sm">
                                 <span class="text-base">👤</span>
                             </div>
-                            <select id="charClass" class="w-full bg-white border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 rounded-xl px-3.5 py-2 text-xs font-bold text-stone-800 transition cursor-pointer shadow-sm">
+                            <select id="charClass" class="w-full bg-[#170c2d] border border-purple-700/60 focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 rounded-xl px-3.5 py-2 text-xs font-bold text-purple-100 transition cursor-pointer shadow-inner">
                                 <option value="">-- เลือกอาชีพ --</option>
                                 <option value="Lord Knight">⚔️ Lord Knight</option>
                                 <option value="Paladin">🛡️ Paladin</option>
@@ -211,7 +216,7 @@
                 </div>
 
                 <div class="pt-2 flex justify-end">
-                    <button id="btnSaveInfo" class="roo-button text-white font-bold py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md">
+                    <button id="btnSaveInfo" class="roo-button text-white font-bold py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
                         💾 บันทึกข้อมูลตัวละคร
                     </button>
                 </div>
@@ -221,27 +226,27 @@
             <!-- Right Card: Avatar / Character Image Upload -->
             <div class="lg:col-span-5 roo-card rounded-3xl p-6 sm:p-7 space-y-4 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-amber-900 mb-1 flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-purple-100 mb-1 flex items-center gap-2">
                         <span>🖼️</span> รูปภาพสเตตัส / ตัวละคร
                     </h3>
-                    <p class="text-[11px] text-stone-500 mb-3">
+                    <p class="text-[11px] text-purple-300/80 mb-3">
                         💡 คำแนะนำ: เพื่อให้ภาพตัวละครแสดงผลได้สวยงามที่สุด แนะนำให้ลบพื้นหลังออกให้เรียบร้อย และแนบเป็นไฟล์ PNG (พื้นหลังโปร่งใส) ครับ
                     </p>
                     
                     <div class="relative mb-3">
-                        <input type="file" id="avatarFileInput" accept="image/*" class="w-full text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-amber-300 file:text-xs file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100 cursor-pointer">
+                        <input type="file" id="avatarFileInput" accept="image/*" class="w-full text-xs text-purple-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-purple-600/50 file:text-xs file:font-bold file:bg-purple-950 file:text-purple-200 hover:file:bg-purple-900 cursor-pointer">
                     </div>
                 </div>
 
-                <div id="avatarPreviewContainer" class="min-h-[140px] max-h-[180px] bg-amber-50/40 border-2 border-dashed border-amber-300 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden">
+                <div id="avatarPreviewContainer" class="min-h-[140px] max-h-[180px] bg-[#120724]/80 border-2 border-dashed border-purple-800/60 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden">
                     <img id="avatarPreviewImg" class="hidden max-h-[140px] object-contain drop-shadow-md rounded-lg" alt="Avatar">
-                    <div id="avatarPlaceholder" class="text-stone-400 text-xs">
+                    <div id="avatarPlaceholder" class="text-purple-400/50 text-xs">
                         <span class="text-2xl block mb-1">👤</span>
                         ยังไม่มีรูปภาพ<br>กดเลือกไฟล์เพื่ออัปโหลด
                     </div>
                 </div>
 
-                <p class="text-[10px] text-stone-400 text-center">
+                <p class="text-[10px] text-purple-400/60 text-center">
                     * ขนาดไม่เกิน 5MB (png, jpg, jpeg, webp) รูปนี้จะโชว์ที่ภาพตัวละครของคุณในทำเนียบสมาชิก
                 </p>
             </div>
@@ -249,39 +254,39 @@
         </div>
 
         <!-- Bottom Card: Comprehensive Character Stats (17 Fields + Multi-Image AI OCR) -->
-        <div class="roo-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="roo-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-fade-in shadow-2xl border border-purple-800/50" style="animation-delay: 0.1s;">
             
             <!-- AI Scanning Progress Overlay -->
-            <div id="aiOverlay" class="hidden absolute inset-0 bg-white/90 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+            <div id="aiOverlay" class="hidden absolute inset-0 bg-[#0b0614]/90 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
                 <div class="relative w-20 h-20 mb-4">
-                    <div class="absolute inset-0 border-4 border-amber-200 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-amber-600 rounded-full border-t-transparent animate-spin"></div>
+                    <div class="absolute inset-0 border-4 border-purple-800/50 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-fuchsia-500 rounded-full border-t-transparent animate-spin"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
                 </div>
-                <h4 id="aiStatusTitle" class="text-base font-extrabold text-amber-950">AI กำลังวิเคราะห์สเตตัสจากภาพ...</h4>
-                <p id="aiStatusDesc" class="text-xs text-stone-600 mt-1 max-w-sm">กำลังอ่านค่า CP, HP, ATK, DEF, Penetration และสเตตัส PVP จากภาพที่คุณอัปโหลด</p>
-                <div id="aiProgressBarContainer" class="w-64 bg-stone-200 rounded-full h-2 mt-4 overflow-hidden">
-                    <div id="aiProgressBar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 15%"></div>
+                <h4 id="aiStatusTitle" class="text-base font-extrabold text-purple-100">AI กำลังวิเคราะห์สเตตัสจากภาพ...</h4>
+                <p id="aiStatusDesc" class="text-xs text-purple-300/80 mt-1 max-w-sm">กำลังอ่านค่า CP, HP, ATK, DEF, Penetration และสเตตัส PVP จากภาพที่คุณอัปโหลด</p>
+                <div id="aiProgressBarContainer" class="w-64 bg-[#1a0c2e] rounded-full h-2 mt-4 overflow-hidden border border-purple-800/50">
+                    <div id="aiProgressBar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-2 rounded-full transition-all duration-300" style="width: 15%"></div>
                 </div>
             </div>
 
             <!-- Header of Stats Section -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-amber-200 pb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-purple-900/60 pb-4">
                 <div>
-                    <h3 class="text-lg font-extrabold text-amber-900 flex items-center gap-2">
+                    <h3 class="text-lg font-extrabold text-purple-100 flex items-center gap-2">
                         <span>⚔️</span> ข้อมูลสเตตัสตัวละคร
                     </h3>
-                    <p class="text-xs text-stone-500 mt-0.5">กรอกข้อมูล หรือกดอัปโหลดรูปภาพสเตตัสด้วย AI (เลือกได้ 1 รูปหรือหลายรูปพร้อมกัน)</p>
+                    <p class="text-xs text-purple-300/80 mt-0.5">กรอกข้อมูล หรือกดอัปโหลดรูปภาพสเตตัสด้วย AI (เลือกได้ 1 รูปหรือหลายรูปพร้อมกัน)</p>
                 </div>
                 
                 <div class="flex items-center gap-3 flex-wrap">
                     <!-- Hidden Multi-file input for AI -->
                     <input type="file" id="aiMultiFileInput" accept="image/*" multiple class="hidden">
                     
-                    <button onclick="document.getElementById('aiMultiFileInput').click()" class="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-amber-300 font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 border border-stone-700">
+                    <button onclick="document.getElementById('aiMultiFileInput').click()" class="px-4 py-2 bg-purple-950/90 hover:bg-purple-900 text-fuchsia-300 font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 border border-purple-600/50 cursor-pointer">
                         🤖 อัปโหลดสเตตัส ด้วย AI
                     </button>
-                    <button id="btnSaveStats" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+                    <button id="btnSaveStats" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
                         💾 บันทึกค่าสเตตัส
                     </button>
                 </div>
@@ -295,56 +300,56 @@
                     
                     <!-- CP (Highlight) -->
                     <div class="stat-input-card highlight rounded-xl p-2.5">
-                        <label class="block text-[10px] font-extrabold text-amber-900 uppercase">CP</label>
-                        <input type="number" id="stat_cp" placeholder="0" class="w-full bg-transparent text-sm font-extrabold text-amber-900 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-extrabold text-fuchsia-300 uppercase">CP</label>
+                        <input type="number" id="stat_cp" placeholder="0" class="w-full bg-transparent text-sm font-extrabold text-fuchsia-200 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- MAX HP -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">MAX HP</label>
-                        <input type="number" id="stat_maxHp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">MAX HP</label>
+                        <input type="number" id="stat_maxHp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- MAX SP -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">MAX SP</label>
-                        <input type="number" id="stat_maxSp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">MAX SP</label>
+                        <input type="number" id="stat_maxSp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.ATK -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.ATK</label>
-                        <input type="number" id="stat_pAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">P.ATK</label>
+                        <input type="number" id="stat_pAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.ATK -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.ATK</label>
-                        <input type="number" id="stat_mAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">M.ATK</label>
+                        <input type="number" id="stat_mAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.DEF</label>
-                        <input type="number" id="stat_pDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">P.DEF</label>
+                        <input type="number" id="stat_pDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.DEF</label>
-                        <input type="number" id="stat_mDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">M.DEF</label>
+                        <input type="number" id="stat_mDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- IGNORE P.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">IGNORE P.DEF</label>
-                        <input type="number" id="stat_ignorePDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">IGNORE P.DEF</label>
+                        <input type="number" id="stat_ignorePDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- IGNORE M.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">IGNORE M.DEF</label>
-                        <input type="number" id="stat_ignoreMDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">IGNORE M.DEF</label>
+                        <input type="number" id="stat_ignoreMDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                 </div>
@@ -354,50 +359,50 @@
                     
                     <!-- P.DMG (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.DMG (%)</label>
-                        <input type="number" step="0.1" id="stat_pDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">P.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_pDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.DMG (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.DMG (%)</label>
-                        <input type="number" step="0.1" id="stat_mDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">M.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_mDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.REDUC (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">P.REDUC (%)</label>
-                        <input type="number" step="0.1" id="stat_pReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">P.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_pReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.REDUC (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">M.REDUC (%)</label>
-                        <input type="number" step="0.1" id="stat_mReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">M.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_mReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- PVP DMG -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">PVP DMG</label>
-                        <input type="number" step="0.1" id="stat_pvpDmg" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">PVP DMG</label>
+                        <input type="number" step="0.1" id="stat_pvpDmg" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- PVP REDUC -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">PVP REDUC</label>
-                        <input type="number" step="0.1" id="stat_pvpReduc" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">PVP REDUC</label>
+                        <input type="number" step="0.1" id="stat_pvpReduc" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- CRI -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">CRI</label>
-                        <input type="number" id="stat_cri" placeholder="0" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">CRI</label>
+                        <input type="number" id="stat_cri" placeholder="0" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- CRI DAM (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-stone-500 uppercase">CRI DAM (%)</label>
-                        <input type="number" step="0.1" id="stat_criDam" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-stone-800 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-purple-400 uppercase">CRI DAM (%)</label>
+                        <input type="number" step="0.1" id="stat_criDam" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-100 focus:outline-none mt-0.5">
                     </div>
 
                 </div>
