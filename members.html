@@ -572,6 +572,9 @@
         if (navMobElMembers) navMobElMembers.innerText = userDisplayMembers;
 
         let allMembersData = [];
+        let rawMembersData = null;
+        let cardAuctionPartyMap = {};
+        let currentWhitelist = {};
         let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
 
         const CLASS_ICON_FILES = {
@@ -976,8 +979,17 @@
             return 900;
         }
 
-        let rawMembersData = null;
-        let cardAuctionPartyMap = {};
+        // ลำดับความสำคัญของตำแหน่งหลัก
+        function getRolePriority(role) {
+            switch (role) {
+                case 'Admin': case 'admin': return 1;
+                case 'หัวหน้ากิลด์': case 'หัวหน้ากิล': return 2;
+                case 'รองหัวหน้ากิลด์': case 'รองหัวหน้ากิล': return 3;
+                case 'ผู้จัดการ': return 4;
+                case 'สมาชิกพิเศษ': return 5;
+                case 'สมาชิกกิลด์': case 'สมาชิกกิล': default: return 6;
+            }
+        }
 
         function processAndRenderMembers() {
             if (!rawMembersData) {
@@ -1087,8 +1099,6 @@
         // ==========================================
         // 6. Whitelist Management Functions (Admin & Guild Leader)
         // ==========================================
-        let currentWhitelist = {};
-
         function encodeWhitelistKey(username) {
             return username.toLowerCase().replace(/#/g, '').replace(/\./g, '__dot__');
         }
