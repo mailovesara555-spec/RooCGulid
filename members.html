@@ -14,8 +14,8 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #0b0614;
-            color: #f3e8ff;
+            background-color: #0b0f19;
+            color: #f1f5f9;
             position: relative;
             min-height: 100vh;
         }
@@ -26,67 +26,93 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.12) 0%, transparent 50%), url('images/bg_banner.png');
+            background-image: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), url('images/bg_banner.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.35;
+            opacity: 0.22;
             pointer-events: none;
             z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f071a; }
-        ::-webkit-scrollbar-thumb { background: #581c87; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #7e22ce; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
         
         .roo-card { 
-            background: rgba(22, 12, 38, 0.88); 
-            backdrop-filter: blur(14px); 
-            border: 1px solid rgba(168, 85, 247, 0.28); 
-            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 15px rgba(168, 85, 247, 0.1); 
+            background: rgba(15, 23, 42, 0.88); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(51, 65, 85, 0.65); 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03); 
         }
         .roo-button { 
-            background: linear-gradient(135deg, #7c3aed, #c026d3, #db2777); 
-            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
-            border: 1px solid rgba(192, 132, 252, 0.4); 
+            background: linear-gradient(135deg, #4f46e5, #6366f1, #3b82f6); 
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
+            border: 1px solid rgba(129, 140, 248, 0.4); 
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
         }
         .roo-button:hover { 
-            background: linear-gradient(135deg, #8b5cf6, #d946ef, #e11d48); 
-            box-shadow: 0 6px 18px rgba(217, 70, 239, 0.5);
+            background: linear-gradient(135deg, #4338ca, #4f46e5, #2563eb); 
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
             transform: translateY(-1px);
         }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="min-h-screen text-purple-100">
+<body class="min-h-screen text-slate-100">
 
     <!-- Navbar -->
-    <nav class="bg-[#130b24]/90 backdrop-blur-md border-b border-purple-900/60 sticky top-0 z-50 shadow-lg">
+    <nav class="bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-md">
         <div class="max-w-[98%] 2xl:max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo & Links -->
+                <!-- Logo & Desktop Links -->
                 <div class="flex items-center gap-8">
                     <h1 class="text-xl font-extrabold tracking-tight drop-shadow-sm flex items-center gap-2.5">
-                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-purple-400 shadow-2xs">
-                        <span class="bg-gradient-to-r from-purple-200 via-fuchsia-200 to-pink-300 bg-clip-text text-transparent font-black">Wendell<span class="text-purple-400 font-bold ml-1">Guild</span></span>
+                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-slate-600 shadow-xs">
+                        <span class="bg-gradient-to-r from-slate-100 via-indigo-100 to-slate-200 bg-clip-text text-transparent font-black">Wendell<span class="text-indigo-400 font-bold ml-1">Guild</span></span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">จัดปาร์ตี้</a>
-                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">ประมูล</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-950/60 transition-colors">ข้อมูลส่วนตัว</a>
-                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-md border border-purple-400/50">สมาชิก</a>
+                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">จัดปาร์ตี้</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">ประมูล</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-sm border border-indigo-400/30">สมาชิก</a>
                     </div>
                 </div>
-                <!-- User Profile -->
-                <div class="flex items-center gap-4">
+                <!-- User Profile & Logout & Mobile Hamburger Button -->
+                <div class="flex items-center gap-2 sm:gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p id="navUsername" class="font-medium text-purple-200 leading-none">สมาชิกกิลด์</p>
+                        <p id="navUsername" class="font-medium text-slate-300 leading-none">สมาชิกกิลด์</p>
                     </div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-purple-300 hover:text-rose-400 bg-purple-950/60 hover:bg-rose-950/50 border border-purple-800/60 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-400 hover:text-rose-300 bg-slate-800/70 hover:bg-rose-950/50 border border-slate-700/70 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
                         ออกจากระบบ
+                    </a>
+                    <!-- Mobile Hamburger Button -->
+                    <button type="button" onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer" aria-label="Toggle navigation">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collapsible Mobile Top Menu Dropdown -->
+            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-slate-800 py-3 space-y-1 animate-fade-in">
+                <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                    <span>🛡️</span> จัดปาร์ตี้
+                </a>
+                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                    <span>🃏</span> ประมูล
+                </a>
+                <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                    <span>👤</span> ข้อมูลส่วนตัว
+                </a>
+                <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-indigo-600/30 text-indigo-300 border border-indigo-500/40">
+                    <span>👥</span> สมาชิก
+                </a>
+                <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between px-2">
+                    <span id="navUsernameMobile" class="text-xs text-slate-400 font-medium">สมาชิกกิลด์</span>
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/40 border border-rose-800/50 px-3 py-1.5 rounded-lg transition">
+                        🚪 ออกจากระบบ
                     </a>
                 </div>
             </div>
@@ -94,36 +120,36 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-[98%] 2xl:max-w-[1750px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+    <main class="flex-1 max-w-[98%] 2xl:max-w-[1750px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-6 pb-28 md:pb-6 space-y-6">
         
-        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-2xl border border-purple-800/50">
+        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-xl border border-slate-800">
             <!-- Header Section -->
-            <div class="p-5 sm:p-7 border-b border-purple-900/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-5 sm:p-7 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black drop-shadow-sm flex items-center gap-2 flex-wrap">
-                        <span class="bg-gradient-to-r from-purple-100 via-fuchsia-200 to-pink-200 bg-clip-text text-transparent">จัดการสมาชิกในกิลด์</span>
-                        <span id="syncBadge" class="text-xs bg-purple-950 text-purple-300 font-semibold px-2.5 py-0.5 rounded-full border border-purple-700/60 shadow-inner">
+                        <span class="text-slate-100">จัดการสมาชิกในกิลด์</span>
+                        <span id="syncBadge" class="text-xs bg-slate-800 text-slate-300 font-semibold px-2.5 py-0.5 rounded-full border border-slate-700 shadow-inner">
                             Connecting...
                         </span>
-                        <span id="adminBadge" class="hidden text-xs bg-rose-950 text-rose-300 font-bold px-2.5 py-0.5 rounded-full border border-rose-700/60 shadow-inner">
+                        <span id="adminBadge" class="hidden text-xs bg-rose-950/80 text-rose-300 font-bold px-2.5 py-0.5 rounded-full border border-rose-800/60 shadow-inner">
                             ⚡ Admin (daffodil2693)
                         </span>
                     </h2>
-                    <p class="text-xs text-purple-300/80 mt-1">เรียงลำดับ: 🚩 Party 1 &rarr; Party 2 &rarr; ... &rarr; Party 16 &rarr; สมาชิกที่ยังไม่ระบุปาร์ตี้</p>
+                    <p class="text-xs text-slate-400 mt-1">เรียงลำดับ: 🚩 Party 1 &rarr; Party 2 &rarr; ... &rarr; Party 16 &rarr; สมาชิกที่ยังไม่ระบุปาร์ตี้</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <!-- Whitelist Button (Admin Only) -->
-                    <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 border border-purple-400/50 cursor-pointer">
+                    <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 border border-indigo-400/40 cursor-pointer">
                         🔑 อนุญาตเข้าเว็บ (Whitelist)
                     </button>
 
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรืออาชีพ..." class="w-full bg-[#120724] border border-purple-800/60 rounded-xl pl-10 pr-4 py-2 text-sm text-purple-100 focus:outline-none focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 transition-all shadow-inner">
+                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรืออาชีพ..." class="w-full bg-[#0b0f19] border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all shadow-inner">
                     </div>
                 </div>
             </div>
@@ -132,7 +158,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-purple-950/90 border-b border-purple-900/80 text-xs font-bold text-purple-200 uppercase tracking-wider whitespace-nowrap">
+                        <tr class="bg-slate-900/90 border-b border-slate-800 text-xs font-bold text-slate-300 uppercase tracking-wider whitespace-nowrap">
                             <th class="py-3.5 px-3 text-center w-12">ลำดับ</th>
                             <th class="py-3.5 px-4">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
                             <th class="py-3.5 px-3 text-center">ตำแหน่ง (ROLE)</th>
@@ -143,7 +169,7 @@
                             <th class="py-3.5 px-4 text-center">ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody id="memberTableBody" class="divide-y divide-purple-950/60">
+                    <tbody id="memberTableBody" class="divide-y divide-slate-800/60">
                         <tr>
                             <td colspan="8" class="py-12 text-center text-purple-400/60 text-sm animate-pulse">
                                 กำลังโหลดข้อมูลสมาชิกจาก Cloud...
@@ -158,32 +184,32 @@
 
     <!-- Modal สำหรับ Edit ตำแหน่งและข้อมูลสมาชิก -->
     <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-8 relative bg-[#170a2b]/95 border border-purple-700/60 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-purple-800/60 pb-4 mb-6">
-                <h3 class="text-lg font-bold text-purple-100 flex items-center gap-2">
+        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-8 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
                     <span>✏️</span> แก้ไขข้อมูล & กำหนดตำแหน่งสมาชิก
                 </h3>
-                <button onclick="closeEditModal()" class="text-purple-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4 mb-6">
                 <div>
-                    <label class="block text-xs font-semibold text-purple-300 mb-1">Discord UID</label>
-                    <input type="text" id="editUid" readonly class="w-full bg-[#120724] border border-purple-900/60 rounded-xl px-4 py-2.5 text-sm text-purple-300 font-bold cursor-not-allowed shadow-inner">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Discord UID</label>
+                    <input type="text" id="editUid" readonly class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-400 font-bold cursor-not-allowed shadow-inner">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-purple-200 mb-1">ชื่อตัวละครในเกม</label>
-                    <input type="text" id="editName" class="w-full bg-[#120724] border border-purple-700/60 focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 rounded-xl px-4 py-2.5 text-sm font-bold text-purple-100 shadow-inner">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">ชื่อตัวละครในเกม</label>
+                    <input type="text" id="editName" class="w-full bg-[#1e293b] border border-slate-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-inner">
                 </div>
 
                 <!-- ตำแหน่งกิลด์ (หัวใจสำคัญ) -->
                 <div>
-                    <label class="block text-xs font-bold text-purple-200 mb-1 flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
                         <span>👑 ตำแหน่งในกิลด์ (Role)</span>
-                        <span id="roleAdminHint" class="text-xs text-fuchsia-400 font-normal">เฉพาะ Admin (daffodil2693) มีสิทธิ์เปลี่ยน</span>
+                        <span id="roleAdminHint" class="text-xs text-indigo-400 font-normal">เฉพาะ Admin (daffodil2693) มีสิทธิ์เปลี่ยน</span>
                     </label>
-                    <select id="editRole" class="w-full bg-[#120724] border border-purple-700/60 focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 rounded-xl px-4 py-2.5 text-sm font-bold text-purple-100 shadow-inner cursor-pointer">
+                    <select id="editRole" class="w-full bg-[#1e293b] border border-slate-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-inner cursor-pointer">
                         <option value="หัวหน้ากิลด์">👑 หัวหน้ากิลด์</option>
                         <option value="รองหัวหน้ากิลด์">⚔️ รองหัวหน้ากิลด์</option>
                         <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
@@ -193,16 +219,16 @@
 
                 <!-- ตำแหน่งรอง (Sub Role / Party) - เชื่อมโยงอัตโนมัติตามผังประมูลการ์ด -->
                 <div>
-                    <label class="block text-xs font-bold text-purple-200 mb-1 flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
                         <span>🚩 ตำแหน่งรอง (Sub Role)</span>
-                        <span class="text-xs text-fuchsia-400 font-normal">✨ เชื่อมโยงตามผังประมูลการ์ดอัตโนมัติ</span>
+                        <span class="text-xs text-indigo-400 font-normal">✨ เชื่อมโยงตามผังประมูลการ์ดอัตโนมัติ</span>
                     </label>
-                    <input type="text" id="editSubRole" readonly class="w-full bg-[#120724] border border-purple-800/60 rounded-xl px-4 py-2.5 text-sm font-bold text-fuchsia-200 cursor-not-allowed select-none shadow-inner" placeholder="-- ยังไม่ถูกจัดเข้าปาร์ตี้ประมูลการ์ด --">
+                    <input type="text" id="editSubRole" readonly class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-bold text-indigo-300 cursor-not-allowed select-none shadow-inner" placeholder="-- ยังไม่ถูกจัดเข้าปาร์ตี้ประมูลการ์ด --">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-purple-200 mb-1">สายอาชีพ</label>
-                    <select id="editClass" class="w-full bg-[#120724] border border-purple-700/60 focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 rounded-xl px-4 py-2.5 text-sm font-bold text-purple-100 shadow-inner cursor-pointer">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">สายอาชีพ</label>
+                    <select id="editClass" class="w-full bg-[#1e293b] border border-slate-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-inner cursor-pointer">
                         <option value="">-- เลือกอาชีพ --</option>
                         <option value="Lord Knight">Lord Knight</option>
                         <option value="Paladin">Paladin</option>
@@ -223,13 +249,13 @@
                 </div>
 
                 <div class="flex items-center gap-3 pt-2">
-                    <input type="checkbox" id="editActive" class="w-4 h-4 text-purple-600 border-purple-700 rounded focus:ring-fuchsia-500 cursor-pointer">
-                    <label for="editActive" class="text-sm font-medium text-purple-200 cursor-pointer">สถานะเข้าร่วมกิจกรรม (Active)</label>
+                    <input type="checkbox" id="editActive" class="w-4 h-4 text-indigo-600 border-slate-600 rounded focus:ring-indigo-500 cursor-pointer">
+                    <label for="editActive" class="text-sm font-medium text-slate-300 cursor-pointer">สถานะเข้าร่วมกิจกรรม (Active)</label>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-purple-800/60">
-                <button onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl border border-purple-800 text-purple-300 hover:bg-purple-900/60 font-semibold text-sm transition cursor-pointer">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <button onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold text-sm transition cursor-pointer">
                     ยกเลิก
                 </button>
                 <button onclick="saveEditMember()" class="roo-button px-6 py-2.5 rounded-xl text-white font-bold text-sm tracking-wide transition flex items-center gap-2 cursor-pointer">
@@ -241,103 +267,103 @@
 
     <!-- Modal ดูรายละเอียดสเตตัสตัวละคร (Stats Detail Modal) -->
     <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-[#170a2b]/95 border border-purple-700/60 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-purple-800/60 pb-4 mb-6">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-purple-950 border border-purple-700/60 flex items-center justify-center text-xl overflow-hidden shadow-inner">
+                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xl overflow-hidden shadow-inner">
                         <span id="modalAvatarIcon">👤</span>
                         <img id="modalAvatarImg" class="hidden w-full h-full object-cover" alt="Avatar">
                     </div>
                     <div>
-                        <h3 id="modalMemberName" class="text-lg font-extrabold text-purple-100">ชื่อตัวละคร</h3>
-                        <p id="modalMemberSub" class="text-xs text-purple-300 font-medium">Sniper • สมาชิกกิลด์</p>
+                        <h3 id="modalMemberName" class="text-lg font-extrabold text-slate-100">ชื่อตัวละคร</h3>
+                        <p id="modalMemberSub" class="text-xs text-slate-400 font-medium">Sniper • สมาชิกกิลด์</p>
                     </div>
                 </div>
-                <button onclick="closeStatsModal()" class="text-purple-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4">
-                <h4 class="text-xs font-extrabold text-fuchsia-300 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
+                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
                 
                 <!-- Primary Stats -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-[#120724] rounded-xl border border-purple-700/60">
-                        <div class="text-[10px] text-fuchsia-400 font-extrabold uppercase">CP</div>
-                        <div id="mStat_cp" class="font-extrabold text-fuchsia-200 text-sm mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-indigo-900/60">
+                        <div class="text-[10px] text-indigo-400 font-extrabold uppercase">CP</div>
+                        <div id="mStat_cp" class="font-extrabold text-amber-300 text-sm mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">MAX HP</div>
-                        <div id="mStat_maxHp" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">MAX HP</div>
+                        <div id="mStat_maxHp" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">MAX SP</div>
-                        <div id="mStat_maxSp" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">MAX SP</div>
+                        <div id="mStat_maxSp" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">P.ATK</div>
-                        <div id="mStat_pAtk" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.ATK</div>
+                        <div id="mStat_pAtk" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">M.ATK</div>
-                        <div id="mStat_mAtk" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.ATK</div>
+                        <div id="mStat_mAtk" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">P.DEF</div>
-                        <div id="mStat_pDef" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.DEF</div>
+                        <div id="mStat_pDef" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">M.DEF</div>
-                        <div id="mStat_mDef" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.DEF</div>
+                        <div id="mStat_mDef" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">IGN P.DEF</div>
-                        <div id="mStat_ignorePDef" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">IGN P.DEF</div>
+                        <div id="mStat_ignorePDef" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">IGN M.DEF</div>
-                        <div id="mStat_ignoreMDef" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">IGN M.DEF</div>
+                        <div id="mStat_ignoreMDef" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
                 </div>
 
                 <!-- PVP & Crit Stats -->
-                <h4 class="text-xs font-extrabold text-fuchsia-300 uppercase tracking-wider pt-2">⚔️ สเตตัส PVP & CRITICAL</h4>
+                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider pt-2">⚔️ สเตตัส PVP & CRITICAL</h4>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">P.DMG (%)</div>
-                        <div id="mStat_pDmg" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.DMG (%)</div>
+                        <div id="mStat_pDmg" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">M.DMG (%)</div>
-                        <div id="mStat_mDmg" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.DMG (%)</div>
+                        <div id="mStat_mDmg" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">P.REDUC (%)</div>
-                        <div id="mStat_pReduc" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.REDUC (%)</div>
+                        <div id="mStat_pReduc" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">M.REDUC (%)</div>
-                        <div id="mStat_mReduc" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.REDUC (%)</div>
+                        <div id="mStat_mReduc" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">PVP DMG</div>
-                        <div id="mStat_pvpDmg" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">PVP DMG</div>
+                        <div id="mStat_pvpDmg" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">PVP REDUC</div>
-                        <div id="mStat_pvpReduc" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">PVP REDUC</div>
+                        <div id="mStat_pvpReduc" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">CRI</div>
-                        <div id="mStat_cri" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">CRI</div>
+                        <div id="mStat_cri" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#140b28] rounded-xl border border-purple-900/60">
-                        <div class="text-[10px] text-purple-400 font-bold uppercase">CRI DAM (%)</div>
-                        <div id="mStat_criDam" class="font-bold text-purple-100 mt-0.5">-</div>
+                    <div class="p-2.5 bg-[#1e293b] rounded-xl border border-slate-700/80">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">CRI DAM (%)</div>
+                        <div id="mStat_criDam" class="font-bold text-slate-100 mt-0.5">-</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end pt-4 border-t border-purple-800/60">
+            <div class="flex items-center justify-end pt-4 border-t border-slate-800">
                 <button onclick="closeStatsModal()" class="roo-button px-6 py-2 rounded-xl text-white font-bold text-xs cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
@@ -347,30 +373,30 @@
 
     <!-- Modal จัดการสิทธิ์เข้าเว็บ (Whitelist Modal - Admin Only) -->
     <div id="whitelistModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-[#170a2b]/95 border border-purple-700/60 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-purple-800/60 pb-4 mb-5">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
                 <div>
-                    <h3 class="text-lg font-extrabold text-purple-100 flex items-center gap-2">
+                    <h3 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
                         <span>🔑</span> จัดการสิทธิ์เข้าสู่ระบบ (Whitelist)
                     </h3>
-                    <p class="text-xs text-purple-300/80 mt-0.5">เพิ่มได้ไม่จำกัดจำนวนคน • รองรับชื่อที่มีจุด เช่น onlyfunz.gg</p>
+                    <p class="text-xs text-slate-400 mt-0.5">เพิ่มได้ไม่จำกัดจำนวนคน • รองรับชื่อที่มีจุด เช่น onlyfunz.gg</p>
                 </div>
-                <button onclick="closeWhitelistModal()" class="text-purple-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeWhitelistModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <!-- Form เพิ่ม Username ใหม่ -->
-            <div class="p-4 bg-purple-950/70 rounded-2xl border border-purple-800/60 mb-5 space-y-3 shadow-inner">
-                <h4 class="text-xs font-bold text-fuchsia-300 flex items-center gap-1.5">
+            <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 mb-5 space-y-3 shadow-inner">
+                <h4 class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
                     <span>➕</span> เพิ่ม Discord Username ที่อนุญาต (ไม่จำกัด)
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-[11px] font-semibold text-purple-300 mb-1">Discord Username (เช่น onlyfunz.gg)</label>
-                        <input type="text" id="newWhitelistUser" placeholder="เช่น onlyfunz.gg หรือ amooma_aom" class="w-full bg-[#120724] border border-purple-700/60 rounded-xl px-3 py-2 text-xs font-bold text-purple-100 focus:outline-none focus:border-fuchsia-400 shadow-inner">
+                        <label class="block text-[11px] font-semibold text-slate-300 mb-1">Discord Username (เช่น onlyfunz.gg)</label>
+                        <input type="text" id="newWhitelistUser" placeholder="เช่น onlyfunz.gg หรือ amooma_aom" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 shadow-inner">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-purple-300 mb-1">หมายเหตุ / ชื่อเล่น</label>
-                        <input type="text" id="newWhitelistNote" placeholder="เช่น นายต้น สมาชิกกิลด์" class="w-full bg-[#120724] border border-purple-700/60 rounded-xl px-3 py-2 text-xs font-bold text-purple-100 focus:outline-none focus:border-fuchsia-400 shadow-inner">
+                        <label class="block text-[11px] font-semibold text-slate-300 mb-1">หมายเหตุ / ชื่อเล่น</label>
+                        <input type="text" id="newWhitelistNote" placeholder="เช่น นายต้น สมาชิกกิลด์" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 shadow-inner">
                     </div>
                 </div>
                 <div class="flex justify-end pt-1">
@@ -383,32 +409,57 @@
             <!-- List of Allowed Users -->
             <div class="space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-extrabold text-purple-200 flex items-center gap-2">
-                        <span>📋 รายชื่อที่อนุญาต (<span id="whitelistCount" class="text-fuchsia-300 font-extrabold">0</span> คน)</span>
+                    <h4 class="text-xs font-extrabold text-slate-200 flex items-center gap-2">
+                        <span>📋 รายชื่อที่อนุญาต (<span id="whitelistCount" class="text-indigo-400 font-extrabold">0</span> คน)</span>
                     </h4>
                     <!-- Search inside Whitelist -->
-                    <input type="text" id="whitelistFilterInput" placeholder="🔍 ค้นหารายชื่อ Whitelist..." oninput="renderWhitelistList()" class="bg-[#120724] border border-purple-700/60 rounded-lg px-2.5 py-1 text-xs text-purple-100 focus:outline-none focus:border-fuchsia-400 w-48 shadow-inner">
+                    <input type="text" id="whitelistFilterInput" placeholder="🔍 ค้นหารายชื่อ Whitelist..." oninput="renderWhitelistList()" class="bg-[#0b0f19] border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 w-48 shadow-inner">
                 </div>
                 
-                <div class="max-h-[320px] overflow-y-auto rounded-2xl border border-purple-900/60 divide-y divide-purple-950/80 bg-[#120724]/90 shadow-inner">
+                <div class="max-h-[320px] overflow-y-auto rounded-2xl border border-slate-800 divide-y divide-slate-850 bg-[#0b0f19]/90 shadow-inner">
                     <div id="whitelistTableBody" class="p-2 space-y-1.5">
-                        <div class="text-center py-6 text-xs text-purple-400/60">กำลังโหลดรายชื่อ...</div>
+                        <div class="text-center py-6 text-xs text-slate-500">กำลังโหลดรายชื่อ...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between pt-4 mt-4 border-t border-purple-800/60">
-                <p class="text-[11px] text-purple-400/60">
+            <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-800">
+                <p class="text-[11px] text-slate-500">
                     * ผู้ที่ไม่มีรายชื่อในนี้จะไม่สามารถล็อกอินเข้าเว็บได้
                 </p>
-                <button onclick="closeWhitelistModal()" class="px-5 py-2 rounded-xl border border-purple-800 text-purple-300 hover:bg-purple-900/60 font-bold text-xs transition cursor-pointer">
+                <button onclick="closeWhitelistModal()" class="px-5 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-bold text-xs transition cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.6)] px-2 py-1.5 flex justify-around items-center">
+        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+            <span class="text-lg leading-tight">🛡️</span>
+            <span class="text-[10px] font-medium mt-0.5">จัดปาร์ตี้</span>
+        </a>
+        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+            <span class="text-lg leading-tight">🃏</span>
+            <span class="text-[10px] font-medium mt-0.5">ประมูล</span>
+        </a>
+        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+            <span class="text-lg leading-tight">👤</span>
+            <span class="text-[10px] font-medium mt-0.5">ส่วนตัว</span>
+        </a>
+        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-indigo-400 bg-indigo-950/70 border border-indigo-500/30">
+            <span class="text-lg leading-tight">👥</span>
+            <span class="text-[10px] font-bold mt-0.5">สมาชิก</span>
+        </a>
+    </div>
+
     <script>
+        function toggleMobileNav() {
+            const el = document.getElementById('mobileNavDropdown');
+            if (el) el.classList.toggle('hidden');
+        }
+
         // 1. Firebase Initializer
         const firebaseConfig = {
             apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
@@ -466,7 +517,11 @@
         
         updatePermissionsUI();
 
-        document.getElementById('navUsername').innerText = `${currentUser} [${currentUserRole}]`;
+        const userDisplayMembers = `${currentUser} [${currentUserRole}]`;
+        const navElMembers = document.getElementById('navUsername');
+        const navMobElMembers = document.getElementById('navUsernameMobile');
+        if (navElMembers) navElMembers.innerText = userDisplayMembers;
+        if (navMobElMembers) navMobElMembers.innerText = userDisplayMembers;
 
         let allMembersData = [];
         let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
@@ -558,28 +613,28 @@
             switch (r) {
                 case 'Admin':
                 case 'admin':
-                    return `<span class="whitespace-nowrap bg-rose-950 text-rose-300 border border-rose-600/60 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">⚡ Admin</span>`;
+                    return `<span class="whitespace-nowrap bg-rose-950/80 text-rose-300 border border-rose-700/60 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">⚡ Admin</span>`;
                 case 'หัวหน้ากิลด์':
                 case 'หัวหน้ากิล':
-                    return `<span class="whitespace-nowrap bg-purple-950 text-purple-200 border border-purple-500/60 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">👑 หัวหน้ากิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-amber-950/80 text-amber-200 border border-amber-600/60 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">👑 หัวหน้ากิลด์</span>`;
                 case 'รองหัวหน้ากิลด์':
                 case 'รองหัวหน้ากิล':
-                    return `<span class="whitespace-nowrap bg-fuchsia-950 text-fuchsia-200 border border-fuchsia-600/50 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-indigo-950/80 text-indigo-200 border border-indigo-600/60 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
                 case 'ผู้จัดการ':
-                    return `<span class="whitespace-nowrap bg-indigo-950 text-indigo-200 border border-indigo-600/50 px-3 py-1 rounded-full text-xs font-bold shadow-sm inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
+                    return `<span class="whitespace-nowrap bg-blue-950/80 text-blue-200 border border-blue-600/60 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
                 case 'สมาชิกพิเศษ':
-                    return `<span class="whitespace-nowrap bg-teal-950 text-teal-200 border border-teal-600/50 px-3 py-1 rounded-full text-xs font-extrabold shadow-sm inline-flex items-center gap-1">⭐ สมาชิกพิเศษ</span>`;
+                    return `<span class="whitespace-nowrap bg-teal-950/80 text-teal-200 border border-teal-600/60 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">⭐ สมาชิกพิเศษ</span>`;
                 case 'สมาชิกกิลด์':
                 case 'สมาชิกกิล':
                 default:
-                    return `<span class="whitespace-nowrap bg-[#160a28] text-purple-300 border border-purple-800/60 px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1">🛡️ สมาชิกกิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-slate-800/90 text-slate-300 border border-slate-700/60 px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1">🛡️ สมาชิกกิลด์</span>`;
             }
         }
 
         // Badge ตำแหน่งรอง (Sub Role Badge)
         function getSubRoleBadge(subRole) {
             if (!subRole) return '';
-            return `<span class="whitespace-nowrap bg-purple-900/90 text-fuchsia-200 border border-fuchsia-600/50 px-2 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 shadow-xs">🚩 ${subRole}</span>`;
+            return `<span class="whitespace-nowrap bg-indigo-950/90 text-indigo-200 border border-indigo-500/50 px-2 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 shadow-xs">🚩 ${subRole}</span>`;
         }
 
         // 3. Render Table
@@ -603,23 +658,23 @@
             });
 
             if (filteredMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-purple-400/60">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-500">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
                 return;
             }
 
             filteredMembers.forEach((member, index) => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-purple-950/40 transition-colors';
+                tr.className = 'hover:bg-slate-800/40 transition-colors';
                 
                 const toggleHtml = member.active 
-                    ? `<div class="w-10 h-5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
-                    : `<div class="w-10 h-5 bg-purple-950 border border-purple-800/60 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-purple-400 w-4 h-4 rounded-full shadow-sm"></div></div>`;
+                    ? `<div class="w-10 h-5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
+                    : `<div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-slate-500 w-4 h-4 rounded-full shadow-sm"></div></div>`;
                 
                 // เช็คไอคอนประมูลของรอบปัจจุบัน (ใช้รูปภาพไอเทมจริง)
                 let icons = [];
-                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="whitespace-nowrap bg-purple-900/90 text-purple-100 px-1.5 py-0.5 rounded border border-purple-600/50 text-xs inline-flex items-center gap-1"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
-                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-indigo-950 text-indigo-200 px-1.5 py-0.5 rounded border border-indigo-700/60 text-xs inline-flex items-center gap-1"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
-                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-[#180a2a] text-purple-200 px-1.5 py-0.5 rounded border border-purple-800/60 text-xs inline-flex items-center gap-1"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
+                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="whitespace-nowrap bg-indigo-950 text-indigo-200 px-1.5 py-0.5 rounded border border-indigo-700/60 text-xs inline-flex items-center gap-1"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
+                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-sky-950 text-sky-200 px-1.5 py-0.5 rounded border border-sky-700/60 text-xs inline-flex items-center gap-1"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
+                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-slate-900 text-slate-200 px-1.5 py-0.5 rounded border border-slate-700 text-xs inline-flex items-center gap-1"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
                 
                 let isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
                 let char2Tag = isChar2 ? '<span class="text-[10px] bg-teal-950 text-teal-300 border border-teal-600/50 px-1.5 py-0.5 rounded-md font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
@@ -637,43 +692,43 @@
                 const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
 
                 tr.innerHTML = `
-                    <td class="py-3.5 px-3 text-center font-bold text-purple-400/60 text-xs whitespace-nowrap">#${index + 1}</td>
-                    <td class="py-3.5 px-4 text-sm text-purple-100 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
-                        <div class="hover:text-fuchsia-300 transition flex items-center gap-1.5 flex-wrap">
+                    <td class="py-3.5 px-3 text-center font-bold text-slate-500 text-xs whitespace-nowrap">#${index + 1}</td>
+                    <td class="py-3.5 px-4 text-sm text-slate-100 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                        <div class="hover:text-indigo-300 transition flex items-center gap-1.5 flex-wrap">
                             <span>${displayName}</span>
                             ${char2Tag}
-                            <span class="text-xs text-fuchsia-400">🔍</span>
+                            <span class="text-xs text-indigo-400">🔍</span>
                         </div>
                         ${iconDisplay}
                     </td>
                     <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleCombined}</td>
-                    <td class="py-3.5 px-3 text-sm text-purple-200 font-medium whitespace-nowrap">
+                    <td class="py-3.5 px-3 text-sm text-slate-200 font-medium whitespace-nowrap">
                         <div class="flex items-center gap-2">
                             ${getClassIconHtml(member.charClass, 'w-6 h-6')}
-                            <span class="font-bold text-purple-100">${member.charClass || '-'}</span>
+                            <span class="font-bold text-slate-100">${member.charClass || '-'}</span>
                         </div>
                     </td>
-                    <td class="py-3.5 px-3 text-sm text-center font-bold text-fuchsia-300 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
+                    <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-300 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
                     <td class="py-3.5 px-3 ${toggleCursor} text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="${toggleTitle}">
                         ${toggleHtml}
                     </td>
                     <td class="py-3.5 px-3 text-sm whitespace-nowrap">
-                        <div class="text-purple-300/80">${member.lastUpdate || '-'}</div>
-                        <div class="text-fuchsia-400 text-xs font-semibold flex items-center gap-1 mt-0.5">
-                            <span class="w-1.5 h-1.5 bg-fuchsia-400 rounded-full"></span> อัปเดตแล้ว
+                        <div class="text-slate-400 text-xs">${member.lastUpdate || '-'}</div>
+                        <div class="text-emerald-400 text-xs font-semibold flex items-center gap-1 mt-0.5">
+                            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span> อัปเดตแล้ว
                         </div>
                     </td>
                     <td class="py-3.5 px-4 whitespace-nowrap">
                         <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-purple-950/80 border border-purple-800/60 text-purple-200 hover:bg-purple-900 rounded-lg text-xs font-bold transition shadow-sm inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
+                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-slate-800/90 border border-slate-700 text-slate-200 hover:bg-slate-700 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
                                 📊 สเตตัส
                             </button>
-                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-purple-900/80 border border-purple-600/50 text-purple-100 hover:bg-purple-800 rounded-lg text-xs font-bold transition shadow-sm inline-flex items-center gap-1 cursor-pointer">
+                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-indigo-950/80 border border-indigo-700/60 text-indigo-200 hover:bg-indigo-900 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer">
                                 ✏️ Edit
                             </button>
-                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-950/60 border border-rose-800/60 text-rose-300 hover:bg-rose-900/60 rounded-lg text-xs font-bold transition shadow-sm inline-flex items-center gap-1 cursor-pointer">
+                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-950/60 border border-rose-800/60 text-rose-300 hover:bg-rose-900/60 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer">
                                 🗑️ Delete
                             </button>
                         </div>

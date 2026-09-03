@@ -9,8 +9,8 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #0b0614;
-            color: #f3e8ff;
+            background-color: #0b0f19;
+            color: #f1f5f9;
             position: relative;
             min-height: 100vh;
         }
@@ -21,68 +21,63 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.18) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.15) 0%, transparent 50%), url('images/bg_banner.png');
+            background-image: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), url('images/bg_banner.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.35;
+            opacity: 0.22;
             pointer-events: none;
             z-index: 0;
         }
         .roo-card { 
-            background: rgba(22, 12, 38, 0.88); 
+            background: rgba(15, 23, 42, 0.88); 
             backdrop-filter: blur(16px); 
-            border: 1px solid rgba(168, 85, 247, 0.35); 
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.2); 
+            border: 1px solid rgba(51, 65, 85, 0.65); 
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04); 
         }
         .discord-button { 
-            background: linear-gradient(135deg, #7c3aed, #5865F2, #d946ef); 
-            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
-            border: 1px solid rgba(192, 132, 252, 0.5); 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
+            background: #5865F2; 
+            box-shadow: 0 4px 14px rgba(88, 101, 242, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
+            border: 1px solid rgba(129, 140, 248, 0.4); 
         }
         .discord-button:hover { 
-            background: linear-gradient(135deg, #8b5cf6, #6974F3, #ec4899); 
-            box-shadow: 0 6px 20px rgba(217, 70, 239, 0.5); 
+            background: #4752C4; 
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5); 
             transform: translateY(-1px); 
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Decorative flame & nebula glowing elements -->
-    <div class="absolute top-10 left-10 w-48 h-48 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-pulse"></div>
-    <div class="absolute bottom-10 right-10 w-56 h-56 bg-pink-600 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-pulse" style="animation-delay: 2s;"></div>
-
-    <div class="roo-card w-full max-w-md rounded-[2.5rem] p-10 relative z-10 text-center animate-[fadeIn_0.5s_ease-out]">
+    <div class="roo-card w-full max-w-md rounded-[2rem] p-10 relative z-10 text-center animate-[fadeIn_0.4s_ease-out]">
         
         <div class="relative inline-block mb-6 group">
-            <div class="absolute -inset-1.5 bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-500 group-hover:duration-200"></div>
-            <img src="images/guild_icon.jpg" alt="Wendell Guild" class="relative w-28 h-28 rounded-2xl mx-auto object-cover shadow-2xl border-2 border-purple-400/80 group-hover:scale-105 transition-transform duration-300">
+            <div class="absolute -inset-1 bg-indigo-500/30 rounded-3xl blur opacity-70 group-hover:opacity-100 transition duration-300"></div>
+            <img src="images/guild_icon.jpg" alt="Wendell Guild" class="relative w-24 h-24 rounded-2xl mx-auto object-cover shadow-xl border border-slate-600/80 group-hover:scale-105 transition-transform duration-300">
         </div>
 
-        <h1 class="text-3xl font-extrabold tracking-tight mb-2 flex items-center justify-center gap-1.5">
-            <span class="bg-gradient-to-r from-purple-200 via-fuchsia-200 to-pink-300 bg-clip-text text-transparent drop-shadow-sm font-black">Wendell</span>
-            <span class="text-purple-400 font-bold text-2xl">Guild</span>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight mb-2 flex items-center justify-center gap-1.5">
+            <span class="bg-gradient-to-r from-slate-100 via-indigo-100 to-slate-200 bg-clip-text text-transparent drop-shadow-sm">Wendell</span>
+            <span class="text-indigo-400 font-bold text-2xl">Guild</span>
         </h1>
-        <p class="text-purple-300/80 mb-8 text-sm">ระบบจัดการกิลด์ Ragnarok Origin</p>
+        <p class="text-slate-400 mb-8 text-sm">ระบบจัดการกิลด์ Ragnarok Origin</p>
 
         <!-- แสดง Error หากมี -->
-        <div id="error-message" class="hidden mb-6 p-4 bg-rose-950/80 border border-rose-500/50 rounded-2xl text-rose-200 text-sm font-medium">
+        <div id="error-message" class="hidden mb-6 p-4 bg-rose-950/70 border border-rose-600/50 rounded-2xl text-rose-200 text-sm font-medium">
         </div>
 
         <div class="space-y-4">
             <!-- Link ไปยัง /auth/discord ของ Server -->
-            <a href="/auth/discord" class="discord-button w-full text-white font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 transition-all">
-                <svg class="w-6 h-6 drop-shadow" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <a href="/auth/discord" class="discord-button w-full text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition-all cursor-pointer">
+                <svg class="w-5 h-5 drop-shadow" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
                 </svg>
                 เข้าสู่ระบบด้วย Discord
             </a>
         </div>
         
-        <p class="text-xs text-purple-400/60 mt-8">
+        <p class="text-xs text-slate-500 mt-8">
             เฉพาะสมาชิกกิลด์ Wendell ที่ได้รับอนุญาตเท่านั้น
         </p>
     </div>
