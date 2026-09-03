@@ -1108,7 +1108,7 @@
                         const enhancedBlob = await createEnhancedImageBlob(file);
                         const res1 = await Tesseract.recognize(
                             enhancedBlob,
-                            'eng',
+                            'tha+eng',
                             { logger: m => {
                                 if (m.status === 'recognizing text') {
                                     const subProgress = Math.floor(progressVal + (m.progress * (40 / files.length)));
@@ -1118,14 +1118,18 @@
                         );
                         extractedTextCombined += '\n' + res1.data.text;
                     } catch (err1) {
-                        console.warn('Pass 1 OCR error:', err1);
+                        console.warn('Pass 1 OCR error (tha+eng), falling back to eng:', err1);
+                        try {
+                            const res1Fallback = await Tesseract.recognize(enhancedBlob, 'eng');
+                            extractedTextCombined += '\n' + res1Fallback.data.text;
+                        } catch (e) {}
                     }
 
                     // Pass 2: Original Raw Image
                     try {
                         const res2 = await Tesseract.recognize(
                             file,
-                            'eng',
+                            'tha+eng',
                             { logger: m => {
                                 if (m.status === 'recognizing text') {
                                     const subProgress = Math.floor(progressVal + 40 + (m.progress * (40 / files.length)));
@@ -1135,7 +1139,11 @@
                         );
                         extractedTextCombined += '\n' + res2.data.text;
                     } catch (err2) {
-                        console.warn('Pass 2 OCR error:', err2);
+                        console.warn('Pass 2 OCR error (tha+eng), falling back to eng:', err2);
+                        try {
+                            const res2Fallback = await Tesseract.recognize(file, 'eng');
+                            extractedTextCombined += '\n' + res2Fallback.data.text;
+                        } catch (e) {}
                     }
                 }
 
@@ -1348,30 +1356,23 @@
                     ]
                 },
                 {
-                    key: 'stat_reducMSize',
-                    label: 'REDUC.Msize',
-                    isPercent: true,
-                    patterns: [
-                        /(?:REDUC[.\s_]*M\s*SIZE|M\s*SIZE\s*REDUC[A-Z]*|ลดความเสียหาย\s*(?:ขนาด\s*กลาง|M\s*SIZE|ขนาด\s*M)|ลด(?:ทอน)?\s*(?:ขนาด\s*กลาง|M\s*SIZE)|ได้รับ\s*DMG\s*จาก\s*M\s*SIZE\s*ลดลง|DMG\s*จาก\s*M\s*SIZE\s*ลดลง|M\s*SIZE\s*DMG\s*RED[A-Z]*|M\s*SIZE\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /(?:REDUC[.\s_]*M\s*SIZE|M[.\s_]*SIZE\s*RED[A-Z]*|REDUC[.\s_]*M)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
-                    ]
-                },
-                {
-                    key: 'stat_reducDemi',
-                    label: 'REDUC.Demi',
-                    isPercent: true,
-                    patterns: [
-                        /(?:REDUC[.\s_]*DEMI[A-Z]*|DEMI[.\s_]*HUMAN\s*REDUC[A-Z]*|ลดความเสียหาย\s*(?:กึ่งมนุษย์|DEMI|HUMAN)|ลด(?:ทอน)?\s*(?:กึ่งมนุษย์|DEMI|HUMAN)|ได้รับ\s*DMG\s*จาก\s*(?:กึ่งมนุษย์|DEMI|DEMI-HUMAN)\s*ลดลง|DMG\s*จาก\s*DEMI\s*ลดลง|DEMI\s*DMG\s*RED[A-Z]*|DEMI\s*HUMAN\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /(?:REDUC[.\s_]*DEMI|DEMI[.\s_]*RED[A-Z]*|DEMI\s*HUMAN\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
-                    ]
-                },
-                {
                     key: 'stat_dmgMSize',
                     label: 'DMG.Msize',
                     isPercent: true,
                     patterns: [
-                        /(?:DMG[.\s_]*M\s*SIZE|M\s*SIZE\s*DMG[A-Z]*|ความเสียหาย\s*(?:ต่อ\s*)?(?:ขนาด\s*กลาง|M\s*SIZE|ขนาด\s*M)|ดาเมจ\s*(?:ต่อ\s*)?(?:ขนาด\s*กลาง|M\s*SIZE)|สร้าง\s*DMG\s*ต่อ\s*M\s*SIZE\s*เพิ่มขึ้น|DMG\s*ต่อ\s*M\s*SIZE|M\s*SIZE\s*DAMAGE\s*INC[A-Z]*|M\s*SIZE\s*BONUS)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /(?:DMG[.\s_]*M\s*SIZE|M[.\s_]*SIZE\s*DMG|DMG[.\s_]*M)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:สร้าง\s*DMG\s*ต่อ\s*M\s*SIZE(?:\s*MONSTER)?\s*(?:เพิ่มขึ้น|เพิ่ม)?|DMG\s*ต่อ\s*M\s*SIZE|M\s*SIZE\s*DMG|สร้าง\s*DMG\s*M\s*SIZE|M\s*SIZE\s*(?:DAMAGE|DMG)?\s*(?:INC|BONUS|เพิ่ม))\s*[%]*\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:สร้าง\s*DMG.*M\s*SIZE.*(?:เพิ่มขึ้น|เพิ่ม)?)\s*[%]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:DMG[.\s_]*M\s*SIZE|M\s*SIZE\s*DMG)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_reducMSize',
+                    label: 'REDUC.Msize',
+                    isPercent: true,
+                    patterns: [
+                        /(?:ได้รับ\s*DMG\s*จาก\s*M\s*SIZE(?:\s*MONSTER)?\s*(?:ลดลง|ลด)?|DMG\s*จาก\s*M\s*SIZE\s*ลดลง|REDUC[.\s_]*M\s*SIZE|M\s*SIZE\s*REDUC[A-Z]*|M\s*SIZE\s*RED[A-Z]*|ลดความเสียหาย\s*M\s*SIZE|ลด(?:ทอน)?\s*M\s*SIZE)\s*[%]*\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:ได้รับ\s*DMG.*M\s*SIZE.*(?:ลดลง|ลด)?)\s*[%]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:REDUC[.\s_]*M\s*SIZE|M[.\s_]*SIZE\s*RED[A-Z]*|REDUC[.\s_]*M)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 },
                 {
@@ -1379,8 +1380,19 @@
                     label: 'DMG.Demi',
                     isPercent: true,
                     patterns: [
-                        /(?:DMG[.\s_]*DEMI[A-Z]*|DEMI[.\s_]*HUMAN\s*DMG|ความเสียหาย\s*(?:ต่อ\s*)?(?:กึ่งมนุษย์|DEMI|HUMAN)|ดาเมจ\s*(?:ต่อ\s*)?(?:กึ่งมนุษย์|DEMI|HUMAN)|สร้าง\s*DMG\s*ต่อ\s*(?:กึ่งมนุษย์|DEMI|DEMI-HUMAN)\s*เพิ่มขึ้น|DMG\s*ต่อ\s*DEMI|DEMI\s*DAMAGE\s*INC[A-Z]*|DEMI\s*BONUS)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /(?:DMG[.\s_]*DEMI|DEMI[.\s_]*DMG|DEMI\s*HUMAN\s*DMG)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:สร้าง\s*DMG\s*ต่อ\s*DEMI[.\s_-]*HUMAN(?:\s*MONSTER)?\s*(?:เพิ่มขึ้น|เพิ่ม)?|สร้าง\s*DMG\s*ต่อ\s*DEMI|DMG\s*ต่อ\s*DEMI|DEMI[.\s_-]*HUMAN\s*DMG|DEMI\s*DMG|สร้าง\s*DMG\s*กึ่งมนุษย์)\s*[%]*\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:สร้าง\s*DMG.*DEMI.*(?:เพิ่มขึ้น|เพิ่ม)?)\s*[%]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:DMG[.\s_]*DEMI|DEMI[.\s_]*DMG)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_reducDemi',
+                    label: 'REDUC.Demi',
+                    isPercent: true,
+                    patterns: [
+                        /(?:ได้รับ\s*DMG\s*จาก\s*DEMI[.\s_-]*HUMAN(?:\s*MONSTER)?\s*(?:ลดลง|ลด)?|ได้รับ\s*DMG\s*จาก\s*DEMI|DMG\s*จาก\s*DEMI\s*ลดลง|REDUC[.\s_]*DEMI|DEMI[.\s_-]*HUMAN\s*REDUC[A-Z]*|DEMI\s*RED[A-Z]*|ลดความเสียหาย\s*กึ่งมนุษย์|ลด(?:ทอน)?\s*กึ่งมนุษย์)\s*[%]*\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:ได้รับ\s*DMG.*DEMI.*(?:ลดลง|ลด)?)\s*[%]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:REDUC[.\s_]*DEMI|DEMI[.\s_]*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 },
                 {
@@ -1404,6 +1416,24 @@
             ];
 
             let matchedCount = 0;
+            const appliedKeys = new Set();
+
+            function applyStatValue(key, val) {
+                if (val === null || isNaN(val) || appliedKeys.has(key)) return;
+                const inputEl = document.getElementById(key);
+                if (inputEl) {
+                    inputEl.value = val;
+                    appliedKeys.add(key);
+                    matchedCount++;
+
+                    // Visual highlight แสดงผลว่าช่องนี้ AI กรอกให้เรียบร้อย
+                    const parentCard = inputEl.closest('.stat-input-card');
+                    if (parentCard) {
+                        parentCard.classList.add('highlight');
+                        setTimeout(() => parentCard.classList.remove('highlight'), 3500);
+                    }
+                }
+            }
 
             STAT_RULES.forEach(rule => {
                 let foundVal = null;
@@ -1442,20 +1472,46 @@
                 }
 
                 if (foundVal !== null) {
-                    const inputEl = document.getElementById(rule.key);
-                    if (inputEl) {
-                        inputEl.value = foundVal;
-                        matchedCount++;
-
-                        // Visual highlight แสดงผลว่าช่องนี้ AI กรอกให้เรียบร้อย
-                        const parentCard = inputEl.closest('.stat-input-card');
-                        if (parentCard) {
-                            parentCard.classList.add('highlight');
-                            setTimeout(() => parentCard.classList.remove('highlight'), 3500);
-                        }
-                    }
+                    applyStatValue(rule.key, foundVal);
                 }
             });
+
+            // 3. Smart Structural Line Fallback (สำหรับขนาด M Size & กึ่งมนุษย์ Demi-Human)
+            const mSizeLines = lines.filter(l => /M\s*SIZE/i.test(l) && !/L\s*SIZE|S\s*SIZE/i.test(l));
+            if (mSizeLines.length > 0) {
+                mSizeLines.forEach((line, idx) => {
+                    const valMatch = line.match(/([0-9]+(?:\.[0-9]+)?)\s*%/);
+                    if (valMatch) {
+                        const val = cleanNum(valMatch[1], true);
+                        if (/สร้าง|เพิ่ม|ต่อ|INC|BONUS/i.test(line)) {
+                            applyStatValue('stat_dmgMSize', val);
+                        } else if (/ได้รับ|รับ|ลด|จาก|RED|RES/i.test(line)) {
+                            applyStatValue('stat_reducMSize', val);
+                        } else {
+                            if (idx === 0) applyStatValue('stat_dmgMSize', val);
+                            else if (idx === 1) applyStatValue('stat_reducMSize', val);
+                        }
+                    }
+                });
+            }
+
+            const demiLines = lines.filter(l => /DEMI/i.test(l) || /กึ่งมนุษย์/i.test(l));
+            if (demiLines.length > 0) {
+                demiLines.forEach((line, idx) => {
+                    const valMatch = line.match(/([0-9]+(?:\.[0-9]+)?)\s*%/);
+                    if (valMatch) {
+                        const val = cleanNum(valMatch[1], true);
+                        if (/สร้าง|เพิ่ม|ต่อ|INC|BONUS/i.test(line)) {
+                            applyStatValue('stat_dmgDemi', val);
+                        } else if (/ได้รับ|รับ|ลด|จาก|RED|RES/i.test(line)) {
+                            applyStatValue('stat_reducDemi', val);
+                        } else {
+                            if (idx === 0) applyStatValue('stat_dmgDemi', val);
+                            else if (idx === 1) applyStatValue('stat_reducDemi', val);
+                        }
+                    }
+                });
+            }
 
             return matchedCount;
         }
