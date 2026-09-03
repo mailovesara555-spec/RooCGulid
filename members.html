@@ -149,6 +149,11 @@
                         🔑 อนุญาตเข้าเว็บ (Whitelist)
                     </button>
 
+                    <!-- Discord Announcement Button (Admin Only) -->
+                    <button id="btnDiscordAnnounce" onclick="openDiscordAnnounceModal()" class="hidden px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl shadow-2xs transition flex items-center gap-1.5 border border-indigo-200 cursor-pointer">
+                        📢 ประกาศ Discord
+                    </button>
+
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -468,6 +473,96 @@
         </div>
     </div>
 
+    <!-- Discord Announcement Management Modal (Admin Only) -->
+    <div id="discordAnnounceModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-5 sm:p-6 shadow-2xl animate-fade-in border border-purple-100 max-h-[92vh] flex flex-col bg-white/95">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between pb-4 border-b border-purple-100 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md text-xl">
+                        📢
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-black text-indigo-950 flex items-center gap-2">
+                            <span>ระบบประกาศแจ้งเตือน Discord</span>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                                Webhook Active
+                            </span>
+                        </h3>
+                        <p class="text-xs text-slate-500 font-medium">รอบละ 2 สัปดาห์ (เริ่ม 06/09/2026) • แจ้งเตือนอัตโนมัติทุกวันตอนเที่ยง (12:00 น.)</p>
+                    </div>
+                </div>
+                <button onclick="closeDiscordAnnounceModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer text-sm font-bold">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="overflow-y-auto space-y-4 py-4 flex-1 pr-1 custom-scrollbar">
+                <!-- Cycle Status Banner -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div class="p-3 bg-purple-50/70 border border-purple-100 rounded-2xl">
+                        <div class="text-[10px] font-bold text-purple-700 uppercase tracking-wider">📅 รอบประเมินปัจจุบัน</div>
+                        <div id="discordCycleDates" class="text-xs font-black text-indigo-950 mt-1">กำลังคำนวณ...</div>
+                    </div>
+                    <div class="p-3 bg-indigo-50/70 border border-indigo-100 rounded-2xl">
+                        <div class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">⏰ กำหนดการวันนี้</div>
+                        <div id="discordTodaySchedule" class="text-xs font-black text-indigo-950 mt-1">กำลังตรวจสอบ...</div>
+                    </div>
+                    <div class="p-3 bg-rose-50/70 border border-rose-100 rounded-2xl">
+                        <div class="text-[10px] font-bold text-rose-700 uppercase tracking-wider">📊 สถานะสมาชิกกิลด์</div>
+                        <div id="discordMemberStatsSummary" class="text-xs font-black text-rose-950 mt-1">ยังไม่อัปเดต 0 / 0 ท่าน</div>
+                    </div>
+                </div>
+
+                <!-- Un-updated Members Section -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h4 class="text-xs font-black text-indigo-950 flex items-center gap-2">
+                            <span>⚠️ รายชื่อสมาชิกที่ยังไม่ได้อัปเดตสเตตัส (<span id="discordUnupdatedCount" class="text-rose-600">0</span> คน)</span>
+                        </h4>
+                        <input type="text" id="discordFilterInput" placeholder="🔍 ค้นหารายชื่อ/ดิสคอร์ด..." oninput="filterDiscordUnupdatedList()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 w-48 shadow-xs">
+                    </div>
+
+                    <div class="max-h-[260px] overflow-y-auto rounded-2xl border border-purple-100 divide-y divide-purple-100 bg-white shadow-inner custom-scrollbar">
+                        <div id="discordUnupdatedList" class="p-2 space-y-1.5">
+                            <div class="text-center py-8 text-xs text-slate-400 font-medium">กำลังโหลดข้อมูล...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webhook Target Info -->
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="text-base">🔗</span>
+                        <div class="truncate text-[11px] text-slate-600">
+                            <strong>ช่องทางส่งประกาศ:</strong> <span class="font-mono text-slate-500">Discord Webhook (ห้องประกาศกิลด์)</span>
+                        </div>
+                    </div>
+                    <span class="shrink-0 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        พร้อมส่ง
+                    </span>
+                </div>
+            </div>
+
+            <!-- Modal Footer & Action Buttons -->
+            <div class="pt-4 border-t border-purple-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
+                <div class="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
+                    <span id="discordSendingSpinner" class="hidden animate-spin text-purple-600">🌀</span>
+                    <span id="discordSendStatusText">สามารถกดส่งด้วยตนเองได้ทันทีโดยไม่ต้องรอรอบ</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btnSendSundayAnnounce" onclick="triggerDiscordAnnouncement('SUNDAY')" class="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-500/20 transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <span>📢</span> เตือนทุกคน (@everyone)
+                    </button>
+                    <button type="button" id="btnSendDailyReminder" onclick="triggerDiscordAnnouncement('DAILY')" class="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-500/20 transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <span>⚠️</span> ทวงเฉพาะคนยังไม่อัปเดต
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
     <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-xl border-t border-purple-100 shadow-[0_-4px_20px_rgba(124,58,237,0.08)] px-2 py-1.5 flex justify-around items-center">
         <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
@@ -588,6 +683,14 @@
                     btnWhitelist.classList.remove('hidden');
                 } else {
                     btnWhitelist.classList.add('hidden');
+                }
+            }
+            const btnDiscord = document.getElementById('btnDiscordAnnounce');
+            if (btnDiscord) {
+                if (canManageWhitelist()) {
+                    btnDiscord.classList.remove('hidden');
+                } else {
+                    btnDiscord.classList.add('hidden');
                 }
             }
         }
@@ -1303,6 +1406,322 @@
             currentWhitelist = snapshot.val() || {};
             renderWhitelistList();
         });
+
+        // ==========================================
+        // ระบบประกาศแจ้งเตือน Discord (Discord Announcement)
+        // ==========================================
+        const DISCORD_WEBHOOK_DEFAULT = 'https://discord.com/api/webhooks/1545110304008962130/WKNATtFB6_4RD97nE1jEDrlmzEHciGIYHGahGxtApIb9iMBl5gXJ8ZVGNc8_gS6NqThm';
+        const ANCHOR_DATE_MS = new Date('2026-09-06T00:00:00+07:00').getTime();
+        let currentDiscordUnupdated = [];
+
+        function getClientCycleInfo(dateObj = new Date()) {
+            const bkkStr = dateObj.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
+            const bkkNow = new Date(bkkStr);
+            const anchor = new Date(ANCHOR_DATE_MS);
+            const bkkAnchor = new Date(anchor.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
+
+            const midnightNow = new Date(bkkNow.getFullYear(), bkkNow.getMonth(), bkkNow.getDate());
+            const midnightAnchor = new Date(bkkAnchor.getFullYear(), bkkAnchor.getMonth(), bkkAnchor.getDate());
+
+            const diffDays = Math.floor((midnightNow - midnightAnchor) / (24 * 60 * 60 * 1000));
+            let cycleNumber = 1;
+            let dayInCycle = 0;
+            let cycleStartDate;
+            let cycleEndDate;
+
+            if (diffDays < 0) {
+                cycleNumber = 1;
+                dayInCycle = diffDays;
+                cycleStartDate = new Date(midnightAnchor);
+                cycleEndDate = new Date(midnightAnchor.getTime() + (13 * 24 * 60 * 60 * 1000));
+            } else {
+                cycleNumber = Math.floor(diffDays / 14) + 1;
+                dayInCycle = diffDays % 14;
+                const startMs = midnightAnchor.getTime() + ((cycleNumber - 1) * 14 * 24 * 60 * 60 * 1000);
+                cycleStartDate = new Date(startMs);
+                cycleEndDate = new Date(startMs + (13 * 24 * 60 * 60 * 1000));
+            }
+
+            const startStr = `${cycleStartDate.getDate().toString().padStart(2, '0')}/${(cycleStartDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleStartDate.getFullYear()}`;
+            const endStr = `${cycleEndDate.getDate().toString().padStart(2, '0')}/${(cycleEndDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleEndDate.getFullYear()}`;
+
+            let scheduleText = 'กำลังอยู่ในรอบ';
+            if (dayInCycle === 0) {
+                scheduleText = '📢 วันอาทิตย์: ส่งประกาศเตือนทุกคน (@everyone)';
+            } else if (dayInCycle >= 1 && dayInCycle <= 13) {
+                scheduleText = `⚠️ วันที่ ${dayInCycle + 1}/14: ทวงรายชื่อคนยังไม่อัปเดต`;
+            } else {
+                scheduleText = `⏳ อีก ${Math.abs(diffDays)} วัน ถึงรอบแรก (06/09/2026)`;
+            }
+
+            return {
+                cycleNumber,
+                dayInCycle,
+                cycleStartDate,
+                cycleEndDate,
+                startStr,
+                endStr,
+                scheduleText
+            };
+        }
+
+        function parseThaiMemberDate(dateStr) {
+            if (!dateStr) return null;
+            if (typeof dateStr === 'number') return new Date(dateStr);
+            const m = String(dateStr).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{1,2}))?/);
+            if (m) {
+                let d = parseInt(m[1]);
+                let mo = parseInt(m[2]) - 1;
+                let y = parseInt(m[3]);
+                if (y > 2500) y -= 543;
+                let h = m[4] ? parseInt(m[4]) : 0;
+                let min = m[5] ? parseInt(m[5]) : 0;
+                return new Date(y, mo, d, h, min);
+            }
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function openDiscordAnnounceModal() {
+            if (!canManageWhitelist()) {
+                alert('⚠️ เฉพาะ Admin หรือหัวหน้ากิลด์เท่านั้นที่สามารถส่งประกาศ Discord ได้');
+                return;
+            }
+            document.getElementById('discordAnnounceModal').classList.remove('hidden');
+            loadDiscordAnnounceData();
+        }
+
+        function closeDiscordAnnounceModal() {
+            document.getElementById('discordAnnounceModal').classList.add('hidden');
+        }
+
+        async function loadDiscordAnnounceData() {
+            const cycle = getClientCycleInfo();
+            document.getElementById('discordCycleDates').innerText = `${cycle.startStr} - ${cycle.endStr} (รอบที่ ${cycle.cycleNumber})`;
+            document.getElementById('discordTodaySchedule').innerText = cycle.scheduleText;
+
+            // ตรวจสอบสมาชิกจาก allMembersData
+            const activeMembers = allMembersData.filter(m => !m.isChar2 && m.active !== false);
+            const totalActive = activeMembers.length;
+            let updatedCount = 0;
+            currentDiscordUnupdated = [];
+
+            activeMembers.forEach(m => {
+                const hasStats = m.stats && Object.keys(m.stats).length > 0 && Object.values(m.stats).some(v => Number(v) > 0);
+                const lastDate = parseThaiMemberDate(m.lastUpdate);
+                const isUpdated = hasStats && lastDate && (lastDate.getTime() >= cycle.cycleStartDate.getTime());
+
+                if (isUpdated) {
+                    updatedCount++;
+                } else {
+                    let discordId = m.discordId || null;
+                    let discordUser = (m.mainUid || m.discordUser || m.uid || '').trim();
+
+                    if (currentWhitelist && typeof currentWhitelist === 'object') {
+                        const wl = currentWhitelist[discordUser] || currentWhitelist[discordUser.replace(/\./g, '__dot__')];
+                        if (wl && wl.discordId) discordId = wl.discordId;
+                    }
+
+                    currentDiscordUnupdated.push({
+                        name: m.name || 'ไม่ระบุชื่อ',
+                        charClass: m.charClass || 'ไม่ระบุ',
+                        role: m.role || 'สมาชิกกิลด์',
+                        discordUsername: discordUser,
+                        discordId: discordId,
+                        lastUpdate: m.lastUpdate || 'ยังไม่เคยอัปเดต'
+                    });
+                }
+            });
+
+            document.getElementById('discordMemberStatsSummary').innerText = `อัปเดต ${updatedCount} / ยังไม่อัปเดต ${currentDiscordUnupdated.length} ท่าน (ทั้งหมด ${totalActive})`;
+            document.getElementById('discordUnupdatedCount').innerText = currentDiscordUnupdated.length;
+
+            renderDiscordUnupdatedList();
+        }
+
+        function renderDiscordUnupdatedList() {
+            const listEl = document.getElementById('discordUnupdatedList');
+            const filterKeyword = (document.getElementById('discordFilterInput')?.value || '').toLowerCase().trim();
+
+            const filtered = currentDiscordUnupdated.filter(m => {
+                return !filterKeyword || 
+                    m.name.toLowerCase().includes(filterKeyword) || 
+                    m.charClass.toLowerCase().includes(filterKeyword) || 
+                    m.discordUsername.toLowerCase().includes(filterKeyword);
+            });
+
+            if (filtered.length === 0) {
+                if (currentDiscordUnupdated.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="text-center py-8">
+                            <span class="text-3xl">🎉</span>
+                            <p class="text-xs font-bold text-emerald-700 mt-2">ยอดเยี่ยมมาก! สมาชิกทุกคนอัปเดตสเตตัสรอบนี้ครบถ้วนแล้ว</p>
+                        </div>
+                    `;
+                } else {
+                    listEl.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">ไม่พบสมาชิกที่ตรงกับคำค้นหา</div>`;
+                }
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((m, idx) => {
+                const icon = getClassIconHtml(m.charClass, 'w-6 h-6 rounded-md');
+                const tagDisplay = m.discordId ? `<span class="text-indigo-600 font-mono font-bold bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 text-[10px]">&lt;@${m.discordId}&gt;</span>` : `<span class="text-slate-600 font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">@${m.discordUsername}</span>`;
+
+                return `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-purple-50/50 border border-slate-200/80 transition text-xs">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-slate-400 font-bold text-[11px] w-5 text-right">${idx + 1}.</span>
+                            ${icon}
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-black text-indigo-950">${m.name}</span>
+                                    <span class="text-[10px] text-purple-700 font-medium">${m.charClass}</span>
+                                    ${tagDisplay}
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">
+                                    ตำแหน่ง: ${m.role} • อัปเดตล่าสุด: <span class="font-medium text-rose-600">${m.lastUpdate}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="shrink-0 text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-md border border-rose-200">
+                            ยังไม่อัปเดต
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterDiscordUnupdatedList() {
+            renderDiscordUnupdatedList();
+        }
+
+        async function triggerDiscordAnnouncement(type) {
+            const statusText = document.getElementById('discordSendStatusText');
+            const spinner = document.getElementById('discordSendingSpinner');
+            const btnSunday = document.getElementById('btnSendSundayAnnounce');
+            const btnDaily = document.getElementById('btnSendDailyReminder');
+
+            const confirmMsg = (type === 'SUNDAY')
+                ? 'คุณต้องการส่งประกาศแจ้งเตือนสมาชิกทุกคนพร้อมแท็ก @everyone ลงใน Discord ตอนนี้ใช่หรือไม่?'
+                : `คุณต้องการส่งประกาศรายชื่อคนที่ยังไม่อัปเดต (${currentDiscordUnupdated.length} ท่าน) พร้อมแท็ก Discord ลงใน Discord ตอนนี้ใช่หรือไม่?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            btnSunday.disabled = true;
+            btnDaily.disabled = true;
+            spinner.classList.remove('hidden');
+            statusText.innerText = 'กำลังส่งประกาศเข้า Discord...';
+
+            try {
+                // 1. ลองส่งผ่าน Server API ก่อน
+                let sentViaApi = false;
+                try {
+                    const res = await fetch('/api/discord/announce-now', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: activeToken,
+                            type: type,
+                            customWebhookUrl: DISCORD_WEBHOOK_DEFAULT
+                        })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.success) sentViaApi = true;
+                    }
+                } catch (apiErr) {
+                    console.warn('API route failed, falling back to direct Webhook post:', apiErr);
+                }
+
+                // 2. หาก API ไม่ตอบสนอง ส่งตรงเข้า Discord Webhook จาก Client
+                if (!sentViaApi) {
+                    const cycle = getClientCycleInfo();
+                    let payload;
+
+                    if (type === 'SUNDAY') {
+                        payload = {
+                            content: "@everyone 📢 **[ROOC GUILD ANNOUNCEMENT] แจ้งเตือนอัปเดตสเตตัสประจำรอบ 2 สัปดาห์!**",
+                            embeds: [{
+                                title: "🛡️ กิลด์ ROOC: รบกวนสมาชิกทุกคนอัปเดตสเตตัสล่าสุด",
+                                description: `สวัสดีสมาชิกทุกคนครับ! วันนี้เริ่มต้นรอบการประเมินสเตตัสประจำรอบ **${cycle.startStr} - ${cycle.endStr}**\n\nรบกวนสมาชิกทุกคนช่วยเข้าไปอัปโหลดและอัปเดตสเตตัสตัวละครที่หน้าเว็บกิลด์ เพื่อให้ทีมผู้นำนำไปจัดผังปาร์ตี้ **GVG / KVM / PVE** ได้อย่างแม่นยำและเต็มประสิทธิภาพครับ ✨`,
+                                color: 0x9333ea,
+                                fields: [
+                                    { name: "📅 รอบประจำวันที่", value: `${cycle.startStr} ถึง ${cycle.endStr}`, inline: true },
+                                    { name: "⏰ กำหนดส่ง", value: "ภายในวันนี้ก่อนเที่ยงคืน", inline: true },
+                                    { name: "🌐 เว็บไซต์กิลด์", value: "[คลิกเข้าสู่ระบบเว็บกิลด์](https://rooc-guild.vercel.app/)", inline: false }
+                                ],
+                                footer: { text: "ROOC Guild Management System • ระบบแจ้งเตือนอัตโนมัติ" },
+                                timestamp: new Date().toISOString()
+                            }]
+                        };
+                    } else {
+                        if (currentDiscordUnupdated.length === 0) {
+                            alert('🎉 สมาชิกทุกคนอัปเดตสเตตัสครบแล้ว ไม่จำเป็นต้องส่งข้อความทวงครับ');
+                            spinner.classList.add('hidden');
+                            btnSunday.disabled = false;
+                            btnDaily.disabled = false;
+                            statusText.innerText = 'สมาชิกทุกคนอัปเดตครบแล้ว';
+                            return;
+                        }
+
+                        const mentions = currentDiscordUnupdated.map(m => m.discordId ? `<@${m.discordId}>` : `@${m.discordUsername}`).join(' ');
+                        const memberLines = currentDiscordUnupdated.map((m, idx) => {
+                            const tag = m.discordId ? `<@${m.discordId}>` : `@${m.discordUsername}`;
+                            return `\`${(idx + 1).toString().padStart(2, '0')}.\` **${m.name}** (${m.charClass}) • ${tag}\n└ *อัปเดตล่าสุด: ${m.lastUpdate}*`;
+                        });
+
+                        const fields = [];
+                        const chunkSize = 12;
+                        for (let i = 0; i < memberLines.length; i += chunkSize) {
+                            fields.push({
+                                name: `📋 รายชื่อ (กลุ่มที่ ${Math.floor(i / chunkSize) + 1})`,
+                                value: memberLines.slice(i, i + chunkSize).join('\n'),
+                                inline: false
+                            });
+                        }
+
+                        payload = {
+                            content: `⚠️ **แจ้งเตือนสมาชิกที่ยังไม่ได้อัปเดตสเตตัส (${currentDiscordUnupdated.length} ท่าน):**\n${mentions}`,
+                            embeds: [{
+                                title: `⚠️ แจ้งเตือน: สมาชิกที่ยังไม่ได้อัปเดตสเตตัส (${currentDiscordUnupdated.length} คน)`,
+                                description: `รบกวนสมาชิกที่มีรายชื่อด้านล่างช่วยเข้าไปอัปเดตค่าสเตตัสล่าสุดที่หน้าเว็บด้วยนะครับ เพื่อความพร้อมในการแข่งขันกิลด์ครับ 🙏✨`,
+                                color: 0xf43f5e,
+                                fields: [
+                                    ...fields,
+                                    { name: "🔗 ช่องทางอัปเดต", value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://rooc-guild.vercel.app/dashboard.html)", inline: false }
+                                ],
+                                footer: { text: `รอบวันที่ ${cycle.startStr} - ${cycle.endStr} • เตือนประจำวันเวลา 12:00 น.` },
+                                timestamp: new Date().toISOString()
+                            }]
+                        };
+                    }
+
+                    const hookRes = await fetch(DISCORD_WEBHOOK_DEFAULT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!hookRes.ok) {
+                        throw new Error(`Webhook response status: ${hookRes.status}`);
+                    }
+                }
+
+                statusText.innerText = '✅ ส่งประกาศเข้าห้อง Discord สำเร็จเรียบร้อย!';
+                alert('🎉 ส่งประกาศเข้าห้อง Discord สำเร็จเรียบร้อยแล้วครับ!');
+            } catch (err) {
+                console.error('Send Discord Announcement error:', err);
+                statusText.innerText = '❌ เกิดข้อผิดพลาดในการส่ง: ' + err.message;
+                alert('❌ ไม่สามารถส่งประกาศได้: ' + err.message);
+            } finally {
+                spinner.classList.add('hidden');
+                btnSunday.disabled = false;
+                btnDaily.disabled = false;
+                setTimeout(() => {
+                    statusText.innerText = 'สามารถกดส่งด้วยตนเองได้ทันทีโดยไม่ต้องรอรอบ';
+                }, 4000);
+            }
+        }
     </script>
 </body>
 </html>

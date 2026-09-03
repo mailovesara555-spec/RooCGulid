@@ -1,10 +1,34 @@
-require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+
+try {
+    require('dotenv').config();
+} catch (e) {
+    try {
+        const envPath = path.join(__dirname, '.env');
+        if (fs.existsSync(envPath)) {
+            const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+            lines.forEach(l => {
+                const trimmed = l.trim();
+                if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+                    const idx = trimmed.indexOf('=');
+                    const k = trimmed.slice(0, idx).trim();
+                    const v = trimmed.slice(idx + 1).trim();
+                    if (!process.env[k]) process.env[k] = v;
+                }
+            });
+        }
+    } catch (err) {}
+}
+
 const express = require('express');
 const axios = require('axios');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+const announcer = require('./discord_announcer');
 
 // เสิร์ฟไฟล์ Static (HTML, CSS, JS) ในโฟลเดอร์ปัจจุบัน
 app.use(express.static(path.join(__dirname)));
@@ -202,6 +226,57 @@ app.get('/auth/discord/callback', async (req, res) => {
     }
 });
 
+// API: ดึงสถานะรอบและการอัปเดตสเตตัสของสมาชิก
+app.get('/api/discord/status', async (req, res) => {
+    try {
+        const token = req.query.token;
+        const verified = verifyAuthToken(token);
+        if (!verified) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const status = await announcer.getMembersUpdateStatus();
+        res.json({
+            success: true,
+            status
+        });
+    } catch (err) {
+        console.error('API discord status error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API: สั่งส่งประกาศเข้า Discord ทันที (Manual Trigger)
+app.post('/api/discord/announce-now', async (req, res) => {
+    try {
+        const { token, type, customWebhookUrl } = req.body || {};
+        const verified = verifyAuthToken(token);
+        if (!verified) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const webhook = customWebhookUrl || process.env.DISCORD_WEBHOOK_URL || announcer.DEFAULT_WEBHOOK_URL;
+        let result;
+
+        if (type === 'SUNDAY' || type === 'EVERYONE') {
+            result = await announcer.sendSundayAnnouncement(webhook);
+        } else {
+            result = await announcer.sendDailyReminderAnnouncement(webhook);
+        }
+
+        res.json({
+            success: true,
+            result
+        });
+    } catch (err) {
+        console.error('API discord announce-now error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// เริ่มต้นระบบ Background Scheduler ตรวจสอบเวลา 12:00 น. ทุกวัน
+announcer.startScheduler();
+
 // Export สำหรับ Vercel Serverless Function
 module.exports = app;
 
@@ -210,3 +285,4 @@ if (!process.env.VERCEL) {
         console.log(`Server is running on http://localhost:${PORT}`);
     });
 }
+
