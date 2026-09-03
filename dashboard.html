@@ -460,6 +460,47 @@
 
                 </div>
 
+                <!-- Row 3: Size, Race Reduction / Bonus & Speed Stats (6 Fields) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                    
+                    <!-- REDUC.Msize (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-teal-700 uppercase">REDUC.Msize (%)</label>
+                        <input type="number" step="0.01" id="stat_reducMSize" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-teal-800 focus:outline-none mt-0.5" title="ได้รับ DMG จาก M Size Monster ลดลง %">
+                    </div>
+
+                    <!-- REDUC.Demi (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-teal-700 uppercase">REDUC.Demi (%)</label>
+                        <input type="number" step="0.01" id="stat_reducDemi" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-teal-800 focus:outline-none mt-0.5" title="ได้รับ DMG จาก Demi-Human Monster ลดลง %">
+                    </div>
+
+                    <!-- DMG.Msize (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-purple-700 uppercase">DMG.Msize (%)</label>
+                        <input type="number" step="0.01" id="stat_dmgMSize" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-800 focus:outline-none mt-0.5" title="สร้าง DMG ต่อ M Size Monster เพิ่มขึ้น %">
+                    </div>
+
+                    <!-- DMG.Demi (%) -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-purple-700 uppercase">DMG.Demi (%)</label>
+                        <input type="number" step="0.01" id="stat_dmgDemi" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-purple-800 focus:outline-none mt-0.5" title="สร้าง DMG ต่อ Demi-Human Monster เพิ่มขึ้น %">
+                    </div>
+
+                    <!-- ASPD% -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-amber-700 uppercase">ASPD (%)</label>
+                        <input type="number" step="0.01" id="stat_aspd" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-amber-800 focus:outline-none mt-0.5" title="ASPD %">
+                    </div>
+
+                    <!-- MSPD% -->
+                    <div class="stat-input-card rounded-xl p-2.5">
+                        <label class="block text-[10px] font-bold text-amber-700 uppercase">MSPD (%)</label>
+                        <input type="number" step="0.01" id="stat_mspd" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-amber-800 focus:outline-none mt-0.5" title="MSPD %">
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
@@ -704,7 +745,8 @@
 
             ['stat_cp', 'stat_maxHp', 'stat_maxSp', 'stat_pAtk', 'stat_mAtk', 'stat_pDef', 'stat_mDef',
              'stat_ignorePDef', 'stat_ignoreMDef', 'stat_pDmg', 'stat_mDmg', 'stat_pReduc', 'stat_mReduc',
-             'stat_pvpDmg', 'stat_pvpReduc', 'stat_cri', 'stat_criDam'].forEach(id => {
+             'stat_pvpDmg', 'stat_pvpReduc', 'stat_cri', 'stat_criDam',
+             'stat_reducMSize', 'stat_reducDemi', 'stat_dmgMSize', 'stat_dmgDemi', 'stat_aspd', 'stat_mspd'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
@@ -792,7 +834,7 @@
                         document.getElementById('avatarPlaceholder').classList.add('hidden');
                     }
 
-                    // Load All 17 Stats Fields
+                    // Load All 23 Stats Fields
                     if (data.stats) {
                         document.getElementById('stat_cp').value = data.stats.cp || '';
                         document.getElementById('stat_maxHp').value = data.stats.maxHp || '';
@@ -811,6 +853,13 @@
                         document.getElementById('stat_pvpReduc').value = data.stats.pvpReduc || '';
                         document.getElementById('stat_cri').value = data.stats.cri || '';
                         document.getElementById('stat_criDam').value = data.stats.criDam || '';
+
+                        document.getElementById('stat_reducMSize').value = data.stats.reducMSize || '';
+                        document.getElementById('stat_reducDemi').value = data.stats.reducDemi || '';
+                        document.getElementById('stat_dmgMSize').value = data.stats.dmgMSize || '';
+                        document.getElementById('stat_dmgDemi').value = data.stats.dmgDemi || '';
+                        document.getElementById('stat_aspd').value = data.stats.aspd || '';
+                        document.getElementById('stat_mspd').value = data.stats.mspd || '';
                     }
                     const charSuffix = index === 1 ? '' : ' [ตัวที่ 2]';
                     const charRole = index === 1 ? currentUserRole : 'สมาชิกกิลด์';
@@ -966,7 +1015,14 @@
                 pvpDmg: parseFloat(document.getElementById('stat_pvpDmg').value) || 0,
                 pvpReduc: parseFloat(document.getElementById('stat_pvpReduc').value) || 0,
                 cri: parseInt(document.getElementById('stat_cri').value) || 0,
-                criDam: parseFloat(document.getElementById('stat_criDam').value) || 0
+                criDam: parseFloat(document.getElementById('stat_criDam').value) || 0,
+
+                reducMSize: parseFloat(document.getElementById('stat_reducMSize').value) || 0,
+                reducDemi: parseFloat(document.getElementById('stat_reducDemi').value) || 0,
+                dmgMSize: parseFloat(document.getElementById('stat_dmgMSize').value) || 0,
+                dmgDemi: parseFloat(document.getElementById('stat_dmgDemi').value) || 0,
+                aspd: parseFloat(document.getElementById('stat_aspd').value) || 0,
+                mspd: parseFloat(document.getElementById('stat_mspd').value) || 0
             };
 
             const safeKey = getActiveFirebaseKey();
@@ -1104,7 +1160,7 @@
             }
         });
 
-        // Smart parser extracting all 17 Ragnarok Origin Stats from in-game OCR screenshots
+        // Smart parser extracting all 23 Ragnarok Origin Stats from in-game OCR screenshots
         // รองรับทั้งภาษาไทย, ภาษาอังกฤษ, ตัวย่อ, คำขาดหาย, ตัวสะกดเพี้ยน (Fuzzy / Partial Matching)
         function parseStatsFromOCR(rawText) {
             console.log("Raw OCR Text Output:\n", rawText);
@@ -1289,6 +1345,60 @@
                     isPercent: false,
                     patterns: [
                         /(?<!IGNORE\s*|IGN\s*|ละเว้น\s*|เพิกเฉย\s*|เจาะเกราะ\s*)(?:^|\s)(?:M\.?\s*DEF|MAGIC\s*DEF|MAGIC\s*DEFENSE|พลังป้องกันเวท(?:ย์)?|ป้องกันเวท(?:ย์)?|เวทป้องกัน)(?!\s*R[OE]D)\s*[\+\:\=\—\–]*\s*([0-9]{2,7})/i
+                    ]
+                },
+                {
+                    key: 'stat_reducMSize',
+                    label: 'REDUC.Msize',
+                    isPercent: true,
+                    patterns: [
+                        /(?:REDUC[.\s_]*M\s*SIZE|M\s*SIZE\s*REDUC[A-Z]*|ลดความเสียหาย\s*(?:ขนาด\s*กลาง|M\s*SIZE|ขนาด\s*M)|ลด(?:ทอน)?\s*(?:ขนาด\s*กลาง|M\s*SIZE)|ได้รับ\s*DMG\s*จาก\s*M\s*SIZE\s*ลดลง|DMG\s*จาก\s*M\s*SIZE\s*ลดลง|M\s*SIZE\s*DMG\s*RED[A-Z]*|M\s*SIZE\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:REDUC[.\s_]*M\s*SIZE|M[.\s_]*SIZE\s*RED[A-Z]*|REDUC[.\s_]*M)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_reducDemi',
+                    label: 'REDUC.Demi',
+                    isPercent: true,
+                    patterns: [
+                        /(?:REDUC[.\s_]*DEMI[A-Z]*|DEMI[.\s_]*HUMAN\s*REDUC[A-Z]*|ลดความเสียหาย\s*(?:กึ่งมนุษย์|DEMI|HUMAN)|ลด(?:ทอน)?\s*(?:กึ่งมนุษย์|DEMI|HUMAN)|ได้รับ\s*DMG\s*จาก\s*(?:กึ่งมนุษย์|DEMI|DEMI-HUMAN)\s*ลดลง|DMG\s*จาก\s*DEMI\s*ลดลง|DEMI\s*DMG\s*RED[A-Z]*|DEMI\s*HUMAN\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:REDUC[.\s_]*DEMI|DEMI[.\s_]*RED[A-Z]*|DEMI\s*HUMAN\s*RED[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_dmgMSize',
+                    label: 'DMG.Msize',
+                    isPercent: true,
+                    patterns: [
+                        /(?:DMG[.\s_]*M\s*SIZE|M\s*SIZE\s*DMG[A-Z]*|ความเสียหาย\s*(?:ต่อ\s*)?(?:ขนาด\s*กลาง|M\s*SIZE|ขนาด\s*M)|ดาเมจ\s*(?:ต่อ\s*)?(?:ขนาด\s*กลาง|M\s*SIZE)|สร้าง\s*DMG\s*ต่อ\s*M\s*SIZE\s*เพิ่มขึ้น|DMG\s*ต่อ\s*M\s*SIZE|M\s*SIZE\s*DAMAGE\s*INC[A-Z]*|M\s*SIZE\s*BONUS)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:DMG[.\s_]*M\s*SIZE|M[.\s_]*SIZE\s*DMG|DMG[.\s_]*M)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_dmgDemi',
+                    label: 'DMG.Demi',
+                    isPercent: true,
+                    patterns: [
+                        /(?:DMG[.\s_]*DEMI[A-Z]*|DEMI[.\s_]*HUMAN\s*DMG|ความเสียหาย\s*(?:ต่อ\s*)?(?:กึ่งมนุษย์|DEMI|HUMAN)|ดาเมจ\s*(?:ต่อ\s*)?(?:กึ่งมนุษย์|DEMI|HUMAN)|สร้าง\s*DMG\s*ต่อ\s*(?:กึ่งมนุษย์|DEMI|DEMI-HUMAN)\s*เพิ่มขึ้น|DMG\s*ต่อ\s*DEMI|DEMI\s*DAMAGE\s*INC[A-Z]*|DEMI\s*BONUS)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /(?:DMG[.\s_]*DEMI|DEMI[.\s_]*DMG|DEMI\s*HUMAN\s*DMG)(?!\s*RED|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_aspd',
+                    label: 'ASPD%',
+                    isPercent: true,
+                    patterns: [
+                        /(?:A\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วโจมตี|ความเร็วการโจมตี|ATK\s*SPD|ATTACK\s*SPEED)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /\bASPD\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                    ]
+                },
+                {
+                    key: 'stat_mspd',
+                    label: 'MSPD%',
+                    isPercent: true,
+                    patterns: [
+                        /(?:M\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วเคลื่อนที่|ความเร็วการเคลื่อนที่|MOVE\s*SPD|MOVEMENT\s*SPEED)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
+                        /\bMSPD\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 }
             ];

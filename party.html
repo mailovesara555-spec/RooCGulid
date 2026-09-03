@@ -452,6 +452,35 @@
                         <div id="mStat_criDam" class="font-bold text-indigo-700 mt-0.5">-</div>
                     </div>
                 </div>
+
+                <!-- Special Monster & Speed Stats -->
+                <h4 class="text-xs font-black text-purple-700 uppercase tracking-wider pt-2">🛡️ สเตตัสโบนัสขนาด/กึ่งมนุษย์ & ความเร็ว</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="ได้รับ DMG จาก M Size Monster ลดลง %">
+                        <div class="text-[10px] text-teal-700 font-bold uppercase">REDUC.Msize (%)</div>
+                        <div id="mStat_reducMSize" class="font-bold text-teal-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="ได้รับ DMG จาก Demi-Human Monster ลดลง %">
+                        <div class="text-[10px] text-teal-700 font-bold uppercase">REDUC.Demi (%)</div>
+                        <div id="mStat_reducDemi" class="font-bold text-teal-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="สร้าง DMG ต่อ M Size Monster เพิ่มขึ้น %">
+                        <div class="text-[10px] text-purple-700 font-bold uppercase">DMG.Msize (%)</div>
+                        <div id="mStat_dmgMSize" class="font-bold text-purple-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="สร้าง DMG ต่อ Demi-Human Monster เพิ่มขึ้น %">
+                        <div class="text-[10px] text-purple-700 font-bold uppercase">DMG.Demi (%)</div>
+                        <div id="mStat_dmgDemi" class="font-bold text-purple-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="ASPD %">
+                        <div class="text-[10px] text-amber-700 font-bold uppercase">ASPD (%)</div>
+                        <div id="mStat_aspd" class="font-bold text-amber-800 mt-0.5">-</div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200" title="MSPD %">
+                        <div class="text-[10px] text-amber-700 font-bold uppercase">MSPD (%)</div>
+                        <div id="mStat_mspd" class="font-bold text-amber-800 mt-0.5">-</div>
+                    </div>
+                </div>
             </div>
 
             <div class="flex items-center justify-end pt-4 border-t border-purple-100">
@@ -2004,6 +2033,13 @@
             document.getElementById('mStat_pvpReduc').innerText = stats.pvpReduc !== undefined && stats.pvpReduc !== null ? `${stats.pvpReduc}%` : '-';
             document.getElementById('mStat_cri').innerText = stats.cri ? Number(stats.cri).toLocaleString() : '-';
             document.getElementById('mStat_criDam').innerText = stats.criDam !== undefined && stats.criDam !== null ? `${stats.criDam}%` : '-';
+
+            document.getElementById('mStat_reducMSize').innerText = stats.reducMSize !== undefined && stats.reducMSize !== null ? `${stats.reducMSize}%` : '-';
+            document.getElementById('mStat_reducDemi').innerText = stats.reducDemi !== undefined && stats.reducDemi !== null ? `${stats.reducDemi}%` : '-';
+            document.getElementById('mStat_dmgMSize').innerText = stats.dmgMSize !== undefined && stats.dmgMSize !== null ? `${stats.dmgMSize}%` : '-';
+            document.getElementById('mStat_dmgDemi').innerText = stats.dmgDemi !== undefined && stats.dmgDemi !== null ? `${stats.dmgDemi}%` : '-';
+            document.getElementById('mStat_aspd').innerText = stats.aspd !== undefined && stats.aspd !== null ? `${stats.aspd}%` : '-';
+            document.getElementById('mStat_mspd').innerText = stats.mspd !== undefined && stats.mspd !== null ? `${stats.mspd}%` : '-';
 
             document.getElementById('statsDetailModal').classList.remove('hidden');
         }
