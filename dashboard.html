@@ -17,8 +17,13 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #0f172a;
-            color: #f1f5f9;
+            background-color: #f5f3ff;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(244, 114, 182, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(129, 140, 248, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(253, 186, 116, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, #ede9fe 0%, #fce7f3 50%, #fef3c7 100%);
+            color: #1e1b4b;
             position: relative;
             min-height: 100vh;
         }
@@ -29,51 +34,51 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 50% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), url('images/bg_banner.png');
+            background-image: url('images/pastel_bg.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.12;
+            opacity: 0.45;
             pointer-events: none;
             z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-track { background: #f5f3ff; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         .roo-card { 
-            background: rgba(30, 41, 59, 0.92); 
-            backdrop-filter: blur(14px); 
-            border: 1px solid rgba(51, 65, 85, 0.85); 
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2); 
+            background: rgba(255, 255, 255, 0.88); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.1), 0 5px 15px rgba(244, 114, 182, 0.08); 
         }
         .roo-button { 
-            background: linear-gradient(135deg, #4f46e5, #6366f1, #3b82f6); 
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
-            border: 1px solid rgba(99, 102, 241, 0.6); 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%); 
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            color: #ffffff;
         }
         .roo-button:hover { 
-            background: linear-gradient(135deg, #4338ca, #4f46e5, #2563eb); 
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%); 
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.38);
             transform: translateY(-1px);
         }
         
         .stat-input-card {
-            background: #0f172a;
-            border: 1px solid #334155;
+            background: rgba(248, 250, 252, 0.95);
+            border: 1px solid #e2e8f0;
             transition: all 0.2s ease;
         }
         .stat-input-card:focus-within {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
-            background: #131d31;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+            background: #ffffff;
         }
         .stat-input-card.highlight {
-            border-color: #f59e0b;
-            background: rgba(245, 158, 11, 0.12);
+            border-color: #fde68a;
+            background: rgba(254, 243, 199, 0.85);
         }
 
         .animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
@@ -83,54 +88,54 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white/85 backdrop-blur-md border-b border-purple-100 sticky top-0 z-50 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Links -->
                 <div class="flex items-center gap-8">
-                    <h1 class="text-xl font-extrabold tracking-tight drop-shadow-sm flex items-center gap-2.5">
-                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-slate-700 shadow-xs">
-                        <span class="text-slate-100 font-black">Wendell<span class="text-indigo-400 font-bold ml-1">Guild</span></span>
+                    <h1 class="text-xl font-extrabold tracking-tight drop-shadow-xs flex items-center gap-2.5">
+                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-purple-200 shadow-xs">
+                        <span class="text-indigo-950 font-black">Wendell<span class="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent font-black ml-1">Guild</span></span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">จัดปาร์ตี้</a>
-                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">ประมูล</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-xs border border-indigo-500/50">ข้อมูลส่วนตัว</a>
-                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">สมาชิก</a>
+                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">จัดปาร์ตี้</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">ประมูล</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xs">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">สมาชิก</a>
                     </div>
                 </div>
                 <!-- User Profile & Logout & Mobile Hamburger Button -->
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p id="navUsername" class="font-medium text-slate-300 leading-none">กำลังเชื่อมต่อ...</p>
+                        <p id="navUsername" class="font-bold text-slate-700 leading-none">กำลังเชื่อมต่อ...</p>
                     </div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-300 hover:text-rose-300 bg-slate-800 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-800 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-600 hover:text-rose-600 bg-white/90 hover:bg-rose-50 border border-purple-100 hover:border-rose-200 px-4 py-1.5 rounded-xl text-sm font-bold transition-colors shadow-2xs">
                         ออกจากระบบ
                     </a>
                     <!-- Mobile Hamburger Button -->
-                    <button type="button" onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer" aria-label="Toggle navigation">
+                    <button type="button" onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl bg-white border border-purple-100 text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition cursor-pointer" aria-label="Toggle navigation">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
 
             <!-- Collapsible Mobile Top Menu Dropdown -->
-            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-slate-800 py-3 space-y-1 animate-fade-in bg-slate-900/95">
-                <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-purple-100 py-3 space-y-1 animate-fade-in bg-white/95 backdrop-blur-md">
+                <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>🛡️</span> จัดปาร์ตี้
                 </a>
-                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>🃏</span> ประมูล
                 </a>
-                <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">
+                <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-purple-50 text-purple-700 border border-purple-200">
                     <span>👤</span> ข้อมูลส่วนตัว
                 </a>
-                <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>👥</span> สมาชิก
                 </a>
-                <div class="pt-2 border-t border-slate-800 flex items-center justify-between px-2">
-                    <span id="navUsernameMobile" class="text-xs text-slate-400 font-medium">กำลังเชื่อมต่อ...</span>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/60 border border-rose-800/80 px-3 py-1.5 rounded-lg transition">
+                <div class="pt-2 border-t border-purple-100 flex items-center justify-between px-2">
+                    <span id="navUsernameMobile" class="text-xs text-slate-600 font-bold">กำลังเชื่อมต่อ...</span>
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg transition">
                         🚪 ออกจากระบบ
                     </a>
                 </div>
@@ -144,31 +149,31 @@
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-black drop-shadow-sm text-slate-100">
+                <h2 class="text-2xl sm:text-3xl font-black text-indigo-950">
                     จัดการข้อมูลส่วนตัว
                 </h2>
-                <p class="text-sm text-slate-400 mt-1">อัปเดตข้อมูลตัวละครและสเตตัส (รองรับระบบ AI อ่านภาพหลายรูปพร้อมกัน)</p>
+                <p class="text-sm text-slate-600 font-medium mt-1">อัปเดตข้อมูลตัวละครและสเตตัส (รองรับระบบ AI อ่านภาพหลายรูปพร้อมกัน)</p>
             </div>
             <div class="flex items-center gap-2">
-                <span id="dbStatus" class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 shadow-xs">
+                <span id="dbStatus" class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold bg-white/90 text-slate-700 border border-purple-200 shadow-xs">
                     🟡 กำลังเชื่อมต่อ Cloud...
                 </span>
             </div>
         </div>
 
         <!-- Character Selector Tabs (ตัวละครที่ 1 & ตัวละครที่ 2) -->
-        <div class="flex items-center justify-between flex-wrap gap-3 bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl border border-slate-700 shadow-sm animate-fade-in">
+        <div class="flex items-center justify-between flex-wrap gap-3 roo-card p-3 rounded-2xl animate-fade-in">
             <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" id="btnChar1Tab" onclick="switchCharacterTab(1)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm roo-button text-white border border-indigo-400/40 cursor-pointer">
+                <button type="button" id="btnChar1Tab" onclick="switchCharacterTab(1)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm roo-button cursor-pointer">
                     <span>👤</span> ตัวละครหลัก (ตัวที่ 1)
                 </button>
-                <button type="button" id="btnChar2Tab" onclick="switchCharacterTab(2)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 cursor-pointer">
+                <button type="button" id="btnChar2Tab" onclick="switchCharacterTab(2)" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-slate-200 cursor-pointer">
                     <span>✌️</span> ตัวละครรอง (ตัวที่ 2)
-                    <span id="char2LockBadge" class="hidden text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold border border-slate-600">🔒 สิทธิ์พิเศษ</span>
+                    <span id="char2LockBadge" class="hidden text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold border border-purple-200">🔒 สิทธิ์พิเศษ</span>
                 </button>
             </div>
-            <div id="charTabHint" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900/80 rounded-xl border border-slate-700 shadow-xs">
-                <span>🛡️</span> กำลังจัดการ: <strong id="activeCharLabel" class="text-indigo-400 font-extrabold">ตัวละครหลัก (ตัวที่ 1)</strong>
+            <div id="charTabHint" class="text-xs font-semibold text-slate-700 flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-50/80 rounded-xl border border-purple-200 shadow-xs">
+                <span>🛡️</span> กำลังจัดการ: <strong id="activeCharLabel" class="text-purple-700 font-black">ตัวละครหลัก (ตัวที่ 1)</strong>
             </div>
         </div>
 
@@ -179,46 +184,46 @@
             <div class="lg:col-span-7 roo-card rounded-3xl p-6 sm:p-7 space-y-5">
                 
                 <!-- ลากิจกรรม Toggle -->
-                <div class="p-4 bg-slate-900/80 border border-slate-700 rounded-2xl flex items-center justify-between shadow-xs">
+                <div class="p-4 bg-purple-50/60 border border-purple-100 rounded-2xl flex items-center justify-between shadow-xs">
                     <div>
                         <div class="flex items-center gap-2">
                             <span id="leaveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                            <h4 id="leaveStatusText" class="text-xs font-extrabold text-emerald-400">สะดวกเข้าร่วมกิจกรรม</h4>
+                            <h4 id="leaveStatusText" class="text-xs font-black text-emerald-700">สะดวกเข้าร่วมกิจกรรม</h4>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                        <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
                             *หากเปิดลากิจกรรม ระบบจะแสดงกรอบสีแดงในระบบ และหัวหน้ากิลด์จะไม่สามารถจัดคุณเข้าปาร์ตี้กิจกรรมได้
                         </p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                         <input type="checkbox" id="toggleLeave" class="sr-only peer">
-                        <div class="w-11 h-6 bg-emerald-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600 shadow-xs"></div>
+                        <div class="w-11 h-6 bg-emerald-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500 shadow-xs"></div>
                     </label>
                 </div>
 
                 <!-- ข้อมูลตัวละคร Form -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                    <h3 class="text-sm font-black text-indigo-950 mb-3 flex items-center gap-2">
                         <span>👤</span> ข้อมูลตัวละคร
                     </h3>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">UID (อ้างอิงระบบ)</label>
-                            <input type="text" id="charUid" readonly class="w-full bg-slate-900/60 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-400 font-bold cursor-not-allowed select-none shadow-xs">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">UID (อ้างอิงระบบ)</label>
+                            <input type="text" id="charUid" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-500 font-bold cursor-not-allowed select-none shadow-xs">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">ชื่อตัวละคร <span class="text-rose-400">*</span></label>
-                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-100 transition shadow-xs">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อตัวละคร <span class="text-rose-500">*</span></label>
+                            <input type="text" id="charName" placeholder="เช่น นายไม้" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 transition shadow-xs">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">สายอาชีพ</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">สายอาชีพ</label>
                         <div class="flex items-center gap-2.5">
-                            <div id="classIconPreview" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-1 shrink-0 shadow-xs">
+                            <div id="classIconPreview" class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center p-1 shrink-0 shadow-xs">
                                 <span class="text-base">👤</span>
                             </div>
-                            <select id="charClass" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-100 transition cursor-pointer shadow-xs">
+                            <select id="charClass" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 transition cursor-pointer shadow-xs">
                                 <option value="">-- เลือกอาชีพ --</option>
                                 <option value="Lord Knight">⚔️ Lord Knight</option>
                                 <option value="Paladin">🛡️ Paladin</option>
@@ -240,8 +245,8 @@
                     </div>
 
                     <div class="mt-4">
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">🚩 ตำแหน่งรอง (Sub Role / Party)</label>
-                        <select id="charSubRole" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-100 transition cursor-pointer shadow-xs">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">🚩 ตำแหน่งรอง (Sub Role / Party)</label>
+                        <select id="charSubRole" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 transition cursor-pointer shadow-xs">
                             <option value="">-- ไม่ระบุตำแหน่งรอง --</option>
                             <option value="Party 1">🚩 Party 1</option>
                             <option value="Party 2">🚩 Party 2</option>
@@ -264,7 +269,7 @@
                 </div>
 
                 <div class="pt-2 flex justify-end">
-                    <button id="btnSaveInfo" class="roo-button text-white font-bold py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
+                    <button id="btnSaveInfo" class="roo-button font-black py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
                         💾 บันทึกข้อมูลตัวละคร
                     </button>
                 </div>
@@ -274,27 +279,27 @@
             <!-- Right Card: Avatar / Character Image Upload -->
             <div class="lg:col-span-5 roo-card rounded-3xl p-6 sm:p-7 space-y-4 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-200 mb-1 flex items-center gap-2">
+                    <h3 class="text-sm font-black text-indigo-950 mb-1 flex items-center gap-2">
                         <span>🖼️</span> รูปภาพสเตตัส / ตัวละคร
                     </h3>
-                    <p class="text-[11px] text-slate-400 mb-3">
+                    <p class="text-[11px] text-slate-600 font-medium mb-3">
                         💡 คำแนะนำ: เพื่อให้ภาพตัวละครแสดงผลได้สวยงามที่สุด แนะนำให้ลบพื้นหลังออกให้เรียบร้อย และแนบเป็นไฟล์ PNG (พื้นหลังโปร่งใส) ครับ
                     </p>
                     
                     <div class="relative mb-3">
-                        <input type="file" id="avatarFileInput" accept="image/*" class="w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-slate-600 file:text-xs file:font-bold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        <input type="file" id="avatarFileInput" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-purple-200 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
                     </div>
                 </div>
 
-                <div id="avatarPreviewContainer" class="min-h-[140px] max-h-[180px] bg-slate-900/80 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden shadow-inner">
+                <div id="avatarPreviewContainer" class="min-h-[140px] max-h-[180px] bg-purple-50/50 border-2 border-dashed border-purple-200 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden shadow-inner">
                     <img id="avatarPreviewImg" class="hidden max-h-[140px] object-contain drop-shadow-md rounded-lg" alt="Avatar">
-                    <div id="avatarPlaceholder" class="text-slate-500 text-xs">
+                    <div id="avatarPlaceholder" class="text-slate-500 text-xs font-semibold">
                         <span class="text-2xl block mb-1">👤</span>
                         ยังไม่มีรูปภาพ<br>กดเลือกไฟล์เพื่ออัปโหลด
                     </div>
                 </div>
 
-                <p class="text-[10px] text-slate-500 text-center">
+                <p class="text-[10px] text-slate-500 text-center font-medium">
                     * ขนาดไม่เกิน 5MB (png, jpg, jpeg, webp) รูปนี้จะโชว์ที่ภาพตัวละครของคุณในทำเนียบสมาชิก
                 </p>
             </div>
@@ -302,39 +307,39 @@
         </div>
 
         <!-- Bottom Card: Comprehensive Character Stats (17 Fields + Multi-Image AI OCR) -->
-        <div class="roo-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-fade-in shadow-xl border border-slate-700" style="animation-delay: 0.1s;">
+        <div class="roo-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-fade-in shadow-xl" style="animation-delay: 0.1s;">
             
             <!-- AI Scanning Progress Overlay -->
-            <div id="aiOverlay" class="hidden absolute inset-0 bg-slate-900/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+            <div id="aiOverlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
                 <div class="relative w-20 h-20 mb-4">
-                    <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+                    <div class="absolute inset-0 border-4 border-purple-100 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
                 </div>
-                <h4 id="aiStatusTitle" class="text-base font-extrabold text-slate-100">AI กำลังวิเคราะห์สเตตัสจากภาพ...</h4>
-                <p id="aiStatusDesc" class="text-xs text-slate-400 mt-1 max-w-sm">กำลังอ่านค่า CP, HP, ATK, DEF, Penetration และสเตตัส PVP จากภาพที่คุณอัปโหลด</p>
-                <div id="aiProgressBarContainer" class="w-64 bg-slate-800 rounded-full h-2 mt-4 overflow-hidden border border-slate-700">
-                    <div id="aiProgressBar" class="bg-gradient-to-r from-indigo-500 to-blue-500 h-2 rounded-full transition-all duration-300" style="width: 15%"></div>
+                <h4 id="aiStatusTitle" class="text-base font-black text-indigo-950">AI กำลังวิเคราะห์สเตตัสจากภาพ...</h4>
+                <p id="aiStatusDesc" class="text-xs text-slate-600 mt-1 max-w-sm font-medium">กำลังอ่านค่า CP, HP, ATK, DEF, Penetration และสเตตัส PVP จากภาพที่คุณอัปโหลด</p>
+                <div id="aiProgressBarContainer" class="w-64 bg-slate-100 rounded-full h-2 mt-4 overflow-hidden border border-purple-200">
+                    <div id="aiProgressBar" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300" style="width: 15%"></div>
                 </div>
             </div>
 
             <!-- Header of Stats Section -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700 pb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-purple-100 pb-4">
                 <div>
-                    <h3 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+                    <h3 class="text-lg font-black text-indigo-950 flex items-center gap-2">
                         <span>⚔️</span> ข้อมูลสเตตัสตัวละคร
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">กรอกข้อมูล หรือกดอัปโหลดรูปภาพสเตตัสด้วย AI (เลือกได้ 1 รูปหรือหลายรูปพร้อมกัน)</p>
+                    <p class="text-xs text-slate-600 font-medium mt-0.5">กรอกข้อมูล หรือกดอัปโหลดรูปภาพสเตตัสด้วย AI (เลือกได้ 1 รูปหรือหลายรูปพร้อมกัน)</p>
                 </div>
                 
                 <div class="flex items-center gap-3 flex-wrap">
                     <!-- Hidden Multi-file input for AI -->
                     <input type="file" id="aiMultiFileInput" accept="image/*" multiple class="hidden">
                     
-                    <button onclick="document.getElementById('aiMultiFileInput').click()" class="px-4 py-2 bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 font-bold rounded-xl text-xs shadow-xs transition flex items-center gap-1.5 border border-indigo-700/60 cursor-pointer">
+                    <button onclick="document.getElementById('aiMultiFileInput').click()" class="px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs shadow-2xs transition flex items-center gap-1.5 border border-purple-200 cursor-pointer">
                         🤖 อัปโหลดสเตตัส ด้วย AI
                     </button>
-                    <button id="btnSaveStats" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                    <button id="btnSaveStats" class="roo-button px-5 py-2 font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
                         💾 บันทึกค่าสเตตัส
                     </button>
                 </div>
@@ -348,56 +353,56 @@
                     
                     <!-- CP (Highlight) -->
                     <div class="stat-input-card highlight rounded-xl p-2.5">
-                        <label class="block text-[10px] font-extrabold text-amber-400 uppercase">CP</label>
-                        <input type="number" id="stat_cp" placeholder="0" class="w-full bg-transparent text-sm font-extrabold text-amber-300 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-black text-amber-800 uppercase">CP</label>
+                        <input type="number" id="stat_cp" placeholder="0" class="w-full bg-transparent text-sm font-black text-amber-900 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- MAX HP -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-rose-400 uppercase">MAX HP</label>
-                        <input type="number" id="stat_maxHp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-rose-600 uppercase">MAX HP</label>
+                        <input type="number" id="stat_maxHp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- MAX SP -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-sky-400 uppercase">MAX SP</label>
-                        <input type="number" id="stat_maxSp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-sky-600 uppercase">MAX SP</label>
+                        <input type="number" id="stat_maxSp" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.ATK -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-orange-400 uppercase">P.ATK</label>
-                        <input type="number" id="stat_pAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-orange-600 uppercase">P.ATK</label>
+                        <input type="number" id="stat_pAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.ATK -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-indigo-400 uppercase">M.ATK</label>
-                        <input type="number" id="stat_mAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-indigo-600 uppercase">M.ATK</label>
+                        <input type="number" id="stat_mAtk" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">P.DEF</label>
-                        <input type="number" id="stat_pDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">P.DEF</label>
+                        <input type="number" id="stat_pDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">M.DEF</label>
-                        <input type="number" id="stat_mDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">M.DEF</label>
+                        <input type="number" id="stat_mDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- IGNORE P.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">IGNORE P.DEF</label>
-                        <input type="number" id="stat_ignorePDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">IGNORE P.DEF</label>
+                        <input type="number" id="stat_ignorePDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- IGNORE M.DEF -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">IGNORE M.DEF</label>
-                        <input type="number" id="stat_ignoreMDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">IGNORE M.DEF</label>
+                        <input type="number" id="stat_ignoreMDef" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                 </div>
@@ -407,50 +412,50 @@
                     
                     <!-- P.DMG (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">P.DMG (%)</label>
-                        <input type="number" step="0.1" id="stat_pDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">P.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_pDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.DMG (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">M.DMG (%)</label>
-                        <input type="number" step="0.1" id="stat_mDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">M.DMG (%)</label>
+                        <input type="number" step="0.1" id="stat_mDmg" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- P.REDUC (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">P.REDUC (%)</label>
-                        <input type="number" step="0.1" id="stat_pReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-sky-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">P.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_pReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-sky-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- M.REDUC (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">M.REDUC (%)</label>
-                        <input type="number" step="0.1" id="stat_mReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-sky-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">M.REDUC (%)</label>
+                        <input type="number" step="0.1" id="stat_mReduc" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-sky-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- PVP DMG -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-rose-400 uppercase">PVP DMG</label>
-                        <input type="number" step="0.1" id="stat_pvpDmg" placeholder="0" class="w-full bg-transparent text-xs font-bold text-rose-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-rose-600 uppercase">PVP DMG</label>
+                        <input type="number" step="0.1" id="stat_pvpDmg" placeholder="0" class="w-full bg-transparent text-xs font-bold text-rose-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- PVP REDUC -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-emerald-400 uppercase">PVP REDUC</label>
-                        <input type="number" step="0.1" id="stat_pvpReduc" placeholder="0" class="w-full bg-transparent text-xs font-bold text-emerald-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-emerald-600 uppercase">PVP REDUC</label>
+                        <input type="number" step="0.1" id="stat_pvpReduc" placeholder="0" class="w-full bg-transparent text-xs font-bold text-emerald-700 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- CRI -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">CRI</label>
-                        <input type="number" id="stat_cri" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-100 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">CRI</label>
+                        <input type="number" id="stat_cri" placeholder="0" class="w-full bg-transparent text-xs font-bold text-slate-800 focus:outline-none mt-0.5">
                     </div>
 
                     <!-- CRI DAM (%) -->
                     <div class="stat-input-card rounded-xl p-2.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase">CRI DAM (%)</label>
-                        <input type="number" step="0.1" id="stat_criDam" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-400 focus:outline-none mt-0.5">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">CRI DAM (%)</label>
+                        <input type="number" step="0.1" id="stat_criDam" placeholder="0%" class="w-full bg-transparent text-xs font-bold text-indigo-700 focus:outline-none mt-0.5">
                     </div>
 
                 </div>
@@ -462,20 +467,20 @@
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] px-2 py-1.5 flex justify-around items-center">
-        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-xl border-t border-purple-100 shadow-[0_-4px_20px_rgba(124,58,237,0.08)] px-2 py-1.5 flex justify-around items-center">
+        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">🛡️</span>
             <span class="text-[10px] font-medium mt-0.5">จัดปาร์ตี้</span>
         </a>
-        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">🃏</span>
             <span class="text-[10px] font-medium mt-0.5">ประมูล</span>
         </a>
-        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-indigo-300 bg-indigo-600/20 border border-indigo-500/30">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-purple-700 bg-purple-50 border border-purple-200">
             <span class="text-lg leading-tight">👤</span>
             <span class="text-[10px] font-bold mt-0.5">ส่วนตัว</span>
         </a>
-        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">👥</span>
             <span class="text-[10px] font-medium mt-0.5">สมาชิก</span>
         </a>

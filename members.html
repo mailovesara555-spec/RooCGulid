@@ -9,13 +9,16 @@
     
     <!-- Firebase SDKs (Compat version for Browser) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <style>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-datab    <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #0f172a;
-            color: #f1f5f9;
+            background-color: #f5f3ff;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(244, 114, 182, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(129, 140, 248, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(253, 186, 116, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, #ede9fe 0%, #fce7f3 50%, #fef3c7 100%);
+            color: #1e1b4b;
             position: relative;
             min-height: 100vh;
         }
@@ -26,92 +29,92 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 50% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), url('images/bg_banner.png');
+            background-image: url('images/pastel_bg.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.12;
+            opacity: 0.45;
             pointer-events: none;
             z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-track { background: #f5f3ff; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         .roo-card { 
-            background: rgba(30, 41, 59, 0.92); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(51, 65, 85, 0.85); 
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2); 
+            background: rgba(255, 255, 255, 0.88); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.1), 0 5px 15px rgba(244, 114, 182, 0.08); 
         }
         .roo-button { 
-            background: linear-gradient(135deg, #4f46e5, #6366f1, #3b82f6); 
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
-            border: 1px solid rgba(99, 102, 241, 0.6); 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%); 
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            color: #ffffff;
         }
         .roo-button:hover { 
-            background: linear-gradient(135deg, #4338ca, #4f46e5, #2563eb); 
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%); 
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.38);
             transform: translateY(-1px);
         }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="min-h-screen text-slate-100">
+<body class="min-h-screen text-slate-800">
 
     <!-- Navbar -->
-    <nav class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white/85 backdrop-blur-md border-b border-purple-100 sticky top-0 z-50 shadow-xs">
         <div class="max-w-[98%] 2xl:max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Desktop Links -->
                 <div class="flex items-center gap-8">
-                    <h1 class="text-xl font-extrabold tracking-tight drop-shadow-sm flex items-center gap-2.5">
-                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-slate-700 shadow-xs">
-                        <span class="text-slate-100 font-black">Wendell<span class="text-indigo-400 font-bold ml-1">Guild</span></span>
+                    <h1 class="text-xl font-extrabold tracking-tight drop-shadow-xs flex items-center gap-2.5">
+                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-purple-200 shadow-xs">
+                        <span class="text-indigo-950 font-black">Wendell<span class="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent font-black ml-1">Guild</span></span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">จัดปาร์ตี้</a>
-                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">ประมูล</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">ข้อมูลส่วนตัว</a>
-                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-xs border border-indigo-500/50">สมาชิก</a>
+                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">จัดปาร์ตี้</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">ประมูล</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xs">สมาชิก</a>
                     </div>
                 </div>
                 <!-- User Profile & Logout & Mobile Hamburger Button -->
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p id="navUsername" class="font-medium text-slate-300 leading-none">สมาชิกกิลด์</p>
+                        <p id="navUsername" class="font-bold text-slate-700 leading-none">สมาชิกกิลด์</p>
                     </div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-300 hover:text-rose-300 bg-slate-800 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-800 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-600 hover:text-rose-600 bg-white/90 hover:bg-rose-50 border border-purple-100 hover:border-rose-200 px-4 py-1.5 rounded-xl text-sm font-bold transition-colors shadow-2xs">
                         ออกจากระบบ
                     </a>
                     <!-- Mobile Hamburger Button -->
-                    <button type="button" onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer" aria-label="Toggle navigation">
+                    <button type="button" onclick="toggleMobileNav()" class="md:hidden p-2 rounded-xl bg-white border border-purple-100 text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition cursor-pointer" aria-label="Toggle navigation">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
 
             <!-- Collapsible Mobile Top Menu Dropdown -->
-            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-slate-800 py-3 space-y-1 animate-fade-in bg-slate-900/95">
-                <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-purple-100 py-3 space-y-1 animate-fade-in bg-white/95 backdrop-blur-md">
+                <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>🛡️</span> จัดปาร์ตี้
                 </a>
-                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>🃏</span> ประมูล
                 </a>
-                <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>👤</span> ข้อมูลส่วนตัว
                 </a>
-                <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">
+                <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-purple-50 text-purple-700 border border-purple-200">
                     <span>👥</span> สมาชิก
                 </a>
-                <div class="pt-2 border-t border-slate-800 flex items-center justify-between px-2">
-                    <span id="navUsernameMobile" class="text-xs text-slate-400 font-medium">สมาชิกกิลด์</span>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/60 border border-rose-800/80 px-3 py-1.5 rounded-lg transition">
+                <div class="pt-2 border-t border-purple-100 flex items-center justify-between px-2">
+                    <span id="navUsernameMobile" class="text-xs text-slate-600 font-bold">สมาชิกกิลด์</span>
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg transition">
                         🚪 ออกจากระบบ
                     </a>
                 </div>
@@ -122,34 +125,34 @@
     <!-- Main Content -->
     <main class="flex-1 max-w-[98%] 2xl:max-w-[1750px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-6 pb-28 md:pb-6 space-y-6">
         
-        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-xl border border-slate-700">
+        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-xl">
             <!-- Header Section -->
-            <div class="p-5 sm:p-7 border-b border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-5 sm:p-7 border-b border-purple-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 class="text-xl sm:text-2xl font-black drop-shadow-sm flex items-center gap-2 flex-wrap">
-                        <span class="text-slate-100">จัดการสมาชิกในกิลด์</span>
-                        <span id="syncBadge" class="text-xs bg-slate-800 text-slate-300 font-semibold px-2.5 py-0.5 rounded-full border border-slate-700 shadow-xs">
+                    <h2 class="text-xl sm:text-2xl font-black flex items-center gap-2 flex-wrap text-indigo-950">
+                        <span>จัดการสมาชิกในกิลด์</span>
+                        <span id="syncBadge" class="text-xs bg-white/90 text-slate-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-xs">
                             Connecting...
                         </span>
-                        <span id="adminBadge" class="hidden text-xs bg-rose-950/70 text-rose-300 font-bold px-2.5 py-0.5 rounded-full border border-rose-800/80 shadow-xs">
+                        <span id="adminBadge" class="hidden text-xs bg-rose-50 text-rose-700 font-black px-2.5 py-0.5 rounded-full border border-rose-200 shadow-xs">
                             ⚡ Admin (daffodil2693)
                         </span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-1">เรียงลำดับ: 🚩 Party 1 &rarr; Party 2 &rarr; ... &rarr; Party 16 &rarr; สมาชิกที่ยังไม่ระบุปาร์ตี้</p>
+                    <p class="text-xs text-slate-600 font-medium mt-1">เรียงลำดับ: 🚩 Party 1 &rarr; Party 2 &rarr; ... &rarr; Party 16 &rarr; สมาชิกที่ยังไม่ระบุปาร์ตี้</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <!-- Whitelist Button (Admin Only) -->
-                    <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 border border-indigo-700/60 cursor-pointer">
+                    <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-xl shadow-2xs transition flex items-center gap-1.5 border border-purple-200 cursor-pointer">
                         🔑 อนุญาตเข้าเว็บ (Whitelist)
                     </button>
 
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg class="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรืออาชีพ..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-xs">
+                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรืออาชีพ..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all shadow-xs">
                     </div>
                 </div>
             </div>
@@ -158,7 +161,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-900/90 border-b border-slate-700 text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                        <tr class="bg-purple-50/70 border-b border-purple-100 text-xs font-bold text-slate-700 uppercase tracking-wider whitespace-nowrap">
                             <th class="py-3.5 px-3 text-center w-12">ลำดับ</th>
                             <th class="py-3.5 px-4">ชื่อตัวละคร (ไอคอนของรอบนี้)</th>
                             <th class="py-3.5 px-3 text-center">ตำแหน่ง (ROLE)</th>
@@ -169,9 +172,9 @@
                             <th class="py-3.5 px-4 text-center">ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody id="memberTableBody" class="divide-y divide-slate-800">
+                    <tbody id="memberTableBody" class="divide-y divide-purple-100">
                         <tr>
-                            <td colspan="8" class="py-12 text-center text-slate-500 text-sm animate-pulse">
+                            <td colspan="8" class="py-12 text-center text-slate-500 text-sm font-medium animate-pulse">
                                 กำลังโหลดข้อมูลสมาชิกจาก Cloud...
                             </td>
                         </tr>
@@ -183,33 +186,33 @@
     </main>
 
     <!-- Modal สำหรับ Edit ตำแหน่งและข้อมูลสมาชิก -->
-    <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-8 relative bg-slate-900 border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
-                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+    <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-lg rounded-3xl p-6 sm:p-8 relative bg-white border border-purple-100 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-purple-100 pb-4 mb-6">
+                <h3 class="text-lg font-black text-indigo-950 flex items-center gap-2">
                     <span>✏️</span> แก้ไขข้อมูล & กำหนดตำแหน่งสมาชิก
                 </h3>
-                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4 mb-6">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Discord UID</label>
-                    <input type="text" id="editUid" readonly class="w-full bg-slate-950/60 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-400 font-bold cursor-not-allowed shadow-inner">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Discord UID</label>
+                    <input type="text" id="editUid" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 font-bold cursor-not-allowed shadow-inner">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">ชื่อตัวละครในเกม</label>
-                    <input type="text" id="editName" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-xs">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อตัวละครในเกม</label>
+                    <input type="text" id="editName" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-xs">
                 </div>
 
                 <!-- ตำแหน่งกิลด์ (หัวใจสำคัญ) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
                         <span>👑 ตำแหน่งในกิลด์ (Role)</span>
-                        <span id="roleAdminHint" class="text-xs text-indigo-400 font-normal">เฉพาะ Admin (daffodil2693) มีสิทธิ์เปลี่ยน</span>
+                        <span id="roleAdminHint" class="text-xs text-purple-600 font-semibold">เฉพาะ Admin (daffodil2693) มีสิทธิ์เปลี่ยน</span>
                     </label>
-                    <select id="editRole" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-xs cursor-pointer">
+                    <select id="editRole" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-xs cursor-pointer">
                         <option value="หัวหน้ากิลด์">👑 หัวหน้ากิลด์</option>
                         <option value="รองหัวหน้ากิลด์">⚔️ รองหัวหน้ากิลด์</option>
                         <option value="ผู้จัดการ">📋 ผู้จัดการ</option>
@@ -219,16 +222,16 @@
 
                 <!-- ตำแหน่งรอง (Sub Role / Party) - เชื่อมโยงอัตโนมัติตามผังประมูลการ์ด -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
                         <span>🚩 ตำแหน่งรอง (Sub Role)</span>
-                        <span class="text-xs text-indigo-400 font-normal">✨ เชื่อมโยงตามผังประมูลการ์ดอัตโนมัติ</span>
+                        <span class="text-xs text-purple-600 font-semibold">✨ เชื่อมโยงตามผังประมูลการ์ดอัตโนมัติ</span>
                     </label>
-                    <input type="text" id="editSubRole" readonly class="w-full bg-slate-950/60 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-bold text-indigo-400 cursor-not-allowed select-none shadow-xs" placeholder="-- ยังไม่ถูกจัดเข้าปาร์ตี้ประมูลการ์ด --">
+                    <input type="text" id="editSubRole" readonly class="w-full bg-purple-50/70 border border-purple-200 rounded-xl px-4 py-2.5 text-sm font-bold text-purple-700 cursor-not-allowed select-none shadow-xs" placeholder="-- ยังไม่ถูกจัดเข้าปาร์ตี้ประมูลการ์ด --">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">สายอาชีพ</label>
-                    <select id="editClass" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-100 shadow-xs cursor-pointer">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">สายอาชีพ</label>
+                    <select id="editClass" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-xs cursor-pointer">
                         <option value="">-- เลือกอาชีพ --</option>
                         <option value="Lord Knight">Lord Knight</option>
                         <option value="Paladin">Paladin</option>
@@ -249,16 +252,16 @@
                 </div>
 
                 <div class="flex items-center gap-3 pt-2">
-                    <input type="checkbox" id="editActive" class="w-4 h-4 text-indigo-500 border-slate-600 rounded focus:ring-indigo-500 cursor-pointer">
-                    <label for="editActive" class="text-sm font-medium text-slate-300 cursor-pointer">สถานะเข้าร่วมกิจกรรม (Active)</label>
+                    <input type="checkbox" id="editActive" class="w-4 h-4 text-purple-600 border-slate-300 rounded focus:ring-purple-500 cursor-pointer">
+                    <label for="editActive" class="text-sm font-bold text-slate-700 cursor-pointer">สถานะเข้าร่วมกิจกรรม (Active)</label>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
-                <button onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold text-sm transition cursor-pointer">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-purple-100">
+                <button onclick="closeEditModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold text-sm transition cursor-pointer">
                     ยกเลิก
                 </button>
-                <button onclick="saveEditMember()" class="roo-button px-6 py-2.5 rounded-xl text-white font-bold text-sm tracking-wide transition flex items-center gap-2 cursor-pointer">
+                <button onclick="saveEditMember()" class="roo-button px-6 py-2.5 rounded-xl font-black text-sm tracking-wide transition flex items-center gap-2 cursor-pointer">
                     💾 บันทึกการเปลี่ยนแปลง
                 </button>
             </div>
@@ -266,105 +269,105 @@
     </div>
 
     <!-- Modal ดูรายละเอียดสเตตัสตัวละคร (Stats Detail Modal) -->
-    <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-slate-900 border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
+    <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-white border border-purple-100 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-purple-100 pb-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-700 flex items-center justify-center text-xl overflow-hidden shadow-inner">
+                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-xl overflow-hidden shadow-inner">
                         <span id="modalAvatarIcon">👤</span>
                         <img id="modalAvatarImg" class="hidden w-full h-full object-cover" alt="Avatar">
                     </div>
                     <div>
-                        <h3 id="modalMemberName" class="text-lg font-extrabold text-slate-100">ชื่อตัวละคร</h3>
-                        <p id="modalMemberSub" class="text-xs text-slate-400 font-medium">Sniper • สมาชิกกิลด์</p>
+                        <h3 id="modalMemberName" class="text-lg font-black text-indigo-950">ชื่อตัวละคร</h3>
+                        <p id="modalMemberSub" class="text-xs text-slate-600 font-medium">Sniper • สมาชิกกิลด์</p>
                     </div>
                 </div>
-                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4">
-                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
+                <h4 class="text-xs font-black text-purple-700 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
                 
                 <!-- Primary Stats -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-amber-950/40 rounded-xl border border-amber-800/60">
-                        <div class="text-[10px] text-amber-400 font-extrabold uppercase">CP</div>
-                        <div id="mStat_cp" class="font-extrabold text-amber-300 text-sm mt-0.5">-</div>
+                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200">
+                        <div class="text-[10px] text-amber-800 font-black uppercase">CP</div>
+                        <div id="mStat_cp" class="font-black text-amber-900 text-sm mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">MAX HP</div>
-                        <div id="mStat_maxHp" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">MAX HP</div>
+                        <div id="mStat_maxHp" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">MAX SP</div>
-                        <div id="mStat_maxSp" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">MAX SP</div>
+                        <div id="mStat_maxSp" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.ATK</div>
-                        <div id="mStat_pAtk" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">P.ATK</div>
+                        <div id="mStat_pAtk" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.ATK</div>
-                        <div id="mStat_mAtk" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">M.ATK</div>
+                        <div id="mStat_mAtk" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.DEF</div>
-                        <div id="mStat_pDef" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">P.DEF</div>
+                        <div id="mStat_pDef" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.DEF</div>
-                        <div id="mStat_mDef" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">M.DEF</div>
+                        <div id="mStat_mDef" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">IGN P.DEF</div>
-                        <div id="mStat_ignorePDef" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">IGN P.DEF</div>
+                        <div id="mStat_ignorePDef" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">IGN M.DEF</div>
-                        <div id="mStat_ignoreMDef" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">IGN M.DEF</div>
+                        <div id="mStat_ignoreMDef" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
                 </div>
 
                 <!-- PVP & Crit Stats -->
-                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider pt-2">⚔️ สเตตัส PVP & CRITICAL</h4>
+                <h4 class="text-xs font-black text-purple-700 uppercase tracking-wider pt-2">⚔️ สเตตัส PVP & CRITICAL</h4>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.DMG (%)</div>
-                        <div id="mStat_pDmg" class="font-bold text-indigo-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">P.DMG (%)</div>
+                        <div id="mStat_pDmg" class="font-bold text-indigo-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.DMG (%)</div>
-                        <div id="mStat_mDmg" class="font-bold text-indigo-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">M.DMG (%)</div>
+                        <div id="mStat_mDmg" class="font-bold text-indigo-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">P.REDUC (%)</div>
-                        <div id="mStat_pReduc" class="font-bold text-sky-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">P.REDUC (%)</div>
+                        <div id="mStat_pReduc" class="font-bold text-sky-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">M.REDUC (%)</div>
-                        <div id="mStat_mReduc" class="font-bold text-sky-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">M.REDUC (%)</div>
+                        <div id="mStat_mReduc" class="font-bold text-sky-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">PVP DMG</div>
-                        <div id="mStat_pvpDmg" class="font-bold text-rose-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">PVP DMG</div>
+                        <div id="mStat_pvpDmg" class="font-bold text-rose-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">PVP REDUC</div>
-                        <div id="mStat_pvpReduc" class="font-bold text-emerald-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">PVP REDUC</div>
+                        <div id="mStat_pvpReduc" class="font-bold text-emerald-700 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">CRI</div>
-                        <div id="mStat_cri" class="font-bold text-slate-200 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">CRI</div>
+                        <div id="mStat_cri" class="font-bold text-slate-800 mt-0.5">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">CRI DAM (%)</div>
-                        <div id="mStat_criDam" class="font-bold text-indigo-400 mt-0.5">-</div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">CRI DAM (%)</div>
+                        <div id="mStat_criDam" class="font-bold text-indigo-700 mt-0.5">-</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end pt-4 border-t border-slate-700">
-                <button onclick="closeStatsModal()" class="roo-button px-6 py-2 rounded-xl text-white font-bold text-xs cursor-pointer">
+            <div class="flex items-center justify-end pt-4 border-t border-purple-100">
+                <button onclick="closeStatsModal()" class="roo-button px-6 py-2 rounded-xl font-black text-xs cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
             </div>
@@ -372,35 +375,35 @@
     </div>
 
     <!-- Modal จัดการสิทธิ์เข้าเว็บ (Whitelist Modal - Admin Only) -->
-    <div id="whitelistModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-slate-900 border border-slate-700 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-5">
+    <div id="whitelistModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-white border border-purple-100 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between border-b border-purple-100 pb-4 mb-5">
                 <div>
-                    <h3 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+                    <h3 class="text-lg font-black text-indigo-950 flex items-center gap-2">
                         <span>🔑</span> จัดการสิทธิ์เข้าสู่ระบบ (Whitelist)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">เพิ่มได้ไม่จำกัดจำนวนคน • รองรับชื่อที่มีจุด เช่น onlyfunz.gg</p>
+                    <p class="text-xs text-slate-600 mt-0.5 font-medium">เพิ่มได้ไม่จำกัดจำนวนคน • รองรับชื่อที่มีจุด เช่น onlyfunz.gg</p>
                 </div>
-                <button onclick="closeWhitelistModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeWhitelistModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <!-- Form เพิ่ม Username ใหม่ -->
-            <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-700 mb-5 space-y-3 shadow-xs">
-                <h4 class="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+            <div class="p-4 bg-purple-50/70 rounded-2xl border border-purple-200 mb-5 space-y-3 shadow-xs">
+                <h4 class="text-xs font-bold text-purple-700 flex items-center gap-1.5">
                     <span>➕</span> เพิ่ม Discord Username ที่อนุญาต (ไม่จำกัด)
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Discord Username (เช่น onlyfunz.gg)</label>
-                        <input type="text" id="newWhitelistUser" placeholder="เช่น onlyfunz.gg หรือ amooma_aom" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 shadow-xs">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Discord Username (เช่น onlyfunz.gg)</label>
+                        <input type="text" id="newWhitelistUser" placeholder="เช่น onlyfunz.gg หรือ amooma_aom" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">หมายเหตุ / ชื่อเล่น</label>
-                        <input type="text" id="newWhitelistNote" placeholder="เช่น นายต้น สมาชิกกิลด์" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 shadow-xs">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">หมายเหตุ / ชื่อเล่น</label>
+                        <input type="text" id="newWhitelistNote" placeholder="เช่น นายต้น สมาชิกกิลด์" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs">
                     </div>
                 </div>
                 <div class="flex justify-end pt-1">
-                    <button onclick="addWhitelistUser()" class="roo-button px-5 py-2 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                    <button onclick="addWhitelistUser()" class="roo-button px-5 py-2 font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
                         ➕ อนุญาตสิทธิ์เข้าใช้งาน
                     </button>
                 </div>
@@ -409,25 +412,25 @@
             <!-- List of Allowed Users -->
             <div class="space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-extrabold text-slate-100 flex items-center gap-2">
-                        <span>📋 รายชื่อที่อนุญาต (<span id="whitelistCount" class="text-indigo-400 font-extrabold">0</span> คน)</span>
+                    <h4 class="text-xs font-black text-indigo-950 flex items-center gap-2">
+                        <span>📋 รายชื่อที่อนุญาต (<span id="whitelistCount" class="text-purple-700 font-black">0</span> คน)</span>
                     </h4>
                     <!-- Search inside Whitelist -->
-                    <input type="text" id="whitelistFilterInput" placeholder="🔍 ค้นหารายชื่อ Whitelist..." oninput="renderWhitelistList()" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-48 shadow-xs">
+                    <input type="text" id="whitelistFilterInput" placeholder="🔍 ค้นหารายชื่อ Whitelist..." oninput="renderWhitelistList()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 w-48 shadow-xs">
                 </div>
                 
-                <div class="max-h-[320px] overflow-y-auto rounded-2xl border border-slate-700 divide-y divide-slate-800 bg-slate-950 shadow-inner">
+                <div class="max-h-[320px] overflow-y-auto rounded-2xl border border-purple-100 divide-y divide-purple-100 bg-white shadow-inner">
                     <div id="whitelistTableBody" class="p-2 space-y-1.5">
-                        <div class="text-center py-6 text-xs text-slate-500">กำลังโหลดรายชื่อ...</div>
+                        <div class="text-center py-6 text-xs text-slate-500 font-medium">กำลังโหลดรายชื่อ...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-700">
-                <p class="text-[11px] text-slate-500">
+            <div class="flex items-center justify-between pt-4 mt-4 border-t border-purple-100">
+                <p class="text-[11px] text-slate-500 font-medium">
                     * ผู้ที่ไม่มีรายชื่อในนี้จะไม่สามารถล็อกอินเข้าเว็บได้
                 </p>
-                <button onclick="closeWhitelistModal()" class="px-5 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-bold text-xs transition cursor-pointer">
+                <button onclick="closeWhitelistModal()" class="px-5 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold text-xs transition cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
             </div>
@@ -435,20 +438,20 @@
     </div>
 
     <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] px-2 py-1.5 flex justify-around items-center">
-        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-xl border-t border-purple-100 shadow-[0_-4px_20px_rgba(124,58,237,0.08)] px-2 py-1.5 flex justify-around items-center">
+        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">🛡️</span>
             <span class="text-[10px] font-medium mt-0.5">จัดปาร์ตี้</span>
         </a>
-        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">🃏</span>
             <span class="text-[10px] font-medium mt-0.5">ประมูล</span>
         </a>
-        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">👤</span>
             <span class="text-[10px] font-medium mt-0.5">ส่วนตัว</span>
         </a>
-        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-indigo-300 bg-indigo-600/20 border border-indigo-500/30">
+        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-purple-700 bg-purple-50 border border-purple-200">
             <span class="text-lg leading-tight">👥</span>
             <span class="text-[10px] font-bold mt-0.5">สมาชิก</span>
         </a>
@@ -579,73 +582,14 @@
             'Alchemist': 'images/classes/biochemist.webp',
             'Mastersmith': 'images/classes/mastersmith.webp',
             'Whitesmith': 'images/classes/mastersmith.webp',
-            'Blacksmith': 'images/classes/mastersmith.webp',
-            'Bard': 'images/classes/minstrel.webp',
-            'Clown': 'images/classes/minstrel.webp',
-            'Minstrel': 'images/classes/minstrel.webp',
-            'Gypsy': 'images/classes/gypsy.webp',
-            'Dancer': 'images/classes/gypsy.webp',
-            'Sniper': 'images/classes/sniper.webp',
-            'Hunter': 'images/classes/sniper.webp',
-            'Champion': 'images/classes/champion.webp',
-            'Monk': 'images/classes/champion.webp',
-            'Priest': 'images/classes/high-priest.webp',
-            'High Priest': 'images/classes/high-priest.webp',
-            'Assassin': 'images/classes/assassin-cross.webp',
-            'Assassin Cross': 'images/classes/assassin-cross.webp',
-            'Rogue': 'images/classes/stalker.webp',
-            'Stalker': 'images/classes/stalker.webp',
-            'Wizard': 'images/classes/high-wizard.webp',
-            'High Wizard': 'images/classes/high-wizard.webp',
-            'Sage': 'images/classes/professor.webp',
-            'Professor': 'images/classes/professor.webp',
-            'Summoner': 'images/classes/summoner.webp',
-            'Doram': 'images/classes/summoner.webp',
-            'Rebellion': 'images/classes/rebellion.webp',
-            'Gunslinger': 'images/classes/rebellion.webp'
-        };
-
-        function getClassIconHtml(charClass, sizeClass = 'w-5 h-5') {
-            if (!charClass) return `<span class="inline-block text-xs">👤</span>`;
-            const key = Object.keys(CLASS_ICON_FILES).find(k => k.toLowerCase() === String(charClass).trim().toLowerCase());
-            const file = key ? CLASS_ICON_FILES[key] : null;
-            if (file) {
-                return `<img src="${file}" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm" alt="${charClass}">`;
-            }
-            return `<span class="inline-block text-xs">👤</span>`;
-        }
-
-        // ลำดับความสำคัญของตำแหน่ง (Admin = 1 สูงสุด)
-        function getRolePriority(role) {
-            switch (role) {
-                case 'Admin':
-                case 'admin':
-                    return 1;
-                case 'หัวหน้ากิลด์':
-                case 'หัวหน้ากิล':
-                    return 2;
-                case 'รองหัวหน้ากิลด์':
-                case 'รองหัวหน้ากิล':
-                    return 3;
-                case 'ผู้จัดการ':
-                    return 4;
-                case 'สมาชิกพิเศษ':
-                    return 5;
-                case 'สมาชิกกิลด์':
-                case 'สมาชิกกิล':
-                default:
-                    return 6;
-            }
-        }
-
-        // สถานะการเชื่อมต่อ
+            'Bla        // สถานะการเชื่อมต่อ
         const syncBadge = document.getElementById('syncBadge');
         db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
-                syncBadge.className = "text-xs bg-emerald-950/60 text-emerald-300 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-800/80 shadow-xs";
+                syncBadge.className = "text-xs bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-xs";
                 syncBadge.innerText = "🟢 Live Sync";
             } else {
-                syncBadge.className = "text-xs bg-slate-800 text-amber-400 font-semibold px-2.5 py-0.5 rounded-full border border-slate-700 shadow-xs";
+                syncBadge.className = "text-xs bg-amber-50 text-amber-800 font-bold px-2.5 py-0.5 rounded-full border border-amber-200 shadow-xs";
                 syncBadge.innerText = "🟡 Connecting...";
             }
         });
@@ -656,28 +600,28 @@
             switch (r) {
                 case 'Admin':
                 case 'admin':
-                    return `<span class="whitespace-nowrap bg-rose-950/70 text-rose-300 border border-rose-800/80 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">⚡ Admin</span>`;
+                    return `<span class="whitespace-nowrap bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-black shadow-xs inline-flex items-center gap-1">⚡ Admin</span>`;
                 case 'หัวหน้ากิลด์':
                 case 'หัวหน้ากิล':
-                    return `<span class="whitespace-nowrap bg-amber-950/70 text-amber-300 border border-amber-800/80 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">👑 หัวหน้ากิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-black shadow-xs inline-flex items-center gap-1">👑 หัวหน้ากิลด์</span>`;
                 case 'รองหัวหน้ากิลด์':
                 case 'รองหัวหน้ากิล':
-                    return `<span class="whitespace-nowrap bg-indigo-950/70 text-indigo-300 border border-indigo-800/80 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">⚔️ รองหัวหน้ากิลด์</span>`;
                 case 'ผู้จัดการ':
-                    return `<span class="whitespace-nowrap bg-blue-950/70 text-blue-300 border border-blue-800/80 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
+                    return `<span class="whitespace-nowrap bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold shadow-xs inline-flex items-center gap-1">📋 ผู้จัดการ</span>`;
                 case 'สมาชิกพิเศษ':
-                    return `<span class="whitespace-nowrap bg-teal-950/70 text-teal-300 border border-teal-800/80 px-3 py-1 rounded-full text-xs font-extrabold shadow-xs inline-flex items-center gap-1">⭐ สมาชิกพิเศษ</span>`;
+                    return `<span class="whitespace-nowrap bg-teal-50 text-teal-700 border border-teal-200 px-3 py-1 rounded-full text-xs font-black shadow-xs inline-flex items-center gap-1">⭐ สมาชิกพิเศษ</span>`;
                 case 'สมาชิกกิลด์':
                 case 'สมาชิกกิล':
                 default:
-                    return `<span class="whitespace-nowrap bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1">🛡️ สมาชิกกิลด์</span>`;
+                    return `<span class="whitespace-nowrap bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1">🛡️ สมาชิกกิลด์</span>`;
             }
         }
 
         // Badge ตำแหน่งรอง (Sub Role Badge)
         function getSubRoleBadge(subRole) {
             if (!subRole) return '';
-            return `<span class="whitespace-nowrap bg-indigo-950/80 text-indigo-300 border border-indigo-700/70 px-2 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 shadow-xs">🚩 ${subRole}</span>`;
+            return `<span class="whitespace-nowrap bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1 shadow-2xs">🚩 ${subRole}</span>`;
         }
 
         // 3. Render Table
@@ -701,26 +645,26 @@
             });
 
             if (filteredMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-400 font-medium">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-500 font-medium">ยังไม่มีข้อมูลสมาชิกในระบบ (สามารถเพิ่มได้ที่หน้าข้อมูลส่วนตัว)</td></tr>`;
                 return;
             }
 
             filteredMembers.forEach((member, index) => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/60 transition-colors border-b border-slate-800/80';
+                tr.className = 'hover:bg-purple-50/50 transition-colors border-b border-purple-100/80';
                 
                 const toggleHtml = member.active 
-                    ? `<div class="w-10 h-5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
-                    : `<div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-slate-500 w-4 h-4 rounded-full shadow-sm"></div></div>`;
+                    ? `<div class="w-10 h-5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full relative mx-auto shadow-inner"><div class="absolute right-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-sm"></div></div>`
+                    : `<div class="w-10 h-5 bg-slate-200 border border-slate-300 rounded-full relative mx-auto shadow-inner"><div class="absolute left-[2px] top-[2px] bg-slate-400 w-4 h-4 rounded-full shadow-sm"></div></div>`;
                 
                 // เช็คไอคอนประมูลของรอบปัจจุบัน (ใช้รูปภาพไอเทมจริง)
                 let icons = [];
-                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="whitespace-nowrap bg-indigo-950/80 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-700/60 text-xs inline-flex items-center gap-1 font-semibold"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
-                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-sky-950/80 text-sky-300 px-1.5 py-0.5 rounded border border-sky-700/60 text-xs inline-flex items-center gap-1 font-semibold"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
-                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700 text-xs inline-flex items-center gap-1 font-semibold"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
+                if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="whitespace-nowrap bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
+                if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded border border-sky-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
+                if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
                 
                 let isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
-                let char2Tag = isChar2 ? '<span class="text-[10px] bg-teal-950/80 text-teal-300 border border-teal-700/60 px-1.5 py-0.5 rounded-md font-extrabold shrink-0">✌️ ตัวที่ 2</span>' : '';
+                let char2Tag = isChar2 ? '<span class="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-1.5 py-0.5 rounded-md font-black shrink-0">✌️ ตัวที่ 2</span>' : '';
                 let displayName = member.name || '-';
                 let iconDisplay = icons.length > 0 ? `<div class="flex items-center gap-1.5 mt-1 flex-wrap">${icons.join(' ')}</div>` : '';
 
@@ -735,43 +679,91 @@
                 const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
 
                 tr.innerHTML = `
-                    <td class="py-3.5 px-3 text-center font-bold text-slate-500 text-xs whitespace-nowrap">#${index + 1}</td>
-                    <td class="py-3.5 px-4 text-sm text-slate-100 font-semibold cursor-pointer" onclick="openStatsModal('${member.uid}')">
-                        <div class="hover:text-indigo-400 transition flex items-center gap-1.5 flex-wrap">
+                    <td class="py-3.5 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">#${index + 1}</td>
+                    <td class="py-3.5 px-4 text-sm text-indigo-950 font-bold cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                        <div class="hover:text-purple-600 transition flex items-center gap-1.5 flex-wrap">
                             <span>${displayName}</span>
                             ${char2Tag}
-                            <span class="text-xs text-indigo-400">🔍</span>
+                            <span class="text-xs text-purple-500">🔍</span>
                         </div>
                         ${iconDisplay}
                     </td>
                     <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleCombined}</td>
-                    <td class="py-3.5 px-3 text-sm text-slate-300 font-medium whitespace-nowrap">
+                    <td class="py-3.5 px-3 text-sm text-slate-700 font-medium whitespace-nowrap">
                         <div class="flex items-center gap-2">
                             ${getClassIconHtml(member.charClass, 'w-6 h-6')}
-                            <span class="font-bold text-slate-200">${member.charClass || '-'}</span>
+                            <span class="font-bold text-slate-700">${member.charClass || '-'}</span>
                         </div>
                     </td>
-                    <td class="py-3.5 px-3 text-sm text-center font-bold text-amber-400 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
+                    <td class="py-3.5 px-3 text-sm text-center font-black text-amber-800 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
                         <span class="hover:underline">${cp}</span>
                     </td>
                     <td class="py-3.5 px-3 ${toggleCursor} text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="${toggleTitle}">
                         ${toggleHtml}
                     </td>
                     <td class="py-3.5 px-3 text-sm whitespace-nowrap">
-                        <div class="text-slate-400 text-xs">${member.lastUpdate || '-'}</div>
-                        <div class="text-emerald-400 text-xs font-semibold flex items-center gap-1 mt-0.5">
-                            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span> อัปเดตแล้ว
+                        <div class="text-slate-500 text-xs font-medium">${member.lastUpdate || '-'}</div>
+                        <div class="text-emerald-600 text-xs font-bold flex items-center gap-1 mt-0.5">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> อัปเดตแล้ว
                         </div>
                     </td>
                     <td class="py-3.5 px-4 whitespace-nowrap">
                         <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
+                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
                                 📊 สเตตัส
                             </button>
-                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-indigo-950/80 border border-indigo-700/60 text-indigo-300 hover:bg-indigo-900 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer">
+                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
                                 ✏️ Edit
                             </button>
-                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-950/80 border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg text-xs font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer">
+                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }oggleTitle = isMyCharacter ? 'คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม' : 'เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์สลับสถานะ';
+                const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">#${index + 1}</td>
+                    <td class="py-3.5 px-4 text-sm text-indigo-950 font-bold cursor-pointer" onclick="openStatsModal('${member.uid}')">
+                        <div class="hover:text-purple-600 transition flex items-center gap-1.5 flex-wrap">
+                            <span>${displayName}</span>
+                            ${char2Tag}
+                            <span class="text-xs text-purple-500">🔍</span>
+                        </div>
+                        ${iconDisplay}
+                    </td>
+                    <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleCombined}</td>
+                    <td class="py-3.5 px-3 text-sm text-slate-700 font-medium whitespace-nowrap">
+                        <div class="flex items-center gap-2">
+                            ${getClassIconHtml(member.charClass, 'w-6 h-6')}
+                            <span class="font-bold text-slate-700">${member.charClass || '-'}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 text-sm text-center font-black text-amber-800 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
+                        <span class="hover:underline">${cp}</span>
+                    </td>
+                    <td class="py-3.5 px-3 ${toggleCursor} text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="${toggleTitle}">
+                        ${toggleHtml}
+                    </td>
+                    <td class="py-3.5 px-3 text-sm whitespace-nowrap">
+                        <div class="text-slate-500 text-xs font-medium">${member.lastUpdate || '-'}</div>
+                        <div class="text-emerald-600 text-xs font-bold flex items-center gap-1 mt-0.5">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> อัปเดตแล้ว
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1.5 flex-nowrap">
+                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
+                                📊 สเตตัส
+                            </button>
+                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
                                 🗑️ Delete
                             </button>
                         </div>
