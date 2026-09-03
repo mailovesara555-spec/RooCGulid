@@ -816,9 +816,16 @@
             if (el) el.classList.toggle('hidden');
         }
 
-        // 1. Firebase Config
+        // 1. Firebase Initializer
         const firebaseConfig = {
-            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app"
+            apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
+            authDomain: "rooc-guild.firebaseapp.com",
+            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rooc-guild",
+            storageBucket: "rooc-guild.firebasestorage.app",
+            messagingSenderId: "326463676837",
+            appId: "1:326463676837:web:048169408eb182d96c484c",
+            measurementId: "G-VR163R8CYD"
         };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -889,6 +896,12 @@
                 if (isSuper) role = 'Admin';
                 currentRole = role;
 
+                const userDisplay = `👤 ${currentUser} [${role}]`;
+                const navEl = document.getElementById('navUsername');
+                const navMobEl = document.getElementById('navUsernameMobile');
+                if (navEl) navEl.innerText = userDisplay;
+                if (navMobEl) navMobEl.innerText = userDisplay;
+
                 const roleBadge = document.getElementById('rolePermissionBadge');
                 if (role === 'Admin') {
                     roleBadge.className = "text-xs bg-rose-950/80 text-rose-300 font-extrabold px-3 py-1 rounded-full border border-rose-800/80 shadow-xs";
@@ -932,7 +945,6 @@
         checkUserPermission();
 
         // Check query param e.g. ?type=feather or ?type=card
-        const urlParams = new URLSearchParams(window.location.search);
         const queryMode = urlParams.get('type') || urlParams.get('mode') || urlParams.get('tab');
         if (queryMode === 'feather') {
             switchAuctionMode('feather');
