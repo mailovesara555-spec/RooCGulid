@@ -826,7 +826,17 @@
         const db = firebase.database();
 
         // 2. Authentication & User State
-        const currentUser = localStorage.getItem('rooc_user') || 'daffodil2693';
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentUser = (urlParams.get('user') || localStorage.getItem('rooc_discord_user') || sessionStorage.getItem('discord_user') || localStorage.getItem('rooc_user') || '').trim();
+
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        } else {
+            localStorage.setItem('rooc_discord_user', currentUser);
+            localStorage.setItem('rooc_user', currentUser);
+            sessionStorage.setItem('discord_user', currentUser);
+        }
+
         const userDisplayInit = `👤 ${currentUser}`;
         const navElInit = document.getElementById('navUsername');
         const navMobElInit = document.getElementById('navUsernameMobile');
@@ -834,8 +844,10 @@
         if (navMobElInit) navMobElInit.innerText = userDisplayInit;
 
         function handleLogout() {
+            localStorage.removeItem('rooc_discord_user');
             localStorage.removeItem('rooc_user');
-            window.location.href = 'index.html';
+            sessionStorage.removeItem('discord_user');
+            window.location.href = 'index.html?logout=true';
         }
 
         // Global State

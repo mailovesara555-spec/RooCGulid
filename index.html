@@ -90,12 +90,13 @@
 
         if (isLogout) {
             localStorage.removeItem('rooc_discord_user');
+            localStorage.removeItem('rooc_user');
             sessionStorage.removeItem('discord_user');
         } else if (!error) {
             // Auto Login if user already authorized before
-            const savedUser = localStorage.getItem('rooc_discord_user');
-            if (savedUser) {
-                window.location.href = `dashboard.html?user=${encodeURIComponent(savedUser)}`;
+            const savedUser = localStorage.getItem('rooc_discord_user') || localStorage.getItem('rooc_user');
+            if (savedUser && savedUser.trim() !== '') {
+                window.location.href = `dashboard.html?user=${encodeURIComponent(savedUser.trim())}`;
             }
         }
 

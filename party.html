@@ -614,14 +614,21 @@
 
         // 2. User & Permissions
         const urlParams = new URLSearchParams(window.location.search);
-        let currentUser = (urlParams.get('user') || localStorage.getItem('rooc_discord_user') || sessionStorage.getItem('discord_user') || 'daffodil2693').trim();
-        localStorage.setItem('rooc_discord_user', currentUser);
-        sessionStorage.setItem('discord_user', currentUser);
+        let currentUser = (urlParams.get('user') || localStorage.getItem('rooc_discord_user') || sessionStorage.getItem('discord_user') || localStorage.getItem('rooc_user') || '').trim();
+
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        } else {
+            localStorage.setItem('rooc_discord_user', currentUser);
+            localStorage.setItem('rooc_user', currentUser);
+            sessionStorage.setItem('discord_user', currentUser);
+        }
 
         function handleLogout() {
             localStorage.removeItem('rooc_discord_user');
+            localStorage.removeItem('rooc_user');
             sessionStorage.removeItem('discord_user');
-            window.location.href = '/?logout=true';
+            window.location.href = 'index.html?logout=true';
         }
 
         let currentUserRole = 'สมาชิกกิลด์';
