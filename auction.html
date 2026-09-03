@@ -15,7 +15,7 @@
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
-            background-color: #0b0f19;
+            background-color: #0f172a;
             color: #f1f5f9;
             position: relative;
             min-height: 100vh;
@@ -27,42 +27,42 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), url('images/bg_banner.png');
+            background-image: radial-gradient(circle at 50% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 60%), radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), url('images/bg_banner.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.22;
+            opacity: 0.12;
             pointer-events: none;
             z-index: 0;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
         
         .roo-card { 
-            background: rgba(15, 23, 42, 0.88); 
+            background: rgba(30, 41, 59, 0.92); 
             backdrop-filter: blur(16px); 
-            border: 1px solid rgba(51, 65, 85, 0.65); 
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(51, 65, 85, 0.85); 
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2); 
         }
         .roo-button { 
             background: linear-gradient(135deg, #4f46e5, #6366f1, #3b82f6); 
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
-            border: 1px solid rgba(129, 140, 248, 0.4); 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); 
+            border: 1px solid rgba(99, 102, 241, 0.6); 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); 
         }
         .roo-button:hover { 
             background: linear-gradient(135deg, #4338ca, #4f46e5, #2563eb); 
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
             transform: translateY(-1px);
         }
 
         .slot-box {
             transition: all 0.15s ease-in-out;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1.5px dashed rgba(71, 85, 105, 0.5);
+            background: #0f172a;
+            border: 1.5px dashed #334155;
             cursor: pointer;
             user-select: none;
         }
@@ -70,22 +70,22 @@
         .slot-box button { pointer-events: auto; }
         
         .slot-box.drag-over {
-            border-color: #38bdf8 !important;
-            background: rgba(14, 116, 144, 0.3) !important;
+            border-color: #6366f1 !important;
+            background: rgba(99, 102, 241, 0.2) !important;
             transform: scale(1.02);
-            box-shadow: 0 0 0 2px #38bdf8;
+            box-shadow: 0 0 0 2px #6366f1;
         }
         .slot-box.filled {
             border-style: solid;
-            border-color: rgba(51, 65, 85, 0.7);
-            background: rgba(15, 23, 42, 0.9);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            border-color: #334155;
+            background: #1e293b;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             cursor: grab;
         }
         .slot-box.filled:active { cursor: grabbing; }
         .slot-box.selected-source {
             border-color: #6366f1 !important;
-            background: rgba(30, 41, 59, 0.95) !important;
+            background: rgba(99, 102, 241, 0.25) !important;
             box-shadow: 0 0 0 3px #818cf8 !important;
             animation: pulse-border 1.5s infinite;
         }
@@ -94,8 +94,8 @@
             cursor: grab;
             transition: all 0.15s ease-in-out;
             user-select: none;
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(51, 65, 85, 0.7);
+            background: #1e293b;
+            border: 1px solid #334155;
             color: #f1f5f9;
         }
         .member-chip * { pointer-events: none; }
@@ -103,12 +103,12 @@
         .member-chip:active { cursor: grabbing; }
         .member-chip:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
-            border-color: #818cf8;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            border-color: #6366f1;
         }
         .member-chip.selected-source {
             border-color: #6366f1 !important;
-            background: rgba(49, 46, 129, 0.9) !important;
+            background: rgba(99, 102, 241, 0.25) !important;
             box-shadow: 0 0 0 3px #818cf8 !important;
         }
 
@@ -124,20 +124,20 @@
 <body class="min-h-screen text-slate-100 flex flex-col">
 
     <!-- Navbar -->
-    <nav class="bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-md">
+    <nav class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Desktop Links -->
                 <div class="flex items-center gap-8">
                     <h1 class="text-xl font-extrabold tracking-tight drop-shadow-sm flex items-center gap-2.5">
-                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-slate-600 shadow-xs">
-                        <span class="bg-gradient-to-r from-slate-100 via-indigo-100 to-slate-200 bg-clip-text text-transparent font-black">Wendell<span class="text-indigo-400 font-bold ml-1">Guild</span></span>
+                        <img src="images/guild_icon.jpg" alt="Wendell Guild" class="w-8 h-8 rounded-lg object-cover border border-slate-700 shadow-xs">
+                        <span class="text-slate-100 font-black">Wendell<span class="text-indigo-400 font-bold ml-1">Guild</span></span>
                     </h1>
                     <div class="hidden md:flex space-x-1">
-                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">จัดปาร์ตี้</a>
-                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-sm border border-indigo-400/30">ประมูล</a>
-                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">ข้อมูลส่วนตัว</a>
-                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">สมาชิก</a>
+                        <a href="party.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">จัดปาร์ตี้</a>
+                        <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-xs border border-indigo-500/50">ประมูล</a>
+                        <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">ข้อมูลส่วนตัว</a>
+                        <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">สมาชิก</a>
                     </div>
                 </div>
                 <!-- User Profile & Logout & Mobile Hamburger Button -->
@@ -145,7 +145,7 @@
                     <div class="text-sm hidden sm:block text-right">
                         <p id="navUsername" class="font-medium text-slate-300 leading-none">กำลังเชื่อมต่อ...</p>
                     </div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-400 hover:text-rose-300 bg-slate-800/70 hover:bg-rose-950/50 border border-slate-700/70 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-300 hover:text-rose-300 bg-slate-800 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-800 px-4 py-1.5 rounded-xl text-sm font-medium transition-colors">
                         ออกจากระบบ
                     </a>
                     <!-- Mobile Hamburger Button -->
@@ -156,11 +156,11 @@
             </div>
 
             <!-- Collapsible Mobile Top Menu Dropdown -->
-            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-slate-800 py-3 space-y-1 animate-fade-in">
+            <div id="mobileNavDropdown" class="hidden md:hidden border-t border-slate-800 py-3 space-y-1 animate-fade-in bg-slate-900/95">
                 <a href="party.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
                     <span>🛡️</span> จัดปาร์ตี้
                 </a>
-                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-indigo-600/30 text-indigo-300 border border-indigo-500/40">
+                <a href="auction.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">
                     <span>🃏</span> ประมูล
                 </a>
                 <a href="dashboard.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
@@ -169,9 +169,9 @@
                 <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">
                     <span>👥</span> สมาชิก
                 </a>
-                <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between px-2">
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between px-2">
                     <span id="navUsernameMobile" class="text-xs text-slate-400 font-medium">กำลังเชื่อมต่อ...</span>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/40 border border-rose-800/50 px-3 py-1.5 rounded-lg transition">
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/60 border border-rose-800/80 px-3 py-1.5 rounded-lg transition">
                         🚪 ออกจากระบบ
                     </a>
                 </div>
@@ -187,7 +187,7 @@
             <div>
                 <h2 class="text-2xl sm:text-3xl font-black drop-shadow-sm flex items-center gap-3">
                     <span class="text-slate-100">ระบบประมูลกิลด์</span>
-                    <span id="rolePermissionBadge" class="text-xs bg-slate-800 text-slate-300 font-bold px-3 py-1 rounded-full border border-slate-700">
+                    <span id="rolePermissionBadge" class="text-xs bg-slate-800 text-slate-300 font-bold px-3 py-1 rounded-full border border-slate-700 shadow-xs">
                         ตรวจสอบสิทธิ์...
                     </span>
                 </h2>
@@ -195,11 +195,11 @@
             </div>
 
             <!-- Master Mode Switcher Tabs -->
-            <div class="flex items-center gap-2 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl shadow-md">
-                <button type="button" onclick="switchAuctionMode('card')" id="btnModeCard" class="px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white border border-indigo-400/40 cursor-pointer">
+            <div class="flex items-center gap-2 p-1.5 bg-slate-900 border border-slate-700 rounded-2xl shadow-xs">
+                <button type="button" onclick="switchAuctionMode('card')" id="btnModeCard" class="px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-xs bg-indigo-600 text-white border border-indigo-500/40 cursor-pointer">
                     <span>🃏</span> ประมูลการ์ด (Card Auction)
                 </button>
-                <button type="button" onclick="switchAuctionMode('feather')" id="btnModeFeather" class="px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/70 cursor-pointer">
+                <button type="button" onclick="switchAuctionMode('feather')" id="btnModeFeather" class="px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
                     <span>🪶</span> ประมูลขนนก (Feather Auction)
                 </button>
             </div>
@@ -211,8 +211,8 @@
         <div id="viewCardAuction" class="space-y-6 animate-fade-in">
             
             <!-- Card Auction Control & Setting Bar -->
-            <div class="roo-card rounded-3xl p-5 border border-slate-800 shadow-xl space-y-4">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div class="roo-card rounded-3xl p-5 border border-slate-700 shadow-xl space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-700 pb-4">
                     <div class="flex items-center gap-3">
                         <img src="images/item_card.png" class="w-10 h-10 object-contain drop-shadow" alt="การ์ด">
                         <div>
@@ -230,10 +230,10 @@
                         <button onclick="calculateCardAuction()" id="btnCalculateCard" class="roo-button px-5 py-2.5 text-white font-black rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
                             <span>🧮</span> คำนวณ & อัปเดตผลการ์ด
                         </button>
-                        <button onclick="copyCardResultText()" class="px-3.5 py-2.5 bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs border border-slate-700 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                        <button onclick="copyCardResultText()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <span>📋</span> คัดลอกผลการ์ด
                         </button>
-                        <button onclick="resetCardHoldersRound()" id="btnResetCardHolders" class="px-3.5 py-2.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold rounded-xl text-xs border border-rose-800/60 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                        <button onclick="resetCardHoldersRound()" id="btnResetCardHolders" class="px-3.5 py-2.5 bg-rose-950/80 hover:bg-rose-900 text-rose-300 font-bold rounded-xl text-xs border border-rose-800/80 transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <span>🔄</span> รีเซ็ตรอบการ์ด
                         </button>
                     </div>
@@ -241,72 +241,72 @@
 
                 <!-- Input Start/End & Queue Quick Preview -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                    <div class="md:col-span-5 grid grid-cols-2 gap-3 bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800">
+                    <div class="md:col-span-5 grid grid-cols-2 gap-3 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
                         <div>
                             <div class="flex items-center justify-between mb-1">
                                 <label class="block text-[11px] font-bold text-emerald-400">🟢 เริ่มต้น</label>
-                                <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded font-extrabold border border-slate-700">🔒 ล็อกหน้า 1 ใบ 1</span>
+                                <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-extrabold border border-slate-700">🔒 ล็อกหน้า 1 ใบ 1</span>
                             </div>
                             <div class="flex gap-1.5">
-                                <input type="number" id="cardStartPage" value="1" disabled class="w-1/2 bg-[#0b0f19] border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-400 cursor-not-allowed opacity-90">
-                                <input type="number" id="cardStartSlot" value="1" disabled class="w-1/2 bg-[#0b0f19] border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-400 cursor-not-allowed opacity-90">
+                                <input type="number" id="cardStartPage" value="1" disabled class="w-1/2 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-500 cursor-not-allowed opacity-90">
+                                <input type="number" id="cardStartSlot" value="1" disabled class="w-1/2 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-500 cursor-not-allowed opacity-90">
                             </div>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-rose-400 mb-1">🔴 สิ้นสุด (หน้า/ใบ)</label>
                             <div class="flex gap-1.5">
-                                <input type="number" id="cardEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
-                                <input type="number" id="cardEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
+                                <input type="number" id="cardEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
+                                <input type="number" id="cardEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
                             </div>
                         </div>
                     </div>
 
                     <!-- Queue summary banner -->
-                    <div class="md:col-span-7 bg-[#0b0f19] p-3.5 rounded-2xl border border-slate-800">
+                    <div class="md:col-span-7 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
                         <div class="flex items-center justify-between text-xs font-bold text-slate-300 mb-1.5">
                             <span class="flex items-center gap-1.5">
                                 <span>🃏</span> <b>ลำดับคิวรับการ์ดรอบนี้:</b>
                             </span>
-                            <span id="cardRemainingCountBadge" class="text-[11px] text-indigo-300 font-extrabold">เหลืออีก 0 คิว</span>
+                            <span id="cardRemainingCountBadge" class="text-[11px] text-indigo-400 font-extrabold">เหลืออีก 0 คิว</span>
                         </div>
-                        <div id="cardQueuePillsContainer" class="flex flex-wrap gap-1 max-h-20 overflow-y-auto p-1 bg-[#0b0f19]/80 rounded-xl border border-slate-800">
+                        <div id="cardQueuePillsContainer" class="flex flex-wrap gap-1 max-h-20 overflow-y-auto p-1 bg-slate-900 rounded-xl border border-slate-800">
                             <span class="text-xs text-slate-500 py-1 px-2">กำลังคำนวณคิวคงเหลือ...</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card Result Table Section (Moved above party grid) -->
-            <div class="roo-card rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <!-- Card Result Table Section -->
+            <div class="roo-card rounded-3xl p-6 border border-slate-700 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-700 pb-3">
                     <h3 class="text-base font-black text-slate-100 flex items-center gap-2">
                         <span>📊</span> ตารางสรุปผลการแบ่งการ์ดรอบปัจจุบัน
                     </h3>
-                    <div id="cardResultCountBadge" class="text-xs font-bold text-indigo-300">
+                    <div id="cardResultCountBadge" class="text-xs font-bold text-indigo-400">
                         จัดสรรแล้ว 0 คน
                     </div>
                 </div>
 
                 <!-- Leftover Cards Box -->
-                <div id="cardLeftoverBox" class="hidden p-3.5 bg-slate-900/90 rounded-2xl border border-slate-700/80 space-y-1.5">
-                    <div class="text-xs font-extrabold text-slate-200 flex items-center gap-1.5">
+                <div id="cardLeftoverBox" class="hidden p-3.5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-1.5">
+                    <div class="text-xs font-extrabold text-slate-300 flex items-center gap-1.5">
                         <span>🎁</span> การ์ดที่เหลือจากการประมูลรอบนี้ (Leftovers):
                     </div>
                     <div id="cardLeftoverContent" class="flex flex-wrap gap-1.5 text-xs"></div>
                 </div>
 
                 <!-- Card Result Table -->
-                <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0b0f19]">
+                <div class="overflow-x-auto rounded-2xl border border-slate-700 bg-slate-900">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-900/90 text-slate-300 text-xs font-black uppercase border-b border-slate-800">
+                            <tr class="bg-slate-950 text-slate-300 text-xs font-black uppercase border-b border-slate-800">
                                 <th class="py-3 px-3 text-center w-14">#</th>
                                 <th class="py-3 px-4">ชื่อสมาชิก</th>
                                 <th class="py-3 px-3 text-center">ปาร์ตี้ & คิว</th>
                                 <th class="py-3 px-4">🃏 การ์ดที่ได้รับ (หน้า/ใบ)</th>
                             </tr>
                         </thead>
-                        <tbody id="cardResultTableBody" class="divide-y divide-slate-800/60 text-xs">
+                        <tbody id="cardResultTableBody" class="divide-y divide-slate-800 text-xs text-slate-300">
                             <tr>
                                 <td colspan="4" class="py-8 text-center text-slate-500 font-medium">ยังไม่มีผลการประมูลการ์ด (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลการ์ด')</td>
                             </tr>
@@ -320,7 +320,7 @@
                 
                 <!-- Left 16 Parties (Party 1 to 16) -->
                 <div class="lg:col-span-8 xl:col-span-9 space-y-4">
-                    <div class="flex items-center justify-between bg-slate-900/90 px-4 py-2.5 rounded-2xl border border-slate-800 shadow-sm backdrop-blur-sm">
+                    <div class="flex items-center justify-between bg-slate-900/80 px-4 py-2.5 rounded-2xl border border-slate-700 shadow-xs backdrop-blur-sm">
                         <h3 class="text-sm font-extrabold text-slate-100 flex items-center gap-2">
                             <span class="text-indigo-400">🃏</span> ผังปาร์ตี้ประมูลการ์ด 1 - 16
                             <span class="text-xs text-slate-400 font-normal">(เฉพาะปาร์ตี้ที่ครบ 5/5 ถึงจะมีสิทธิ์ได้รับคิว)</span>
@@ -337,19 +337,19 @@
                 <div class="lg:col-span-4 xl:col-span-3 space-y-5 lg:sticky lg:top-20 lg:self-start">
                     
                     <!-- Waitlist -->
-                    <div class="roo-card rounded-3xl p-5 space-y-4 shadow-xl border border-slate-800">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="roo-card rounded-3xl p-5 space-y-4 shadow-xl border border-slate-700">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
                             <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
                                 <span>👥</span> รอจัดปาร์ตี้ (Waitlist)
                             </h3>
-                            <span id="cardWaitlistCountBadge" class="text-xs font-extrabold bg-indigo-600 text-white px-2.5 py-0.5 rounded-full shadow-xs border border-indigo-400/40">
+                            <span id="cardWaitlistCountBadge" class="text-xs font-extrabold bg-indigo-600 text-white px-2.5 py-0.5 rounded-full shadow-xs border border-indigo-500/40">
                                 0
                             </span>
                         </div>
 
                         <!-- Search -->
                         <div class="relative">
-                            <input type="text" id="cardWaitlistSearch" placeholder="🔍 ค้นหาชื่อหรืออาชีพ..." class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-400 shadow-inner">
+                            <input type="text" id="cardWaitlistSearch" placeholder="🔍 ค้นหาชื่อหรืออาชีพ..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 shadow-xs">
                         </div>
 
                         <!-- Dropzone -->
@@ -358,20 +358,20 @@
                              ondragleave="handleDragLeave(event)" 
                              ondrop="handleDropWaitlist(event)" 
                              onclick="handleDropWaitlist(event)"
-                             class="min-h-[220px] max-h-[calc(100vh-23rem)] overflow-y-auto space-y-2 p-2 rounded-2xl bg-[#0b0f19]/90 border border-slate-800 shadow-inner">
-                            <div class="text-center py-8 text-xs text-slate-500">
+                             class="min-h-[220px] max-h-[calc(100vh-23rem)] overflow-y-auto space-y-2 p-2 rounded-2xl bg-slate-950/70 border border-slate-800 shadow-inner">
+                            <div class="text-center py-8 text-xs text-slate-500 font-medium">
                                 กำลังโหลดรายชื่อสมาชิก...
                             </div>
                         </div>
                     </div>
 
                     <!-- On Leave -->
-                    <div class="roo-card rounded-3xl p-4 space-y-2.5 border border-rose-900/50 bg-rose-950/30 shadow-md">
-                        <div class="flex items-center justify-between border-b border-rose-900/40 pb-2">
-                            <h3 class="text-xs font-bold text-rose-200 flex items-center gap-1.5">
+                    <div class="roo-card rounded-3xl p-4 space-y-2.5 border border-rose-900/60 bg-rose-950/40 shadow-xs">
+                        <div class="flex items-center justify-between border-b border-rose-900/60 pb-2">
+                            <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1.5">
                                 <span>🏖️</span> ลากิจกรรม (On Leave)
                             </h3>
-                            <span id="cardLeaveCountBadge" class="text-xs font-extrabold bg-rose-700 text-white px-2 py-0.5 rounded-full shadow-xs border border-rose-500/40">
+                            <span id="cardLeaveCountBadge" class="text-xs font-extrabold bg-rose-600 text-white px-2 py-0.5 rounded-full shadow-xs border border-rose-500/40">
                                 0
                             </span>
                         </div>
@@ -381,8 +381,8 @@
                              ondragleave="handleDragLeave(event)" 
                              ondrop="handleDropLeave(event)" 
                              onclick="handleDropLeave(event)"
-                             class="min-h-[90px] max-h-[140px] overflow-y-auto space-y-1.5 p-2 rounded-2xl bg-[#0b0f19]/70 border border-rose-900/40 shadow-inner">
-                            <div class="text-center py-4 text-xs text-rose-300/60 font-medium">
+                             class="min-h-[90px] max-h-[140px] overflow-y-auto space-y-1.5 p-2 rounded-2xl bg-slate-950/80 border border-rose-900/50 shadow-inner">
+                            <div class="text-center py-4 text-xs text-rose-400/80 font-medium">
                                 ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม
                             </div>
                         </div>
@@ -405,18 +405,18 @@
                 <div class="lg:col-span-5 space-y-5">
                     
                     <!-- Feather Notice / Action Box -->
-                    <div class="roo-card rounded-3xl p-5 border border-slate-800 shadow-xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="roo-card rounded-3xl p-5 border border-slate-700 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
                             <h3 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
                                 <span>🪶</span> ตั้งค่าประมูลขนนก
                             </h3>
-                            <button onclick="resetFeatherRounds()" id="btnResetFeathers" class="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold rounded-xl text-xs border border-rose-800/60 transition flex items-center gap-1 shadow-xs cursor-pointer">
+                            <button onclick="resetFeatherRounds()" id="btnResetFeathers" class="px-3 py-1.5 bg-rose-950/80 hover:bg-rose-900 text-rose-300 font-bold rounded-xl text-xs border border-rose-800/80 transition flex items-center gap-1 shadow-xs cursor-pointer">
                                 <span>🔄</span> รีเซ็ตรอบขนนก
                             </button>
                         </div>
 
                         <!-- White Feather Card -->
-                        <div class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-xs space-y-3">
+                        <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 shadow-xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <h4 class="font-bold text-slate-100 flex items-center gap-2 text-sm">
                                     <img src="images/item_white.png" class="w-6 h-6 object-contain" alt="ขนขาว">
@@ -430,34 +430,34 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
                                         <label class="block text-[11px] font-bold text-emerald-400">🟢 เริ่มต้น</label>
-                                        <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded font-extrabold border border-slate-700">🔒 ล็อกหน้า 1 ใบ 1</span>
+                                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-extrabold border border-slate-700">🔒 ล็อกหน้า 1 ใบ 1</span>
                                     </div>
                                     <div class="flex gap-1.5">
-                                        <input type="number" id="whiteStartPage" value="1" disabled class="w-1/2 bg-[#0b0f19] border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-400 cursor-not-allowed opacity-90">
-                                        <input type="number" id="whiteStartSlot" value="1" disabled class="w-1/2 bg-[#0b0f19] border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-400 cursor-not-allowed opacity-90">
+                                        <input type="number" id="whiteStartPage" value="1" disabled class="w-1/2 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-500 cursor-not-allowed opacity-90">
+                                        <input type="number" id="whiteStartSlot" value="1" disabled class="w-1/2 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-500 cursor-not-allowed opacity-90">
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-bold text-rose-400 mb-1">🔴 สิ้นสุด (หน้า/ใบ)</label>
                                     <div class="flex gap-1.5">
-                                        <input type="number" id="whiteEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
-                                        <input type="number" id="whiteEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
+                                        <input type="number" id="whiteEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                        <input type="number" id="whiteEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="block text-[11px] font-bold text-slate-300">แบ่งรอบละกี่ใบ / คน</label>
-                                    <button type="button" id="btnToggleWhiteLock" onclick="toggleFeatherAmountLock('white')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
+                                    <button type="button" id="btnToggleWhiteLock" onclick="toggleFeatherAmountLock('white')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
                                         <span id="whiteLockIcon">🔒</span> <span id="whiteLockText">ล็อก 3 ใบ</span>
                                     </button>
                                 </div>
-                                <input type="number" id="whiteAmount" value="3" min="1" disabled class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-400 cursor-not-allowed opacity-90 transition focus:outline-none">
+                                <input type="number" id="whiteAmount" value="3" min="1" disabled class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-500 cursor-not-allowed opacity-90 transition focus:outline-none">
                             </div>
                         </div>
 
                         <!-- Black Feather Card -->
-                        <div class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-xs space-y-3">
+                        <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 shadow-xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <h4 class="font-bold text-slate-100 flex items-center gap-2 text-sm">
                                     <img src="images/item_black.png" class="w-6 h-6 object-contain" alt="ขนดำ">
@@ -471,26 +471,26 @@
                                 <div>
                                     <label class="block text-[11px] font-bold text-emerald-400 mb-1">🟢 เริ่มต้น (หน้า/ใบ)</label>
                                     <div class="flex gap-1.5">
-                                        <input type="number" id="blackStartPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
-                                        <input type="number" id="blackStartSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
+                                        <input type="number" id="blackStartPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                        <input type="number" id="blackStartSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-bold text-rose-400 mb-1">🔴 สิ้นสุด (หน้า/ใบ)</label>
                                     <div class="flex gap-1.5">
-                                        <input type="number" id="blackEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
-                                        <input type="number" id="blackEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-800/80 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-400 focus:outline-none">
+                                        <input type="number" id="blackEndPage" placeholder="หน้า" min="1" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                        <input type="number" id="blackEndSlot" placeholder="ใบ" min="1" max="4" class="w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-100 focus:border-indigo-500 focus:outline-none">
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="block text-[11px] font-bold text-slate-300">แบ่งรอบละกี่ใบ / คน</label>
-                                    <button type="button" id="btnToggleBlackLock" onclick="toggleFeatherAmountLock('black')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
+                                    <button type="button" id="btnToggleBlackLock" onclick="toggleFeatherAmountLock('black')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer" title="ผู้จัดการขึ้นไปคลิกเพื่อปลดล็อก/ล็อกจำนวนใบ">
                                         <span id="blackLockIcon">🔒</span> <span id="blackLockText">ล็อก 4 ใบ</span>
                                     </button>
                                 </div>
-                                <input type="number" id="blackAmount" value="4" min="1" disabled class="w-full bg-[#0b0f19] border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-400 cursor-not-allowed opacity-90 transition focus:outline-none">
+                                <input type="number" id="blackAmount" value="4" min="1" disabled class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-500 cursor-not-allowed opacity-90 transition focus:outline-none">
                             </div>
                         </div>
 
@@ -499,7 +499,7 @@
                             <button onclick="calculateFeatherAuction()" id="btnCalculateFeather" class="roo-button w-full py-3 text-white font-black rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
                                 <span>🧮</span> คำนวณ & อัปเดตผลขนนก
                             </button>
-                            <button onclick="copyFeatherResultText()" class="w-full py-2 bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                            <button onclick="copyFeatherResultText()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
                                 <span>📋</span> คัดลอกผลประมูลขนนก
                             </button>
                         </div>
@@ -512,13 +512,13 @@
                 <div class="lg:col-span-7 space-y-5">
                     
                     <!-- Queue Preview Card -->
-                    <div class="roo-card rounded-3xl p-5 border border-slate-800 shadow-xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="roo-card rounded-3xl p-5 border border-slate-700 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
                             <h3 class="text-sm font-extrabold text-slate-100 flex items-center gap-2">
                                 <span>👥</span> ลำดับคิวสมาชิกกิลด์ (เรียงตามหน้าสมาชิก Party 1 - 16)
                             </h3>
                             <!-- Tabs: White / Black / All -->
-                            <div class="flex items-center gap-1 bg-[#0b0f19] p-1 rounded-xl border border-slate-800">
+                            <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
                                 <button type="button" onclick="setFeatherQueueTab('white')" id="fTab_white" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-xs cursor-pointer">
                                     🕊️ ขนขาว
                                 </button>
@@ -532,7 +532,7 @@
                         </div>
 
                         <!-- Queue Members List Box -->
-                        <div id="featherQueueMembersContainer" class="max-h-72 overflow-y-auto space-y-2 p-2 bg-[#0b0f19] rounded-2xl border border-slate-800">
+                        <div id="featherQueueMembersContainer" class="max-h-72 overflow-y-auto space-y-2 p-2 bg-slate-950/80 rounded-2xl border border-slate-800">
                             <!-- Rendered dynamically -->
                         </div>
                     </div>
@@ -542,58 +542,58 @@
             </div>
 
             <!-- Feather Result Table Section -->
-            <div class="roo-card rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div class="roo-card rounded-3xl p-6 border border-slate-700 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-700 pb-3">
                     <h3 class="text-base font-black text-slate-100 flex items-center gap-2">
                         <span>📊</span> ตารางสรุปผลการแบ่งขนนก (ขนขาว & ขนดำ)
                     </h3>
-                    <div id="featherResultCountBadge" class="text-xs font-bold text-indigo-300">
+                    <div id="featherResultCountBadge" class="text-xs font-bold text-indigo-400">
                         จัดสรรแล้ว 0 คน
                     </div>
                 </div>
 
                 <!-- Leftovers Box for Feathers (เศษเหลือจากการตัดออก) -->
-                <div id="featherLeftoverBox" class="hidden bg-slate-900/90 rounded-2xl p-4 border border-slate-700 shadow-lg space-y-2">
-                    <h4 class="text-xs font-extrabold text-slate-200 flex items-center gap-1.5">
+                <div id="featherLeftoverBox" class="hidden bg-slate-950/80 rounded-2xl p-4 border border-slate-800 shadow-xs space-y-2">
+                    <h4 class="text-xs font-extrabold text-slate-300 flex items-center gap-1.5">
                         <span>🎁</span> ขนนกเศษเหลือที่ถูกตัดออก (Leftovers):
                     </h4>
                     <div id="featherLeftoverContent" class="flex flex-wrap gap-2 text-xs"></div>
                 </div>
 
                 <!-- Feather Result Table -->
-                <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-[#0b0f19]">
+                <div class="overflow-x-auto rounded-2xl border border-slate-700 bg-slate-900">
                     <table class="w-full text-center border-collapse text-xs">
                         <thead>
-                            <tr class="bg-slate-900/90 text-slate-200 text-xs font-black uppercase border-b border-slate-800">
+                            <tr class="bg-slate-950 text-slate-300 text-xs font-black uppercase border-b border-slate-800">
                                 <th rowspan="2" class="py-2.5 px-3 text-center w-12 border-r border-slate-800">#</th>
                                 <th rowspan="2" class="py-2.5 px-4 text-left border-r border-slate-800 min-w-[150px]">ชื่อสมาชิก</th>
-                                <th colspan="4" class="py-2 px-2 text-center bg-indigo-950/70 text-indigo-200 border-r border-slate-800">
+                                <th colspan="4" class="py-2 px-2 text-center bg-indigo-950/70 text-indigo-300 border-r border-slate-800">
                                     🕊️ ขนขาว (White Feather)
                                 </th>
-                                <th colspan="4" class="py-2 px-2 text-center bg-slate-800/80 text-slate-200 border-r border-slate-800">
+                                <th colspan="4" class="py-2 px-2 text-center bg-slate-800 text-slate-300 border-r border-slate-800">
                                     🦅 ขนดำ (Black Feather)
                                 </th>
-                                <th rowspan="2" class="py-2.5 px-3 text-center min-w-[130px] bg-slate-900/80 text-slate-200">
+                                <th rowspan="2" class="py-2.5 px-3 text-center min-w-[130px] bg-slate-950 text-slate-300">
                                     สถานะรับของ
                                 </th>
                             </tr>
-                            <tr class="bg-[#0b0f19] text-[11px] font-extrabold border-b border-slate-800">
+                            <tr class="bg-slate-950/80 text-[11px] font-extrabold border-b border-slate-800">
                                 <!-- White Part 1 -->
                                 <th class="py-1.5 px-2 bg-indigo-950/40 text-indigo-300 border-r border-slate-800 w-16">หน้าที่</th>
                                 <th class="py-1.5 px-2 bg-indigo-950/40 text-indigo-300 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
                                 <!-- White Part 2 -->
-                                <th class="py-1.5 px-2 bg-indigo-950/20 text-indigo-300/80 border-r border-slate-800 w-16">หน้าที่</th>
-                                <th class="py-1.5 px-2 bg-indigo-950/20 text-indigo-300/80 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
+                                <th class="py-1.5 px-2 bg-indigo-950/20 text-indigo-400 border-r border-slate-800 w-16">หน้าที่</th>
+                                <th class="py-1.5 px-2 bg-indigo-950/20 text-indigo-400 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
 
                                 <!-- Black Part 1 -->
-                                <th class="py-1.5 px-2 bg-slate-800/50 text-slate-300 border-r border-slate-800 w-16">หน้าที่</th>
-                                <th class="py-1.5 px-2 bg-slate-800/50 text-slate-300 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
+                                <th class="py-1.5 px-2 bg-slate-900 text-slate-300 border-r border-slate-800 w-16">หน้าที่</th>
+                                <th class="py-1.5 px-2 bg-slate-900 text-slate-300 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
                                 <!-- Black Part 2 -->
-                                <th class="py-1.5 px-2 bg-slate-800/30 text-slate-400 border-r border-slate-800 w-16">หน้าที่</th>
-                                <th class="py-1.5 px-2 bg-slate-800/30 text-slate-400 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
+                                <th class="py-1.5 px-2 bg-slate-900/60 text-slate-400 border-r border-slate-800 w-16">หน้าที่</th>
+                                <th class="py-1.5 px-2 bg-slate-900/60 text-slate-400 border-r border-slate-800 min-w-[110px]">ลำดับที่ (ใบที่)</th>
                             </tr>
                         </thead>
-                        <tbody id="featherResultTableBody" class="divide-y divide-slate-800/60 text-xs">
+                        <tbody id="featherResultTableBody" class="divide-y divide-slate-800 text-xs text-slate-300">
                             <tr>
                                 <td colspan="11" class="py-8 text-center text-slate-500 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td>
                             </tr>
@@ -611,17 +611,17 @@
     <!-- ========================================================================= -->
 
     <!-- 1. Modal โอนคิวประมูลการ์ด (Transfer Queue Modal) -->
-    <div id="transferModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-lg rounded-3xl p-6 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-fade-in">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+    <div id="transferModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-lg rounded-3xl p-6 relative bg-slate-900 border border-slate-700 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
                 <h3 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
                     <span class="text-xl">🔄</span> โอนคิวประมูลการ์ดรอบต่อไป - <span id="transferPartyTitle" class="text-indigo-400">Party 1</span>
                 </h3>
-                <button type="button" onclick="closeTransferModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button type="button" onclick="closeTransferModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4">
-                <div class="p-3 bg-slate-900/90 rounded-2xl border border-slate-800 text-xs text-slate-300">
+                <div class="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 text-xs text-slate-300">
                     <div class="flex items-center gap-2 font-bold mb-1">
                         <span>💡</span> กฎการโอนคิว:
                     </div>
@@ -639,17 +639,17 @@
                     </div>
                 </div>
 
-                <div id="transferSelectedPreview" class="hidden p-3 bg-indigo-950/60 border border-indigo-600/50 rounded-2xl text-xs text-indigo-200 font-bold flex items-center justify-between">
-                    <span>ผู้รับโอนคิว: <span id="transferTargetName" class="text-white font-extrabold"></span></span>
+                <div id="transferSelectedPreview" class="hidden p-3 bg-indigo-950/80 border border-indigo-700/60 rounded-2xl text-xs text-indigo-300 font-bold flex items-center justify-between shadow-xs">
+                    <span>ผู้รับโอนคิว: <span id="transferTargetName" class="text-indigo-300 font-extrabold"></span></span>
                     <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-md">พร้อมโอน</span>
                 </div>
 
-                <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
-                    <button type="button" onclick="resetPartyTransfer()" id="btnResetTransfer" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">
+                <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-700">
+                    <button type="button" onclick="resetPartyTransfer()" id="btnResetTransfer" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">
                         🔄 คืนค่าคิวเดิม
                     </button>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="closeTransferModal()" class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition cursor-pointer">
+                        <button type="button" onclick="closeTransferModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">
                             ยกเลิก
                         </button>
                         <button type="button" onclick="confirmPartyTransfer()" class="roo-button px-5 py-2 text-white rounded-xl text-xs font-extrabold transition shadow-md cursor-pointer">
@@ -662,11 +662,11 @@
     </div>
 
     <!-- 2. Modal ดูสเตตัส (Stats Detail Modal) -->
-    <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-fade-in">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+    <div id="statsDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative bg-slate-900 border border-slate-700 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xl overflow-hidden shadow-inner">
+                    <div id="modalAvatarBox" class="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-700 flex items-center justify-center text-xl overflow-hidden shadow-inner">
                         <span id="modalAvatarIcon">👤</span>
                         <img id="modalAvatarImg" class="hidden w-full h-full object-cover" alt="Avatar">
                     </div>
@@ -675,91 +675,91 @@
                         <p id="modalMemberSub" class="text-xs text-slate-400 font-medium">Sniper • สมาชิกกิลด์</p>
                     </div>
                 </div>
-                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div class="space-y-4">
-                <h4 class="text-xs font-extrabold text-slate-300 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
+                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider">📊 สเตตัสการต่อสู้ (Combat Stats)</h4>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                    <div class="p-2.5 bg-amber-950/40 rounded-xl border border-amber-800/60 shadow-xs">
                         <div class="text-[10px] text-amber-400 font-bold mb-0.5">🌟 CP (พลังต่อสู้)</div>
                         <div id="mStat_cp" class="font-extrabold text-amber-300 text-sm">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-rose-400 font-bold mb-0.5">❤️ Max HP</div>
-                        <div id="mStat_maxHp" class="font-bold text-slate-100 text-sm">-</div>
+                        <div id="mStat_maxHp" class="font-bold text-slate-200 text-sm">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-sky-400 font-bold mb-0.5">💙 Max SP</div>
-                        <div id="mStat_maxSp" class="font-bold text-slate-100 text-sm">-</div>
+                        <div id="mStat_maxSp" class="font-bold text-slate-200 text-sm">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-orange-400 font-bold mb-0.5">⚔️ P.ATK</div>
-                        <div id="mStat_pAtk" class="font-bold text-slate-100 text-sm">-</div>
+                        <div id="mStat_pAtk" class="font-bold text-slate-200 text-sm">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-indigo-400 font-bold mb-0.5">🔮 M.ATK</div>
-                        <div id="mStat_mAtk" class="font-bold text-slate-100 text-sm">-</div>
+                        <div id="mStat_mAtk" class="font-bold text-slate-200 text-sm">-</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🛡️ P.DEF</div>
                         <div id="mStat_pDef" class="font-semibold text-slate-200">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🔰 M.DEF</div>
                         <div id="mStat_mDef" class="font-semibold text-slate-200">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🎯 เจาะเกราะกายภาพ</div>
                         <div id="mStat_ignorePDef" class="font-semibold text-slate-200">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🌀 เจาะเกราะเวท</div>
                         <div id="mStat_ignoreMDef" class="font-semibold text-slate-200">-</div>
                     </div>
                 </div>
 
-                <h4 class="text-xs font-extrabold text-slate-300 uppercase tracking-wider pt-2">⚔️ สเตตัสเปอร์เซ็นต์ & PVP (Percentage Stats)</h4>
+                <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider pt-2">⚔️ สเตตัสเปอร์เซ็นต์ & PVP (Percentage Stats)</h4>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">💥 โบนัสความเสียหายกายภาพ</div>
-                        <div id="mStat_pDmg" class="font-bold text-indigo-300">-</div>
+                        <div id="mStat_pDmg" class="font-bold text-indigo-400">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">✨ โบนัสความเสียหายเวท</div>
-                        <div id="mStat_mDmg" class="font-bold text-indigo-300">-</div>
+                        <div id="mStat_mDmg" class="font-bold text-indigo-400">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🛡️ ลดทอนกายภาพ</div>
-                        <div id="mStat_pReduc" class="font-bold text-sky-300">-</div>
+                        <div id="mStat_pReduc" class="font-bold text-sky-400">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">🔰 ลดทอนเวท</div>
-                        <div id="mStat_mReduc" class="font-bold text-sky-300">-</div>
+                        <div id="mStat_mReduc" class="font-bold text-sky-400">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-rose-300 mb-0.5">⚔️ โบนัสความเสียหาย PVP</div>
-                        <div id="mStat_pvpDmg" class="font-bold text-rose-300">-</div>
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
+                        <div class="text-[10px] text-rose-400 mb-0.5">⚔️ โบนัสความเสียหาย PVP</div>
+                        <div id="mStat_pvpDmg" class="font-bold text-rose-400">-</div>
                     </div>
-                    <div class="p-2.5 bg-slate-900/70 rounded-xl border border-slate-800">
-                        <div class="text-[10px] text-emerald-300 mb-0.5">🛡️ ลดทอนความเสียหาย PVP</div>
-                        <div id="mStat_pvpReduc" class="font-bold text-emerald-300">-</div>
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
+                        <div class="text-[10px] text-emerald-400 mb-0.5">🛡️ ลดทอนความเสียหาย PVP</div>
+                        <div id="mStat_pvpReduc" class="font-bold text-emerald-400">-</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5 text-xs">
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">⚡ คริติคอล (CRI)</div>
                         <div id="mStat_cri" class="font-semibold text-slate-200">-</div>
                     </div>
-                    <div class="p-2.5 bg-[#0b0f19] rounded-xl border border-slate-800">
+                    <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
                         <div class="text-[10px] text-slate-400 mb-0.5">💥 ความเสียหายคริติคอล (CRI.DMG)</div>
-                        <div id="mStat_criDam" class="font-semibold text-indigo-300">-</div>
+                        <div id="mStat_criDam" class="font-semibold text-indigo-400">-</div>
                     </div>
                 </div>
             </div>
@@ -767,16 +767,16 @@
     </div>
 
     <!-- 3. Modal เปลี่ยนสายอาชีพ (Change Class Modal) -->
-    <div id="changeClassModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="roo-card w-full max-w-xl rounded-3xl p-6 relative bg-[#0f172a] border border-slate-700 shadow-2xl animate-fade-in">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+    <div id="changeClassModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="roo-card w-full max-w-xl rounded-3xl p-6 relative bg-slate-900 border border-slate-700 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
                 <div>
                     <h3 class="text-base font-extrabold text-slate-100 flex items-center gap-2">
                         <span>🔄</span> เปลี่ยนอาชีพสำหรับผังปาร์ตี้ - <span id="changeClassMemberName" class="text-indigo-400"></span>
                     </h3>
                     <p class="text-xs text-slate-400">อาชีพปัจจุบัน: <span id="changeClassCurrentClass" class="font-bold text-slate-200"></span></p>
                 </div>
-                <button type="button" onclick="closeChangeClassModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                <button type="button" onclick="closeChangeClassModal()" class="text-slate-400 hover:text-slate-100 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
             <div id="changeClassResetContainer" class="mb-4 hidden"></div>
@@ -788,20 +788,20 @@
     </div>
 
     <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.6)] px-2 py-1.5 flex justify-around items-center">
-        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+    <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] px-2 py-1.5 flex justify-around items-center">
+        <a href="party.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
             <span class="text-lg leading-tight">🛡️</span>
             <span class="text-[10px] font-medium mt-0.5">จัดปาร์ตี้</span>
         </a>
-        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-indigo-400 bg-indigo-950/70 border border-indigo-500/30">
+        <a href="auction.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-indigo-300 bg-indigo-600/20 border border-indigo-500/30">
             <span class="text-lg leading-tight">🃏</span>
             <span class="text-[10px] font-bold mt-0.5">ประมูล</span>
         </a>
-        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
             <span class="text-lg leading-tight">👤</span>
             <span class="text-[10px] font-medium mt-0.5">ส่วนตัว</span>
         </a>
-        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-200">
+        <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-400 hover:text-slate-100">
             <span class="text-lg leading-tight">👥</span>
             <span class="text-[10px] font-medium mt-0.5">สมาชิก</span>
         </a>
@@ -879,23 +879,23 @@
 
                 const roleBadge = document.getElementById('rolePermissionBadge');
                 if (role === 'Admin') {
-                    roleBadge.className = "text-xs bg-rose-950 text-rose-300 font-extrabold px-3 py-1 rounded-full border border-rose-600/60 shadow-sm";
+                    roleBadge.className = "text-xs bg-rose-950/80 text-rose-300 font-extrabold px-3 py-1 rounded-full border border-rose-800/80 shadow-xs";
                     roleBadge.innerText = "⚡ สิทธิ์: Admin";
                     canEditParties = true;
                 } else if (role === 'หัวหน้ากิลด์') {
-                    roleBadge.className = "text-xs bg-purple-950 text-purple-200 font-extrabold px-3 py-1 rounded-full border border-purple-500/60 shadow-sm";
+                    roleBadge.className = "text-xs bg-amber-950/80 text-amber-300 font-extrabold px-3 py-1 rounded-full border border-amber-800/80 shadow-xs";
                     roleBadge.innerText = "👑 สิทธิ์: หัวหน้ากิลด์";
                     canEditParties = true;
                 } else if (role === 'รองหัวหน้ากิลด์') {
-                    roleBadge.className = "text-xs bg-fuchsia-950 text-fuchsia-200 font-bold px-3 py-1 rounded-full border border-fuchsia-600/50 shadow-sm";
+                    roleBadge.className = "text-xs bg-indigo-950/80 text-indigo-300 font-bold px-3 py-1 rounded-full border border-indigo-800/80 shadow-xs";
                     roleBadge.innerText = "⚔️ สิทธิ์: รองหัวหน้ากิลด์";
                     canEditParties = true;
                 } else if (role === 'ผู้จัดการ') {
-                    roleBadge.className = "text-xs bg-indigo-950 text-indigo-200 font-bold px-3 py-1 rounded-full border border-indigo-600/50 shadow-sm";
+                    roleBadge.className = "text-xs bg-teal-950/80 text-teal-300 font-bold px-3 py-1 rounded-full border border-teal-800/80 shadow-xs";
                     roleBadge.innerText = "📋 สิทธิ์: ผู้จัดการ";
                     canEditParties = true;
                 } else {
-                    roleBadge.className = "text-xs bg-[#160a28] text-purple-300 font-medium px-3 py-1 rounded-full border border-purple-800/60";
+                    roleBadge.className = "text-xs bg-slate-800 text-slate-300 font-medium px-3 py-1 rounded-full border border-slate-700";
                     roleBadge.innerText = "🛡️ สิทธิ์: สมาชิกกิลด์ (ดูเท่านั้น)";
                     canEditParties = false;
                 }
@@ -936,13 +936,13 @@
             const viewFeather = document.getElementById('viewFeatherAuction');
 
             if (mode === 'card') {
-                btnCard.className = "px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-md bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white border border-purple-400/50 cursor-pointer";
-                btnFeather.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-purple-300 hover:text-white hover:bg-purple-950/60 cursor-pointer";
+                btnCard.className = "px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-xs bg-indigo-600 text-white cursor-pointer";
+                btnFeather.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer";
                 viewCard.classList.remove('hidden');
                 viewFeather.classList.add('hidden');
             } else {
-                btnFeather.className = "px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-md bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white border border-purple-400/50 cursor-pointer";
-                btnCard.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-purple-300 hover:text-white hover:bg-purple-950/60 cursor-pointer";
+                btnFeather.className = "px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-xs bg-indigo-600 text-white cursor-pointer";
+                btnCard.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer";
                 viewFeather.classList.remove('hidden');
                 viewCard.classList.add('hidden');
             }
@@ -1215,8 +1215,8 @@
                 const remaining = members.filter(m => !cardHolders.includes(m));
                 let rightHolder = remaining.length > 0 ? (transferTarget && remaining.includes(transferTarget) ? transferTarget : remaining[0]) : members[0];
 
-                let partyBorder = isTop5 ? 'border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.12)] bg-[#0f172a]' : 'border-slate-800 bg-[#0f172a]';
-                let partyBadge = isTop5 ? '<span class="text-[10px] bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-extrabold px-2 py-0.5 rounded-md shadow-xs">⭐ 5 ปาร์ตี้แรก</span>' : '';
+                let partyBorder = isTop5 ? 'border-indigo-500/50 shadow-[0_4px_14px_rgba(99,102,241,0.15)] bg-slate-900/90' : 'border-slate-700 bg-slate-900/90';
+                let partyBadge = isTop5 ? '<span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded-md shadow-xs">⭐ 5 ปาร์ตี้แรก</span>' : '';
 
                 let slotsHtml = '';
                 for (let s = 1; s <= 5; s++) {
@@ -1236,13 +1236,13 @@
                         if (canEditParties) {
                             if (gotCard) {
                                 cardStatusBadge = `
-                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] bg-slate-800 hover:bg-rose-950 text-slate-200 hover:text-rose-300 font-bold px-2 py-0.5 rounded-lg border border-slate-700 hover:border-rose-600/60 transition shadow-xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อยกเลิกสถานะได้การ์ด">
+                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] bg-slate-800 hover:bg-rose-950/80 text-slate-300 hover:text-rose-300 font-bold px-2 py-0.5 rounded-lg border border-slate-700 hover:border-rose-800 transition shadow-xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อยกเลิกสถานะได้การ์ด">
                                         <span>🃏 ได้แล้ว ✓</span>
                                     </button>
                                 `;
                             } else {
                                 cardStatusBadge = `
-                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] ${isTarget ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-black shadow-xs ring-1 ring-indigo-400' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'} font-bold px-2 py-0.5 rounded-lg border border-slate-700 hover:border-indigo-500 transition shadow-2xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อทำเครื่องหมายว่าได้การ์ดแล้ว">
+                                    <button type="button" onclick="event.stopPropagation(); toggleCardHolder('${encodeURIComponent(memberName)}')" class="text-[10px] ${isTarget ? 'bg-indigo-600 text-white font-black shadow-xs' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'} font-bold px-2 py-0.5 rounded-lg border ${isTarget ? 'border-indigo-500' : 'border-slate-700'} transition shadow-2xs flex items-center gap-1 cursor-pointer shrink-0" title="คลิกเพื่อทำเครื่องหมายว่าได้การ์ดแล้ว">
                                         <span>${isTarget ? 'คิวถัดไป ⭐' : '+ รับการ์ด'}</span>
                                     </button>
                                 `;
@@ -1251,7 +1251,7 @@
                             if (gotCard) {
                                 cardStatusBadge = '<span class="text-[10px] bg-slate-800 text-slate-300 font-bold px-1.5 py-0.2 rounded border border-slate-700 shrink-0">🃏 ได้แล้ว</span>';
                             } else if (isTarget) {
-                                cardStatusBadge = '<span class="text-[10px] bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-extrabold px-1.5 py-0.2 rounded shadow-2xs shrink-0">คิวถัดไป ⭐</span>';
+                                cardStatusBadge = '<span class="text-[10px] bg-indigo-600 text-white font-extrabold px-1.5 py-0.2 rounded shadow-2xs shrink-0">คิวถัดไป ⭐</span>';
                             }
                         }
 
@@ -1263,27 +1263,27 @@
                                  ondragleave="handleDragLeave(event)" 
                                  ondrop="handleDropSlot(event, '${pKey}', ${s})" 
                                  onclick="handleClickSlot('${pKey}', ${s}, '${memberName}')"
-                                 class="slot-box filled p-2 rounded-xl flex items-center justify-between gap-2 border transition ${isSelected ? 'selected-source' : ''}">
+                                 class="slot-box filled p-2 rounded-xl flex items-center justify-between gap-2 border border-slate-700 bg-slate-900 transition ${isSelected ? 'selected-source' : ''}">
                                 <div class="flex items-center gap-2 min-w-0">
-                                    <span class="text-xs font-black text-slate-400 w-4">${s}.</span>
+                                    <span class="text-xs font-black text-slate-500 w-4">${s}.</span>
                                     <div class="flex items-center gap-1.5 min-w-0">
                                         ${classIcon}
                                         <div class="min-w-0">
                                             <div class="flex items-center gap-1 min-w-0">
                                                 <span class="text-xs font-bold text-slate-100 truncate block leading-none">${memberName}</span>
-                                                ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-indigo-950 text-indigo-200 border border-indigo-500/50 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${mObj.subRole}</span>` : ''}
+                                                ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${mObj.subRole}</span>` : ''}
                                             </div>
-                                            <span class="text-[10px] text-amber-300 font-medium">${effectiveClass || '-'} • CP: ${cpText}</span>
+                                            <span class="text-[10px] text-slate-400 font-medium">${effectiveClass || '-'} • CP: <span class="text-amber-400 font-bold">${cpText}</span></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-1 shrink-0">
                                     ${cardStatusBadge}
                                     ${canEditParties ? `
-                                        <button type="button" onclick="event.stopPropagation(); openChangeClassModal('${encodeURIComponent(memberName)}')" class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition" title="เปลี่ยนอาชีพเฉพาะผังนี้">
+                                        <button type="button" onclick="event.stopPropagation(); openChangeClassModal('${encodeURIComponent(memberName)}')" class="text-slate-400 hover:text-slate-200 text-xs p-1 rounded hover:bg-slate-800 transition" title="เปลี่ยนอาชีพเฉพาะผังนี้">
                                             ✏️
                                         </button>
-                                        <button type="button" onclick="event.stopPropagation(); removeMemberFromSlot('${pKey}', ${s})" class="text-slate-400 hover:text-rose-400 text-xs p-1 rounded hover:bg-slate-800 transition" title="นำออกจากช่อง">
+                                        <button type="button" onclick="event.stopPropagation(); removeMemberFromSlot('${pKey}', ${s})" class="text-slate-400 hover:text-rose-400 text-xs p-1 rounded hover:bg-rose-950/50 transition" title="นำออกจากช่อง">
                                             ✕
                                         </button>
                                     ` : ''}
@@ -1297,7 +1297,7 @@
                                  ondragleave="handleDragLeave(event)" 
                                  ondrop="handleDropSlot(event, '${pKey}', ${s})" 
                                  onclick="handleClickSlot('${pKey}', ${s}, null)"
-                                 class="slot-box p-2 rounded-xl flex items-center justify-between text-xs text-slate-500 border-dashed">
+                                 class="slot-box p-2 rounded-xl flex items-center justify-between text-xs text-slate-500 border-dashed bg-slate-950/60">
                                 <span class="font-bold">${s}. [ว่าง]</span>
                                 <span class="text-[10px] text-slate-500 font-medium">คลิกหรือลากมาวาง</span>
                             </div>
@@ -1306,7 +1306,7 @@
                 }
 
                 html += `
-                    <div class="roo-card rounded-2xl p-4 space-y-2.5 border ${partyBorder} shadow-md">
+                    <div class="roo-card rounded-2xl p-4 space-y-2.5 border ${partyBorder} shadow-xs">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-black text-sm text-slate-100">Party ${pNum}</span>
@@ -1316,15 +1316,15 @@
                                 <button type="button" onclick="openTransferModal('${pKey}')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-black px-2.5 py-1 rounded-lg transition shadow-xs flex items-center gap-1 cursor-pointer">
                                     <span>🔄 โอนคิว</span>
                                 </button>
-                                <span class="text-xs font-bold px-2 py-0.5 rounded-md ${isComplete ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50' : 'bg-slate-800 text-slate-400 border border-slate-700'}">
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-md ${isComplete ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/80' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
                                     ${members.length}/5
                                 </span>
                             </div>
                         </div>
 
-                        <div class="text-[11px] text-slate-300 flex items-center justify-between">
-                            <span>สิทธิ์รอบถัดไป: <b class="text-indigo-300">${rightHolder || '-'}</b></span>
-                            ${transferTarget ? '<span class="text-[9px] text-emerald-300 bg-emerald-950 border border-emerald-600/50 px-1.5 py-0.2 rounded font-bold">โอนคิว ⭐</span>' : ''}
+                        <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                            <span>สิทธิ์รอบถัดไป: <b class="text-indigo-400">${rightHolder || '-'}</b></span>
+                            ${transferTarget ? '<span class="text-[9px] text-emerald-300 bg-emerald-950/80 border border-emerald-800/80 px-1.5 py-0.2 rounded font-bold">โอนคิว ⭐</span>' : ''}
                         </div>
 
                         <div class="space-y-1.5 pt-1">
@@ -1383,12 +1383,12 @@
                         <div draggable="${canEditParties}" 
                              ondragstart="handleDragStart(event, 'waitlist', null, null, '${m.name}')" 
                              onclick="handleClickWaitlist('${m.name}')"
-                             class="member-chip p-2 rounded-xl flex items-center justify-between gap-2 transition ${isSelected ? 'selected-source' : ''}">
+                             class="member-chip p-2 rounded-xl flex items-center justify-between gap-2 border border-slate-700 bg-slate-900 transition ${isSelected ? 'selected-source' : ''}">
                             <div class="flex items-center gap-2 min-w-0">
                                 ${classIcon}
                                 <div class="min-w-0">
                                     <span class="text-xs font-bold text-slate-100 truncate block leading-none">${m.name}</span>
-                                    <span class="text-[10px] text-slate-400 font-medium">${effClass || '-'} • CP: <span class="text-amber-300 font-semibold">${cpText}</span></span>
+                                    <span class="text-[10px] text-slate-400 font-medium">${effClass || '-'} • CP: <span class="text-amber-400 font-semibold">${cpText}</span></span>
                                 </div>
                             </div>
                             <button type="button" onclick="event.stopPropagation(); openStatsModal('${m.name}')" class="text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shadow-2xs">
@@ -1401,16 +1401,16 @@
 
             // Render Leave Dropzone
             if (leaveSet.size === 0) {
-                leaveContainer.innerHTML = `<div class="text-center py-4 text-xs text-rose-300/60 font-medium">ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม</div>`;
+                leaveContainer.innerHTML = `<div class="text-center py-4 text-xs text-rose-400/80 font-medium">ลากหรือคลิกสมาชิกมาที่นี่ หากแจ้งลากิจกรรม</div>`;
             } else {
                 leaveContainer.innerHTML = Array.from(leaveSet).map(name => {
                     const mObj = allGuildMembers.find(x => x.name === name);
                     const effClass = mObj ? getMemberPartyClass(mObj) : '';
                     return `
-                        <div class="p-1.5 bg-rose-950/80 border border-rose-800/60 rounded-xl flex items-center justify-between text-xs text-rose-200">
+                        <div class="p-1.5 bg-rose-950/60 border border-rose-900/60 rounded-xl flex items-center justify-between text-xs text-rose-300">
                             <span class="font-bold truncate">${name} <span class="text-[10px] text-rose-400">(${effClass || '-'})</span></span>
                             ${canEditParties ? `
-                                <button type="button" onclick="removeMemberFromLeave('${name}')" class="text-rose-400 hover:text-white px-1 font-bold" title="นำกลับมา">✕</button>
+                                <button type="button" onclick="removeMemberFromLeave('${name}')" class="text-rose-400 hover:text-rose-200 px-1 font-bold cursor-pointer" title="นำกลับมา">✕</button>
                             ` : ''}
                         </div>
                     `;
@@ -1618,7 +1618,7 @@
             }
 
             if (eligibleParties.length === 0) {
-                container.innerHTML = `<span class="text-xs text-purple-400/60 py-1 px-2">⚠️ ยังไม่มีปาร์ตี้ที่ครบ 5 คน (ต้องครบ 5/5 คนจึงจะมีสิทธิ์ได้รับคิวการ์ด)</span>`;
+                container.innerHTML = `<span class="text-xs text-indigo-400/60 py-1 px-2">⚠️ ยังไม่มีปาร์ตี้ที่ครบ 5 คน (ต้องครบ 5/5 คนจึงจะมีสิทธิ์ได้รับคิวการ์ด)</span>`;
                 if (countBadge) countBadge.innerText = '0 คิว';
                 return;
             }
@@ -1658,18 +1658,18 @@
             if (countBadge) countBadge.innerText = `เหลืออีก ${allQueueItems.length} คิว`;
 
             if (allQueueItems.length === 0) {
-                container.innerHTML = `<span class="text-xs text-emerald-300 font-bold py-1 px-2">🎉 สมาชิกทุกคนได้รับการ์ดครบแล้ว! รอบถัดไปจะเริ่มวนใหม่ตั้งแต่ Party 1</span>`;
+                container.innerHTML = `<span class="text-xs text-emerald-400 font-bold py-1 px-2">🎉 สมาชิกทุกคนได้รับการ์ดครบแล้ว! รอบถัดไปจะเริ่มวนใหม่ตั้งแต่ Party 1</span>`;
                 return;
             }
 
             container.innerHTML = allQueueItems.map((item, idx) => {
                 let isFirst = (idx === 0);
-                let tagClass = isFirst ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-black shadow-md ring-1 ring-fuchsia-400' : 'bg-[#15092a] text-purple-200 border border-purple-800/60 hover:bg-purple-900/60';
+                let tagClass = isFirst ? 'bg-indigo-600 text-white font-black shadow-xs' : 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700';
                 let cursorStyle = canEditParties ? 'cursor-pointer' : '';
                 let clickAttr = canEditParties ? `onclick="toggleCardHolder('${encodeURIComponent(item.memberName)}')"` : '';
                 return `
                     <span ${clickAttr} class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg ${tagClass} ${cursorStyle} transition" title="${canEditParties ? 'คลิกเพื่อกำหนดสถานะได้การ์ดแล้ว' : ''}">
-                        <b class="text-fuchsia-300">P${item.partyNum}</b> (รอบที่ ${item.guildRound || 1}): ${item.memberName}
+                        <b class="${isFirst ? 'text-indigo-200' : 'text-indigo-400'}">P${item.partyNum}</b> (รอบที่ ${item.guildRound || 1}): ${item.memberName}
                     </span>
                 `;
             }).join('');
@@ -1821,7 +1821,7 @@
             if (countBadge) countBadge.innerText = `จัดสรรแล้ว ${names.length} คน`;
 
             if (names.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลการ์ด (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลการ์ด')</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-500 font-medium">ยังไม่มีผลการประมูลการ์ด (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลการ์ด')</td></tr>`;
                 if (leftoverBox) leftoverBox.classList.add('hidden');
                 return;
             }
@@ -1846,21 +1846,21 @@
                 }
 
                 const pills = chunks.map(c => `
-                    <span class="inline-flex items-center gap-1 bg-gradient-to-r from-purple-900 to-fuchsia-900 text-purple-100 px-2 py-0.5 rounded-md border border-purple-500/50 font-extrabold text-xs shadow-sm">
+                    <span class="inline-flex items-center gap-1 bg-indigo-950/80 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-700/80 font-extrabold text-xs shadow-2xs">
                         🃏 หน้า ${c.page} ใบที่ ${c.startSlot}
                     </span>
                 `).join(' ');
 
                 html += `
-                    <tr class="hover:bg-purple-950/40 transition">
-                        <td class="py-3 px-3 text-center font-bold text-purple-400/60">${idx + 1}</td>
-                        <td class="py-3 px-4 font-bold text-purple-100 flex items-center gap-2">
+                    <tr class="hover:bg-slate-800/50 transition">
+                        <td class="py-3 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                        <td class="py-3 px-4 font-bold text-slate-100 flex items-center gap-2">
                             ${classIcon}
                             <span>${name}</span>
-                            <span class="text-[10px] text-purple-400 font-normal">(${roleText})</span>
+                            <span class="text-[10px] text-slate-400 font-normal">(${roleText})</span>
                         </td>
                         <td class="py-3 px-3 text-center">
-                            <span class="bg-[#1b0d35] text-fuchsia-300 border border-purple-700/60 font-black px-2 py-0.5 rounded-md">${partyNum}</span>
+                            <span class="bg-slate-800 text-slate-300 border border-slate-700 font-black px-2 py-0.5 rounded-md">${partyNum}</span>
                         </td>
                         <td class="py-3 px-4">${pills}</td>
                     </tr>
@@ -1927,9 +1927,9 @@
                 const btn = document.getElementById(`fTab_${t}`);
                 if (!btn) return;
                 if (t === tab) {
-                    btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm cursor-pointer";
+                    btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-xs cursor-pointer";
                 } else {
-                    btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition text-purple-300 hover:text-white cursor-pointer";
+                    btn.className = "px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer";
                 }
             });
             renderFeatherQueue();
@@ -1953,16 +1953,16 @@
 
                 if (isWhiteAmountLocked) {
                     input.disabled = true;
-                    input.className = "w-full bg-[#0d071a] border border-indigo-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-300 cursor-not-allowed opacity-90 transition focus:outline-none";
+                    input.className = "w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-500 cursor-not-allowed opacity-90 transition focus:outline-none";
                     if (icon) icon.innerText = "🔒";
                     if (text) text.innerText = `ล็อก ${input.value || 3} ใบ`;
-                    if (btn) btn.className = "text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded-lg border border-indigo-700/60 font-bold transition flex items-center gap-1 cursor-pointer";
+                    if (btn) btn.className = "text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer";
                 } else {
                     input.disabled = false;
-                    input.className = "w-full bg-[#120724] border border-fuchsia-500 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100 focus:border-fuchsia-400 focus:outline-none ring-1 ring-fuchsia-400";
+                    input.className = "w-full bg-slate-900 border border-indigo-500 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-100 focus:border-indigo-400 focus:outline-none ring-1 ring-indigo-500";
                     if (icon) icon.innerText = "🔓";
                     if (text) text.innerText = "ปลดล็อกแล้ว (แก้ไขได้)";
-                    if (btn) btn.className = "text-[10px] bg-fuchsia-900 hover:bg-fuchsia-800 text-fuchsia-200 px-2 py-0.5 rounded-lg border border-fuchsia-500 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
+                    if (btn) btn.className = "text-[10px] bg-indigo-950 hover:bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded-lg border border-indigo-700 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
                     input.focus();
                 }
             } else if (type === 'black') {
@@ -1974,16 +1974,16 @@
 
                 if (isBlackAmountLocked) {
                     input.disabled = true;
-                    input.className = "w-full bg-[#0d071a] border border-purple-800/60 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-300 cursor-not-allowed opacity-90 transition focus:outline-none";
+                    input.className = "w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-500 cursor-not-allowed opacity-90 transition focus:outline-none";
                     if (icon) icon.innerText = "🔒";
                     if (text) text.innerText = `ล็อก ${input.value || 4} ใบ`;
-                    if (btn) btn.className = "text-[10px] bg-purple-900 hover:bg-purple-800 text-purple-200 px-2 py-0.5 rounded-lg border border-purple-700/60 font-bold transition flex items-center gap-1 cursor-pointer";
+                    if (btn) btn.className = "text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1 cursor-pointer";
                 } else {
                     input.disabled = false;
-                    input.className = "w-full bg-[#120724] border border-fuchsia-500 rounded-lg px-3 py-1.5 text-xs font-bold text-purple-100 focus:border-fuchsia-400 focus:outline-none ring-1 ring-fuchsia-400";
+                    input.className = "w-full bg-slate-900 border border-indigo-500 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-100 focus:border-indigo-400 focus:outline-none ring-1 ring-indigo-500";
                     if (icon) icon.innerText = "🔓";
                     if (text) text.innerText = "ปลดล็อกแล้ว (แก้ไขได้)";
-                    if (btn) btn.className = "text-[10px] bg-fuchsia-900 hover:bg-fuchsia-800 text-fuchsia-200 px-2 py-0.5 rounded-lg border border-fuchsia-500 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
+                    if (btn) btn.className = "text-[10px] bg-indigo-950 hover:bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded-lg border border-indigo-700 font-bold transition flex items-center gap-1 cursor-pointer animate-pulse";
                     input.focus();
                 }
             }
@@ -1994,7 +1994,7 @@
             if (!container) return;
 
             if (sortedGuildMembers.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-xs text-purple-400/60">ยังไม่มีสมาชิกในระบบ</div>`;
+                container.innerHTML = `<div class="text-center py-6 text-xs text-slate-500">ยังไม่มีสมาชิกในระบบ</div>`;
                 return;
             }
 
@@ -2021,23 +2021,23 @@
                 const classIcon = getClassIconHtml(effClass, 'w-4 h-4');
 
                 return `
-                    <div class="p-2.5 bg-[#170a2d] hover:bg-[#200e3a] rounded-xl border border-purple-800/50 flex items-center justify-between transition">
+                    <div class="p-2.5 bg-slate-900 hover:bg-slate-800/80 rounded-xl border border-slate-700 flex items-center justify-between transition shadow-2xs">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-purple-950 text-purple-300 text-xs font-black flex items-center justify-center border border-purple-800">${idx + 1}</span>
+                            <span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 text-xs font-black flex items-center justify-center border border-slate-700">${idx + 1}</span>
                             <div class="flex items-center gap-1.5">
                                 ${classIcon}
                                 <div>
                                     <div class="flex items-center gap-1.5">
-                                        <span class="text-xs font-bold text-purple-100">${m.name}</span>
-                                        ${m.subRole ? `<span class="text-[9px] bg-purple-950 text-fuchsia-300 border border-fuchsia-600/50 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${m.subRole}</span>` : ''}
+                                        <span class="text-xs font-bold text-slate-100">${m.name}</span>
+                                        ${m.subRole ? `<span class="text-[9px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-1 py-0.2 rounded font-bold shrink-0">🚩 ${m.subRole}</span>` : ''}
                                     </div>
-                                    <span class="text-[10px] text-purple-400 block leading-none">${m.role || 'สมาชิกกิลด์'}</span>
+                                    <span class="text-[10px] text-slate-400 block leading-none">${m.role || 'สมาชิกกิลด์'}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5">
-                            ${gotWhite ? '<span class="text-[10px] bg-indigo-950 text-indigo-200 border border-indigo-700/60 px-2 py-0.5 rounded-md font-bold">🕊️ ขนขาวแล้ว</span>' : ''}
-                            ${gotBlack ? '<span class="text-[10px] bg-[#1a0c2e] text-purple-200 border border-purple-700/60 px-2 py-0.5 rounded-md font-bold">🦅 ขนดำแล้ว</span>' : ''}
+                            ${gotWhite ? '<span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-md font-bold">🕊️ ขนขาวแล้ว</span>' : ''}
+                            ${gotBlack ? '<span class="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md font-bold">🦅 ขนดำแล้ว</span>' : ''}
                         </div>
                     </div>
                 `;
@@ -2309,17 +2309,17 @@
 
         function renderSlotBlocks(chunk, theme = 'white') {
             if (!chunk) {
-                return `<span class="text-slate-600 font-bold">-</span>`;
+                return `<span class="text-slate-500 font-bold">-</span>`;
             }
 
             const start = chunk.startSlot;
             const end = chunk.endSlot;
 
             let activeClass = (theme === 'white')
-                ? 'bg-indigo-600 text-white font-black border border-indigo-400 shadow-xs'
-                : 'bg-slate-700 text-white font-black border border-slate-500 shadow-xs';
+                ? 'bg-indigo-600 text-white font-black border border-indigo-500 shadow-xs'
+                : 'bg-slate-700 text-white font-black border border-slate-600 shadow-xs';
 
-            let inactiveClass = 'bg-[#0b0f19] text-transparent border border-slate-800 select-none';
+            let inactiveClass = 'bg-slate-800/80 text-transparent border border-slate-700/80 select-none';
 
             let slotsHtml = '';
             for (let s = 1; s <= 4; s++) {
@@ -2356,9 +2356,9 @@
                         const wTxt = wNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
                         const wCount = wNorm.reduce((acc, c) => acc + c.count, 0);
                         leftHtml += `
-                            <div class="inline-flex items-center gap-2 bg-indigo-950/80 text-indigo-200 border border-indigo-700/60 px-3 py-1.5 rounded-xl font-bold">
+                            <div class="inline-flex items-center gap-2 bg-indigo-950/80 text-indigo-300 border border-indigo-700/80 px-3 py-1.5 rounded-xl font-bold">
                                 <span>🕊️ ขนขาวคงเหลือ (${wCount} ใบ):</span>
-                                <span class="text-white font-extrabold">${wTxt}</span>
+                                <span class="text-indigo-200 font-extrabold">${wTxt}</span>
                             </div>
                         `;
                     }
@@ -2367,9 +2367,9 @@
                         const bTxt = bNorm.map(c => `หน้า ${c.page} (ใบที่ ${c.startSlot}${c.startSlot !== c.endSlot ? '-'+c.endSlot : ''})`).join(', ');
                         const bCount = bNorm.reduce((acc, c) => acc + c.count, 0);
                         leftHtml += `
-                            <div class="inline-flex items-center gap-2 bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl font-bold">
+                            <div class="inline-flex items-center gap-2 bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl font-bold">
                                 <span>🦅 ขนดำคงเหลือ (${bCount} ใบ):</span>
-                                <span class="text-white font-extrabold">${bTxt}</span>
+                                <span class="text-slate-100 font-extrabold">${bTxt}</span>
                             </div>
                         `;
                     }
@@ -2400,7 +2400,7 @@
             if (countBadge) countBadge.innerText = `จัดสรรแล้ว ${allNames.length} คน`;
 
             if (allNames.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="py-8 text-center text-purple-400/60 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11" class="py-8 text-center text-slate-500 font-medium">ยังไม่มีผลการประมูลขนนก (กรอกหน้า/ใบ แล้วกด 'คำนวณ & อัปเดตผลขนนก')</td></tr>`;
                 return;
             }
 
@@ -2419,16 +2419,16 @@
                 const bC1 = bChunks[0] || null;
                 const bC2 = bChunks[1] || null;
 
-                const wPage1 = wC1 ? `<span class="font-black text-indigo-200 bg-indigo-950 px-2 py-0.5 rounded border border-indigo-700/60 text-xs">${wC1.page}</span>` : '<span class="text-slate-600 font-bold">-</span>';
+                const wPage1 = wC1 ? `<span class="font-black text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-800 text-xs">${wC1.page}</span>` : '<span class="text-slate-500 font-bold">-</span>';
                 const wSlots1 = renderSlotBlocks(wC1, 'white');
 
-                const wPage2 = wC2 ? `<span class="font-black text-indigo-200 bg-indigo-950 px-2 py-0.5 rounded border border-indigo-700/60 text-xs">${wC2.page}</span>` : '<span class="text-slate-600 font-bold">-</span>';
+                const wPage2 = wC2 ? `<span class="font-black text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-800 text-xs">${wC2.page}</span>` : '<span class="text-slate-500 font-bold">-</span>';
                 const wSlots2 = renderSlotBlocks(wC2, 'white');
 
-                const bPage1 = bC1 ? `<span class="font-black text-slate-200 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 text-xs">${bC1.page}</span>` : '<span class="text-slate-600 font-bold">-</span>';
+                const bPage1 = bC1 ? `<span class="font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 text-xs">${bC1.page}</span>` : '<span class="text-slate-500 font-bold">-</span>';
                 const bSlots1 = renderSlotBlocks(bC1, 'black');
 
-                const bPage2 = bC2 ? `<span class="font-black text-slate-200 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 text-xs">${bC2.page}</span>` : '<span class="text-slate-600 font-bold">-</span>';
+                const bPage2 = bC2 ? `<span class="font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 text-xs">${bC2.page}</span>` : '<span class="text-slate-500 font-bold">-</span>';
                 const bSlots2 = renderSlotBlocks(bC2, 'black');
 
                 // Confirmation Button / Status
@@ -2439,26 +2439,26 @@
                 let confirmHtml = '';
                 if (isConfirmed) {
                     confirmHtml = `
-                        <div class="inline-flex items-center justify-center gap-1 bg-emerald-950 text-emerald-300 border border-emerald-500/60 px-2.5 py-1 rounded-xl font-black text-[11px] shadow-xs">
+                        <div class="inline-flex items-center justify-center gap-1 bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2.5 py-1 rounded-xl font-black text-[11px] shadow-2xs">
                             <span>✅</span> ได้รับแล้ว
                         </div>
                     `;
                 } else if (isOwner) {
                     confirmHtml = `
-                        <button type="button" onclick="confirmReceiveFeather('${encodeURIComponent(name)}')" class="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-[11px] border border-emerald-400/50 shadow-md transition transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 mx-auto">
+                        <button type="button" onclick="confirmReceiveFeather('${encodeURIComponent(name)}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-[11px] border border-emerald-500 shadow-xs transition transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1 mx-auto">
                             <span>📦</span> กดยืนยันรับของ
                         </button>
                     `;
                 } else {
                     confirmHtml = `
-                        <button type="button" onclick="alert('เฉพาะคุณ ${name} เท่านั้นที่สามารถกดยืนยันรับของได้ครับ')" class="px-2 py-1 bg-slate-800/40 text-slate-500 rounded-xl text-[10px] font-bold border border-slate-800 cursor-not-allowed flex items-center justify-center gap-1 mx-auto" title="เฉพาะคุณ ${name} เท่านั้น">
+                        <button type="button" onclick="alert('เฉพาะคุณ ${name} เท่านั้นที่สามารถกดยืนยันรับของได้ครับ')" class="px-2 py-1 bg-slate-800 text-slate-500 rounded-xl text-[10px] font-bold border border-slate-700 cursor-not-allowed flex items-center justify-center gap-1 mx-auto" title="เฉพาะคุณ ${name} เท่านั้น">
                             <span>🔒</span> รอยืนยัน
                         </button>
                     `;
                 }
 
                 return `
-                    <tr class="hover:bg-slate-800/40 transition">
+                    <tr class="hover:bg-slate-800/50 transition">
                         <td class="py-2.5 px-3 text-center font-bold text-slate-500 border-r border-slate-800">${idx + 1}</td>
                         <td class="py-2.5 px-4 font-bold text-slate-100 border-r border-slate-800 text-left">
                             <div class="flex items-center gap-2">
@@ -2466,7 +2466,7 @@
                                 <div>
                                     <div class="flex items-center gap-1.5">
                                         <span class="block leading-none">${name}</span>
-                                        ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-indigo-950 text-indigo-200 border border-indigo-500/50 px-1 py-0.2 rounded font-bold">🚩 ${mObj.subRole}</span>` : ''}
+                                        ${(mObj && mObj.subRole) ? `<span class="text-[9px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-1 py-0.2 rounded font-bold">🚩 ${mObj.subRole}</span>` : ''}
                                     </div>
                                     <span class="text-[10px] text-slate-400 font-normal">(${roleText})</span>
                                 </div>
@@ -2482,15 +2482,15 @@
                         <td class="py-2.5 px-2 bg-indigo-950/10 border-r border-slate-800">${wSlots2}</td>
 
                         <!-- Black Feather 1 -->
-                        <td class="py-2.5 px-2 bg-slate-800/30 border-r border-slate-800">${bPage1}</td>
-                        <td class="py-2.5 px-2 bg-slate-800/30 border-r border-slate-800">${bSlots1}</td>
+                        <td class="py-2.5 px-2 bg-slate-900/60 border-r border-slate-800">${bPage1}</td>
+                        <td class="py-2.5 px-2 bg-slate-900/60 border-r border-slate-800">${bSlots1}</td>
 
                         <!-- Black Feather 2 (Cont.) -->
-                        <td class="py-2.5 px-2 bg-slate-800/10 border-r border-slate-800">${bPage2}</td>
-                        <td class="py-2.5 px-2 bg-slate-800/10 border-r border-slate-800">${bSlots2}</td>
+                        <td class="py-2.5 px-2 bg-slate-900/30 border-r border-slate-800">${bPage2}</td>
+                        <td class="py-2.5 px-2 bg-slate-900/30 border-r border-slate-800">${bSlots2}</td>
 
                         <!-- Confirmation Status -->
-                        <td class="py-2.5 px-3 text-center bg-slate-900/60">
+                        <td class="py-2.5 px-3 text-center bg-slate-900">
                             ${confirmHtml}
                         </td>
                     </tr>
@@ -2616,7 +2616,7 @@
             previewEl.classList.add('hidden');
 
             if (members.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-4 text-xs text-purple-400">ยังไม่มีสมาชิกในปาร์ตี้นี้</div>`;
+                listEl.innerHTML = `<div class="text-center py-4 text-xs text-slate-500">ยังไม่มีสมาชิกในปาร์ตี้นี้</div>`;
             } else {
                 listEl.innerHTML = members.map((mName, idx) => {
                     const gotCard = cardHolders.includes(mName);
@@ -2628,31 +2628,31 @@
 
                     if (gotCard) {
                         return `
-                            <div class="p-2.5 rounded-xl border border-purple-900/40 bg-purple-950/30 flex items-center justify-between opacity-60">
+                            <div class="p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between opacity-50">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded-md bg-purple-950 text-purple-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+                                    <span class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
                                     <div class="flex items-center gap-1.5">
                                         ${classIcon}
-                                        <span class="text-xs font-bold text-purple-300 line-through">${mName}</span>
+                                        <span class="text-xs font-bold text-slate-500 line-through">${mName}</span>
                                     </div>
                                 </div>
-                                <span class="text-[10px] bg-purple-950 text-purple-300 px-2 py-0.5 rounded border border-purple-800">🃏 ได้การ์ดแล้ว</span>
+                                <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">🃏 ได้การ์ดแล้ว</span>
                             </div>
                         `;
                     }
 
                     return `
                         <div onclick="selectTransferPartyMember('${mName}')" 
-                             class="p-2.5 rounded-xl border transition flex items-center justify-between cursor-pointer ${isCur ? 'bg-purple-900/90 border-fuchsia-500 shadow-md ring-1 ring-fuchsia-400' : 'bg-[#15092a] hover:bg-purple-950/80 border-purple-800/60'}">
+                             class="p-2.5 rounded-xl border transition flex items-center justify-between cursor-pointer ${isCur ? 'bg-indigo-950/80 border-indigo-500/80 shadow-xs ring-1 ring-indigo-500' : 'bg-slate-950/70 hover:bg-slate-800 border-slate-800'}">
                             <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-md bg-purple-950 text-purple-200 text-xs font-bold flex items-center justify-center border border-purple-700">${idx + 1}</span>
+                                <span class="w-5 h-5 rounded-md bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center border border-slate-700">${idx + 1}</span>
                                 <div class="flex items-center gap-1.5">
                                     ${classIcon}
-                                    <span class="text-xs font-bold text-purple-100">${mName}</span>
+                                    <span class="text-xs font-bold text-slate-100">${mName}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                ${isTransferred ? '<span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-600 px-2 py-0.5 rounded font-extrabold">🎯 ผู้รับโอนคิว</span>' : (isCur ? '<span class="text-[10px] bg-gradient-to-r from-purple-600 to-pink-600 text-white font-extrabold px-2 py-0.5 rounded shadow-sm">⭐ เจ้าของคิวรอบนี้</span>' : '<span class="text-[10px] text-fuchsia-300 bg-purple-950 px-2 py-0.5 rounded border border-purple-700">คลิกเพื่อโอนคิวให้</span>')}
+                                ${isTransferred ? '<span class="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2 py-0.5 rounded font-extrabold">🎯 ผู้รับโอนคิว</span>' : (isCur ? '<span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded shadow-2xs">⭐ เจ้าของคิวรอบนี้</span>' : '<span class="text-[10px] text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-800">คลิกเพื่อโอนคิวให้</span>')}
                             </div>
                         </div>
                     `;
@@ -2797,9 +2797,9 @@
                 const isCur = (effectiveClass || '').toLowerCase().trim() === cls.name.toLowerCase();
                 return `
                     <button type="button" onclick="selectNewClass('${cls.name}')" 
-                            class="flex flex-col items-center justify-center p-2 rounded-2xl border transition ${isCur ? 'bg-gradient-to-r from-purple-900 to-fuchsia-900 border-2 border-fuchsia-400 shadow-md ring-2 ring-fuchsia-400/50' : 'bg-[#180a2b] hover:bg-[#251040] hover:border-purple-400 border-purple-800/60 shadow-sm cursor-pointer'}">
+                            class="flex flex-col items-center justify-center p-2 rounded-2xl border transition ${isCur ? 'bg-indigo-950 border-2 border-indigo-500 shadow-xs ring-1 ring-indigo-400' : 'bg-slate-950/70 hover:bg-slate-800 hover:border-indigo-500 border-slate-800 shadow-2xs cursor-pointer'}">
                         <img src="${cls.icon}" class="w-9 h-9 object-contain drop-shadow mb-1" alt="${cls.name}">
-                        <span class="text-[10px] font-bold ${isCur ? 'text-white font-extrabold' : 'text-purple-200'} text-center">${cls.name}</span>
+                        <span class="text-[10px] font-bold ${isCur ? 'text-indigo-300 font-extrabold' : 'text-slate-300'} text-center">${cls.name}</span>
                     </button>
                 `;
             }).join('');
