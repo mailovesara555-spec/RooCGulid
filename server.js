@@ -27,6 +27,51 @@ app.get('/auction', (req, res) => {
 });
 
 // รายชื่อ Discord Username พื้นฐานที่อนุญาตให้เข้าถึง (Fallback)
+const crypto = require('crypto');
+const AUTH_SECRET = process.env.DISCORD_CLIENT_SECRET || 'rooc_guild_secure_auth_secret_2026';
+
+function generateAuthToken(user) {
+    const payload = {
+        u: (user.username || '').trim(),
+        id: String(user.id || '').trim(),
+        t: Date.now()
+    };
+    const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const sig = crypto.createHmac('sha256', AUTH_SECRET).update(payloadB64).digest('base64url');
+    return `${payloadB64}.${sig}`;
+}
+
+function verifyAuthToken(token) {
+    if (!token || typeof token !== 'string') return null;
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+    const [payloadB64, sig] = parts;
+    const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(payloadB64).digest('base64url');
+    if (sig !== expectedSig) return null;
+
+    try {
+        const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 วัน
+        if (!payload.u || !payload.t || (Date.now() - payload.t > maxAge)) {
+            return null;
+        }
+        return payload;
+    } catch(e) {
+        return null;
+    }
+}
+
+// Endpoint สำหรับให้หน้าบ้านตรวจสอบความถูกต้องของ Token
+app.get('/auth/verify', (req, res) => {
+    const token = req.query.token;
+    const verified = verifyAuthToken(token);
+    if (verified) {
+        return res.json({ valid: true, username: verified.u, id: verified.id });
+    }
+    return res.status(401).json({ valid: false, error: 'Unauthorized or invalid token' });
+});
+
+// รายชื่อ Discord Username พื้นฐานที่อนุญาตให้เข้าถึง (Fallback)
 const ALLOWED_USERS = [
     'admin_user',
     'daffodil2693',
@@ -37,12 +82,12 @@ const ALLOWED_USERS = [
     'player123'
 ];
 
-// Route: สำหรับกดเข้าสู่ระบบผ่าน Discord
+// Route: สำหรับกดเข้าสู่ระบบผ่าน Discord (prompt=consent เพื่อให้ยืนยันผ่าน Discord ทุกรอบ)
 app.get('/auth/discord', (req, res) => {
     const clientId = process.env.DISCORD_CLIENT_ID;
     const redirectUri = encodeURIComponent(process.env.DISCORD_REDIRECT_URI);
-    // สร้าง URL สำหรับให้ User ไปยืนยันตัวตนที่ Discord
-    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
+    // prompt=consent บังคับให้ Discord แสดงหน้าต่างยืนยันตัวตนทุกรอบ ป้องกันการสวมรอย
+    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&prompt=consent`;
     res.redirect(discordAuthUrl);
 });
 
@@ -142,8 +187,10 @@ app.get('/auth/discord/callback', async (req, res) => {
         }
 
         if (isAllowed) {
-            // อนุญาตให้เข้าถึง: ส่งต่อไปยังหน้า Dashboard พร้อมแนบ Discord Username
-            res.redirect(`/dashboard.html?user=${encodeURIComponent(discordUser.username)}`);
+            // สร้าง Cryptographic Signed Token เพื่อความปลอดภัย ป้องกันการเปลี่ยน query param สวมรอย
+            const authToken = generateAuthToken(discordUser);
+            // ส่งต่อไปยังหน้า Dashboard พร้อม Token และลบการพึ่งพา ?user= แบบลอยๆ
+            res.redirect(`/dashboard.html?auth_token=${encodeURIComponent(authToken)}&user=${encodeURIComponent(discordUser.username)}`);
         } else {
             // ไม่มีสิทธิ์เข้าถึง กลับไปหน้าแรกพร้อมระบุ Discord Username ให้ผู้ใช้เห็น
             res.redirect(`/?error=not_allowed&discord_user=${encodeURIComponent(discordUser.username)}&display_name=${encodeURIComponent(discordUser.global_name || '')}`);

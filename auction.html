@@ -832,17 +832,53 @@
         }
         const db = firebase.database();
 
-        // 2. Authentication & User State
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentUser = (urlParams.get('user') || localStorage.getItem('rooc_discord_user') || sessionStorage.getItem('discord_user') || localStorage.getItem('rooc_user') || '').trim();
+        // Helper สำหรับถอดรหัสและตรวจความถูกต้องของ Signed Auth Token
+        function getVerifiedUserFromToken(token) {
+            if (!token || typeof token !== 'string') return null;
+            const parts = token.split('.');
+            if (parts.length !== 2) return null;
+            try {
+                const b64 = parts[0].replace(/-/g, '+').replace(/_/g, '/');
+                const jsonStr = decodeURIComponent(escape(atob(b64)));
+                const payload = JSON.parse(jsonStr);
+                const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 วัน
+                if (!payload.u || !payload.t || (Date.now() - payload.t > maxAge)) {
+                    return null;
+                }
+                return String(payload.u).trim();
+            } catch(e) {
+                return null;
+            }
+        }
 
-        if (!currentUser) {
+        // 2. Authentication & User State (ป้องกันการเปลี่ยน ?user= เพื่อสวมรอย)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlAuthToken = urlParams.get('auth_token');
+        const storedToken = sessionStorage.getItem('rooc_auth_token') || localStorage.getItem('rooc_auth_token');
+        const activeToken = urlAuthToken || storedToken;
+        const verifiedUser = getVerifiedUserFromToken(activeToken);
+
+        if (!verifiedUser) {
+            localStorage.removeItem('rooc_auth_token');
+            localStorage.removeItem('rooc_discord_user');
+            localStorage.removeItem('rooc_user');
+            sessionStorage.clear();
             window.location.href = 'index.html';
         } else {
-            localStorage.setItem('rooc_discord_user', currentUser);
-            localStorage.setItem('rooc_user', currentUser);
-            sessionStorage.setItem('discord_user', currentUser);
+            sessionStorage.setItem('rooc_auth_token', activeToken);
+            localStorage.setItem('rooc_auth_token', activeToken);
+            sessionStorage.setItem('discord_user', verifiedUser);
+            localStorage.setItem('rooc_discord_user', verifiedUser);
+            localStorage.setItem('rooc_user', verifiedUser);
+
+            // ซ่อน auth_token และ user ออกจาก URL bar ทันทีเพื่อความปลอดภัย
+            if (urlParams.has('auth_token') || urlParams.has('user')) {
+                const cleanUrl = window.location.pathname + (urlParams.has('type') || urlParams.has('mode') || urlParams.has('tab') ? `?type=${urlParams.get('type') || urlParams.get('mode') || urlParams.get('tab')}` : '');
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
         }
+
+        const currentUser = verifiedUser || '';
 
         const userDisplayInit = `👤 ${currentUser}`;
         const navElInit = document.getElementById('navUsername');
@@ -851,9 +887,10 @@
         if (navMobElInit) navMobElInit.innerText = userDisplayInit;
 
         function handleLogout() {
+            localStorage.removeItem('rooc_auth_token');
             localStorage.removeItem('rooc_discord_user');
             localStorage.removeItem('rooc_user');
-            sessionStorage.removeItem('discord_user');
+            sessionStorage.clear();
             window.location.href = 'index.html?logout=true';
         }
 

@@ -89,15 +89,10 @@
         const isLogout = urlParams.get('logout') === 'true';
 
         if (isLogout) {
+            localStorage.removeItem('rooc_auth_token');
             localStorage.removeItem('rooc_discord_user');
             localStorage.removeItem('rooc_user');
-            sessionStorage.removeItem('discord_user');
-        } else if (!error) {
-            // Auto Login if user already authorized before
-            const savedUser = localStorage.getItem('rooc_discord_user') || localStorage.getItem('rooc_user');
-            if (savedUser && savedUser.trim() !== '') {
-                window.location.href = `dashboard.html?user=${encodeURIComponent(savedUser.trim())}`;
-            }
+            sessionStorage.clear();
         }
 
         const discordUserParam = urlParams.get('discord_user');
