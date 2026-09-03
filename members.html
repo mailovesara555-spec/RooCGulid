@@ -584,7 +584,43 @@
             'Alchemist': 'images/classes/biochemist.webp',
             'Mastersmith': 'images/classes/mastersmith.webp',
             'Whitesmith': 'images/classes/mastersmith.webp',
-            'Bla        // สถานะการเชื่อมต่อ
+            'Blacksmith': 'images/classes/mastersmith.webp',
+            'Bard': 'images/classes/minstrel.webp',
+            'Clown': 'images/classes/minstrel.webp',
+            'Minstrel': 'images/classes/minstrel.webp',
+            'Gypsy': 'images/classes/gypsy.webp',
+            'Dancer': 'images/classes/gypsy.webp',
+            'Sniper': 'images/classes/sniper.webp',
+            'Hunter': 'images/classes/sniper.webp',
+            'Champion': 'images/classes/champion.webp',
+            'Monk': 'images/classes/champion.webp',
+            'Priest': 'images/classes/high-priest.webp',
+            'High Priest': 'images/classes/high-priest.webp',
+            'Assassin': 'images/classes/assassin-cross.webp',
+            'Assassin Cross': 'images/classes/assassin-cross.webp',
+            'Rogue': 'images/classes/stalker.webp',
+            'Stalker': 'images/classes/stalker.webp',
+            'Wizard': 'images/classes/high-wizard.webp',
+            'High Wizard': 'images/classes/high-wizard.webp',
+            'Sage': 'images/classes/professor.webp',
+            'Professor': 'images/classes/professor.webp',
+            'Summoner': 'images/classes/summoner.webp',
+            'Doram': 'images/classes/summoner.webp',
+            'Rebellion': 'images/classes/rebellion.webp',
+            'Gunslinger': 'images/classes/rebellion.webp'
+        };
+
+        function getClassIconHtml(charClass, sizeClass = 'w-6 h-6') {
+            if (!charClass) return `<span class="inline-block text-base pointer-events-none select-none">👤</span>`;
+            const key = Object.keys(CLASS_ICON_FILES).find(k => k.toLowerCase() === String(charClass).trim().toLowerCase());
+            const file = key ? CLASS_ICON_FILES[key] : null;
+            if (file) {
+                return `<img src="${file}" draggable="false" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-sm pointer-events-none select-none" alt="${charClass}">`;
+            }
+            return `<span class="inline-block text-base pointer-events-none select-none">👤</span>`;
+        }
+
+        // สถานะการเชื่อมต่อ
         const syncBadge = document.getElementById('syncBadge');
         db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
@@ -678,54 +714,6 @@
                 const rawBaseUid = String(member.uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
                 const isMyCharacter = (currentUser.toLowerCase() === rawBaseUid);
                 const toggleTitle = isMyCharacter ? 'คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม' : 'เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์สลับสถานะ';
-                const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
-
-                tr.innerHTML = `
-                    <td class="py-3.5 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">#${index + 1}</td>
-                    <td class="py-3.5 px-4 text-sm text-indigo-950 font-bold cursor-pointer" onclick="openStatsModal('${member.uid}')">
-                        <div class="hover:text-purple-600 transition flex items-center gap-1.5 flex-wrap">
-                            <span>${displayName}</span>
-                            ${char2Tag}
-                            <span class="text-xs text-purple-500">🔍</span>
-                        </div>
-                        ${iconDisplay}
-                    </td>
-                    <td class="py-3.5 px-3 text-center whitespace-nowrap">${roleCombined}</td>
-                    <td class="py-3.5 px-3 text-sm text-slate-700 font-medium whitespace-nowrap">
-                        <div class="flex items-center gap-2">
-                            ${getClassIconHtml(member.charClass, 'w-6 h-6')}
-                            <span class="font-bold text-slate-700">${member.charClass || '-'}</span>
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-3 text-sm text-center font-black text-amber-800 cursor-pointer whitespace-nowrap" onclick="openStatsModal('${member.uid}')">
-                        <span class="hover:underline">${cp}</span>
-                    </td>
-                    <td class="py-3.5 px-3 ${toggleCursor} text-center whitespace-nowrap" onclick="toggleMemberActive('${member.uid}', ${!member.active})" title="${toggleTitle}">
-                        ${toggleHtml}
-                    </td>
-                    <td class="py-3.5 px-3 text-sm whitespace-nowrap">
-                        <div class="text-slate-500 text-xs font-medium">${member.lastUpdate || '-'}</div>
-                        <div class="text-emerald-600 text-xs font-bold flex items-center gap-1 mt-0.5">
-                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> อัปเดตแล้ว
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-4 whitespace-nowrap">
-                        <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                            <button onclick="openStatsModal('${member.uid}')" class="whitespace-nowrap px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer" title="ดูสเตตัส">
-                                📊 สเตตัส
-                            </button>
-                            <button onclick="openEditModal('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
-                                ✏️ Edit
-                            </button>
-                            <button onclick="deleteMember('${member.uid}')" class="whitespace-nowrap px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer">
-                                🗑️ Delete
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }oggleTitle = isMyCharacter ? 'คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม' : 'เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์สลับสถานะ';
                 const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
 
                 tr.innerHTML = `
