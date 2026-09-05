@@ -6,6 +6,29 @@
     <title>ดาวน์โหลด Romarco Auto Clicker - Wendell Guild</title>
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="images/guild_icon.jpg">
+    <!-- Immediate Authentication Guard (Member Only) -->
+    <script>
+        (function() {
+            function checkAuth(token) {
+                if (!token || typeof token !== 'string') return null;
+                const parts = token.split('.');
+                if (parts.length !== 2) return null;
+                try {
+                    const b64 = parts[0].replace(/-/g, '+').replace(/_/g, '/');
+                    const payload = JSON.parse(decodeURIComponent(escape(atob(b64))));
+                    const maxAge = 30 * 24 * 60 * 60 * 1000;
+                    if (!payload.u || !payload.t || (Date.now() - payload.t > maxAge)) return null;
+                    return String(payload.u).trim();
+                } catch(e) { return null; }
+            }
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('auth_token') || sessionStorage.getItem('rooc_auth_token') || localStorage.getItem('rooc_auth_token');
+            const verified = checkAuth(token);
+            if (!verified) {
+                window.location.replace('index.html?error=member_only');
+            }
+        })();
+    </script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -99,11 +122,8 @@
                 <!-- User Profile & Navigation Buttons -->
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="text-sm hidden sm:block text-right">
-                        <p id="navUsername" class="font-bold text-slate-700 leading-none">สมาชิกกิลด์</p>
+                        <p id="navUsername" class="font-bold text-slate-700 leading-none">กำลังเชื่อมต่อ...</p>
                     </div>
-                    <a id="navLoginBtn" href="index.html" class="hidden text-purple-700 hover:text-purple-800 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition">
-                        🔑 เข้าสู่ระบบ
-                    </a>
                     <a id="navLogoutBtn" href="javascript:void(0)" onclick="handleLogout()" class="hidden sm:inline-block text-slate-600 hover:text-rose-600 bg-white/90 hover:bg-rose-50 border border-purple-100 hover:border-rose-200 px-4 py-1.5 rounded-xl text-sm font-bold transition shadow-2xs">
                         ออกจากระบบ
                     </a>
@@ -401,12 +421,33 @@
             }
         }
 
-        const activeToken = sessionStorage.getItem('rooc_auth_token') || localStorage.getItem('rooc_auth_token');
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlAuthToken = urlParams.get('auth_token');
+        const storedToken = sessionStorage.getItem('rooc_auth_token') || localStorage.getItem('rooc_auth_token');
+        const activeToken = urlAuthToken || storedToken;
         const verifiedUser = getVerifiedUserFromToken(activeToken);
+
+        if (!verifiedUser) {
+            localStorage.removeItem('rooc_auth_token');
+            localStorage.removeItem('rooc_discord_user');
+            localStorage.removeItem('rooc_user');
+            sessionStorage.clear();
+            window.location.replace('index.html?error=member_only');
+        } else {
+            sessionStorage.setItem('rooc_auth_token', activeToken);
+            localStorage.setItem('rooc_auth_token', activeToken);
+            sessionStorage.setItem('discord_user', verifiedUser);
+            localStorage.setItem('rooc_discord_user', verifiedUser);
+            localStorage.setItem('rooc_user', verifiedUser);
+
+            // ซ่อน auth_token และ user ออกจาก URL bar ทันทีเพื่อความปลอดภัย
+            if (urlParams.has('auth_token') || urlParams.has('user')) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
 
         const navUsername = document.getElementById('navUsername');
         const navUsernameMobile = document.getElementById('navUsernameMobile');
-        const navLoginBtn = document.getElementById('navLoginBtn');
         const navLogoutBtn = document.getElementById('navLogoutBtn');
 
         if (verifiedUser) {
@@ -414,12 +455,6 @@
             if (navUsername) navUsername.innerText = displayName;
             if (navUsernameMobile) navUsernameMobile.innerText = displayName;
             if (navLogoutBtn) navLogoutBtn.classList.remove('hidden');
-            if (navLoginBtn) navLoginBtn.classList.add('hidden');
-        } else {
-            if (navUsername) navUsername.innerText = 'แขกผู้มาเยือน';
-            if (navUsernameMobile) navUsernameMobile.innerText = 'แขกผู้มาเยือน';
-            if (navLogoutBtn) navLogoutBtn.classList.add('hidden');
-            if (navLoginBtn) navLoginBtn.classList.remove('hidden');
         }
 
         function handleLogout() {
