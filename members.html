@@ -716,6 +716,7 @@
         let cardAuctionPartyMap = {};
         let currentWhitelist = {};
         let currentAuctionState = { cardHolders: [], whiteHolders: [], blackHolders: [] };
+        let romarcoDownloads = {};
 
         const CLASS_ICON_FILES = {
             'Lord Knight': 'images/classes/lord-knight.webp',
@@ -843,6 +844,18 @@
                 if (cardHolders.includes(member.name)) icons.push('<span title="ได้รับ การ์ด ในรอบนี้แล้ว" class="whitespace-nowrap bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_card.png" class="w-4 h-4 object-contain" alt="การ์ด"> การ์ด</span>');
                 if (whiteHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนขาว ในรอบนี้แล้ว" class="whitespace-nowrap bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded border border-sky-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_white.png" class="w-4 h-4 object-contain" alt="ขนขาว"> ขนขาว</span>');
                 if (blackHolders.includes(member.name)) icons.push('<span title="ได้รับ ขนดำ ในรอบนี้แล้ว" class="whitespace-nowrap bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 text-xs inline-flex items-center gap-1 font-bold"><img src="images/item_black.png" class="w-4 h-4 object-contain" alt="ขนดำ"> ขนดำ</span>');
+
+                // เช็คสถานะการดาวน์โหลด Romarco Auto Clicker (แสดงป้ายเฉพาะแอดมินเท่านั้น)
+                const rawBaseUid = String(member.uid || '').replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
+                const isViewerAdmin = isAdmin || currentUserRole === 'Admin' || currentUserRole === 'admin';
+                if (isViewerAdmin) {
+                    const safeKey = rawBaseUid.replace(/#/g, '').replace(/\./g, '__dot__');
+                    const romarcoRecord = romarcoDownloads[safeKey] || Object.values(romarcoDownloads).find(r => (r.name && r.name === member.name) || (r.discordUser && r.discordUser.toLowerCase() === rawBaseUid));
+                    if (romarcoRecord) {
+                        const downloadCountText = romarcoRecord.downloadCount ? ` (${romarcoRecord.downloadCount} ครั้ง)` : '';
+                        icons.push(`<span title="ดาวน์โหลดแอป Romarco Auto Clicker แล้วเมื่อ ${romarcoRecord.lastDownloadedThai || romarcoRecord.lastDownloadedAt}${downloadCountText}" class="whitespace-nowrap bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-200 text-xs inline-flex items-center gap-1 font-bold shadow-2xs">📲 Romarco</span>`);
+                    }
+                }
                 
                 let isChar2 = member.isChar2 || (member.uid && member.uid.includes('(ตัวที่ 2)'));
                 let char2Tag = isChar2 ? '<span class="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-1.5 py-0.5 rounded-md font-black shrink-0">✌️ ตัวที่ 2</span>' : '';
@@ -854,7 +867,6 @@
                 const subRoleBadge = getSubRoleBadge(member.subRole);
                 const roleCombined = subRoleBadge ? `<div class="flex flex-col items-center gap-1">${roleBadge}${subRoleBadge}</div>` : roleBadge;
 
-                const rawBaseUid = String(member.uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
                 const isMyCharacter = (currentUser.toLowerCase() === rawBaseUid);
                 const toggleTitle = isMyCharacter ? 'คลิกเพื่อสลับสถานะ เข้าร่วม/ลากิจกรรม' : 'เฉพาะเจ้าของตัวละครเท่านั้นที่มีสิทธิ์สลับสถานะ';
                 const toggleCursor = isMyCharacter ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-90';
@@ -1238,6 +1250,12 @@
         // ฟังผลและสถานะรอบการประมูลล่าสุด
         db.ref('auctionState').on('value', (snapshot) => {
             currentAuctionState = snapshot.val() || { cardHolders: [], whiteHolders: [], blackHolders: [] };
+            renderTable();
+        });
+
+        // ฟังสถิติและรายชื่อสมาชิกที่ดาวน์โหลดแอป Romarco Auto Clicker
+        db.ref('romarco_downloads').on('value', (snapshot) => {
+            romarcoDownloads = snapshot.val() || {};
             renderTable();
         });
 

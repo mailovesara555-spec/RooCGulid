@@ -29,6 +29,9 @@
             }
         })();
     </script>
+    <!-- Firebase SDKs (Compat version for Browser) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -195,13 +198,27 @@
 
                     <!-- Download Buttons -->
                     <div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
-                        <a href="downloads/Romarco_AutoClicker_v1.0.apk" download="Romarco_AutoClicker_v1.0.apk" class="roo-button download-glow w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 cursor-pointer">
+                        <button type="button" onclick="handleDownloadClick('downloads/Romarco_AutoClicker_v1.0.apk', 'Main APK')" class="roo-button download-glow w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 cursor-pointer">
                             <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             <span>ดาวน์โหลดไฟล์ APK (v1.0)</span>
-                        </a>
-                        <a href="Romarco_AutoClicker_v1.0.apk" download="Romarco_AutoClicker_v1.0.apk" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/90 hover:bg-purple-50 text-purple-800 border border-purple-200 font-bold text-sm text-center transition shadow-xs">
+                        </button>
+                        <button type="button" onclick="handleDownloadClick('Romarco_AutoClicker_v1.0.apk', 'Direct Mirror')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/90 hover:bg-purple-50 text-purple-800 border border-purple-200 font-bold text-sm text-center transition shadow-xs cursor-pointer">
                             ลิงก์สำรอง (Direct Mirror)
-                        </a>
+                        </button>
+                    </div>
+
+                    <!-- Personal Download Status & Recording Notice (แสดงเฉพาะ Admin) -->
+                    <div id="userDownloadNotice" class="hidden p-3 bg-purple-50/70 border border-purple-200/80 rounded-2xl flex items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span id="userStatusIcon" class="text-base shrink-0">ℹ️</span>
+                            <div class="min-w-0">
+                                <span class="font-bold text-indigo-950">สถานะการดาวน์โหลดของคุณ:</span>
+                                <span id="userStatusText" class="text-slate-600 ml-1">กำลังตรวจสอบข้อมูลสมาชิก...</span>
+                            </div>
+                        </div>
+                        <span id="userDownloadBadge" class="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+                            กำลังโหลด...
+                        </span>
                     </div>
                 </div>
 
@@ -361,6 +378,56 @@
             </div>
         </div>
 
+        <!-- Download Records Section (บันทึกรายชื่อสมาชิกที่ดาวน์โหลด - แสดงเฉพาะ Admin) -->
+        <div id="adminDownloadRecordsSection" class="hidden roo-card rounded-3xl p-6 sm:p-8 border border-purple-100 shadow-md space-y-5 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-xl shadow-md">
+                        📋
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-black text-indigo-950 flex items-center gap-2 flex-wrap">
+                            <span>รายชื่อสมาชิกที่ดาวน์โหลดไปแล้ว</span>
+                            <span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                                🔒 เฉพาะแอดมินเท่านั้น (Admin Only)
+                            </span>
+                        </h3>
+                        <p class="text-xs text-slate-500 font-medium">บันทึกข้อมูลและจำนวนครั้งที่ดาวน์โหลดของสมาชิกแต่ละท่านอัตโนมัติ</p>
+                    </div>
+                </div>
+
+                <!-- Stats summary badges -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-800 flex items-center gap-1.5 shadow-2xs">
+                        <span>👥 ดาวน์โหลดแล้ว:</span>
+                        <span id="statUniqueDownloaders" class="font-black text-emerald-950">0</span>
+                        <span>ท่าน</span>
+                    </div>
+                    <div class="px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-xl text-xs font-bold text-purple-800 flex items-center gap-1.5 shadow-2xs">
+                        <span>📥 โหลดสะสม:</span>
+                        <span id="statTotalDownloads" class="font-black text-purple-950">0</span>
+                        <span>ครั้ง</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search input & Table -->
+            <div class="space-y-3">
+                <div class="relative max-w-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="downloadSearchInput" placeholder="ค้นหาชื่อตัวละคร, ดิสคอร์ด หรืออาชีพ..." oninput="filterDownloadersList()" class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 shadow-2xs">
+                </div>
+
+                <div class="max-h-[360px] overflow-y-auto rounded-2xl border border-purple-100 divide-y divide-purple-100 bg-white shadow-inner custom-scrollbar">
+                    <div id="downloadersListBody" class="p-2 space-y-1.5">
+                        <div class="text-center py-8 text-xs text-slate-400 font-medium">กำลังโหลดรายชื่อสมาชิกที่ดาวน์โหลด...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer Call-to-action -->
         <div class="text-center space-y-3 pb-8">
             <a href="downloads/Romarco_AutoClicker_v1.0.apk" download="Romarco_AutoClicker_v1.0.apk" class="inline-flex items-center gap-2 text-sm font-bold text-purple-700 hover:text-purple-800 transition">
@@ -465,10 +532,340 @@
             window.location.href = 'index.html?logout=true';
         }
 
+        // ==========================================
+        // 1. Firebase Initializer
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXhciX3AG7bXsWtRbRd7371UtS8SwR7sU",
+            authDomain: "rooc-guild.firebaseapp.com",
+            databaseURL: "https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rooc-guild",
+            storageBucket: "rooc-guild.firebasestorage.app",
+            messagingSenderId: "326463676837",
+            appId: "1:326463676837:web:048169408eb182d96c484c",
+            measurementId: "G-VR163R8CYD"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // ==========================================
+        // 2. ข้อมูลอาชีพและไอคอน (Class Icons)
+        // ==========================================
+        const CLASS_ICON_FILES = {
+            'Lord Knight': 'images/classes/lord-knight.webp',
+            'Knight': 'images/classes/lord-knight.webp',
+            'Paladin': 'images/classes/paladin.webp',
+            'Crusader': 'images/classes/paladin.webp',
+            'Biochemist': 'images/classes/biochemist.webp',
+            'Creator': 'images/classes/biochemist.webp',
+            'Alchemist': 'images/classes/biochemist.webp',
+            'Mastersmith': 'images/classes/mastersmith.webp',
+            'Whitesmith': 'images/classes/mastersmith.webp',
+            'Blacksmith': 'images/classes/mastersmith.webp',
+            'Bard': 'images/classes/minstrel.webp',
+            'Clown': 'images/classes/minstrel.webp',
+            'Minstrel': 'images/classes/minstrel.webp',
+            'Gypsy': 'images/classes/gypsy.webp',
+            'Dancer': 'images/classes/gypsy.webp',
+            'Sniper': 'images/classes/sniper.webp',
+            'Hunter': 'images/classes/sniper.webp',
+            'Champion': 'images/classes/champion.webp',
+            'Monk': 'images/classes/champion.webp',
+            'Priest': 'images/classes/high-priest.webp',
+            'High Priest': 'images/classes/high-priest.webp',
+            'Acolyte': 'images/classes/high-priest.webp',
+            'Assassin Cross': 'images/classes/assassin-cross.webp',
+            'Assassin': 'images/classes/assassin-cross.webp',
+            'Stalker': 'images/classes/stalker.webp',
+            'Rogue': 'images/classes/stalker.webp',
+            'Wizard': 'images/classes/high-wizard.webp',
+            'High Wizard': 'images/classes/high-wizard.webp',
+            'Mage': 'images/classes/high-wizard.webp',
+            'Sage': 'images/classes/professor.webp',
+            'Professor': 'images/classes/professor.webp',
+            'Summoner': 'images/classes/summoner.webp',
+            'Doram': 'images/classes/summoner.webp',
+            'Rebellion': 'images/classes/rebellion.webp',
+            'Gunslinger': 'images/classes/rebellion.webp'
+        };
+
+        function getClassIconHtml(charClass, sizeClass = 'w-7 h-7') {
+            if (!charClass) return `<span class="inline-block text-base">👤</span>`;
+            const key = Object.keys(CLASS_ICON_FILES).find(k => k.toLowerCase() === String(charClass).trim().toLowerCase());
+            const file = key ? CLASS_ICON_FILES[key] : null;
+            if (file) {
+                return `<img src="${file}" draggable="false" class="${sizeClass} object-contain inline-block shrink-0 rounded-full shadow-xs" alt="${charClass}">`;
+            }
+            return `<span class="inline-block text-base">👤</span>`;
+        }
+
+        function encodeKey(str) {
+            return String(str || '').toLowerCase().replace(/#/g, '').replace(/\./g, '__dot__').trim();
+        }
+
+        function getThaiDateTimeString(date = new Date()) {
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const y = date.getFullYear() + 543;
+            const h = date.getHours().toString().padStart(2, '0');
+            const min = date.getMinutes().toString().padStart(2, '0');
+            return `${d}/${m}/${y} ${h}:${min} น.`;
+        }
+
+        // ==========================================
+        // 3. State & ข้อมูลสมาชิก
+        // ==========================================
+        let allMembers = [];
+        let currentMember = null;
+        let romarcoDownloadersMap = {};
+
+        // โหลดรายชื่อสมาชิกจาก Firebase เพื่อแมปชื่อตัวละครและตำแหน่ง
+        db.ref('members').on('value', (snapshot) => {
+            const data = snapshot.val() || {};
+            allMembers = Object.keys(data).map(key => ({
+                firebaseKey: key,
+                ...data[key]
+            }));
+
+            // ค้นหาข้อมูลตัวละครของคนที่ล็อกอินอยู่
+            const vLower = (verifiedUser || '').toLowerCase();
+            currentMember = allMembers.find(m => {
+                const uid = String(m.uid || '').toLowerCase();
+                const mainUid = String(m.mainUid || '').toLowerCase();
+                const disc = String(m.discordUser || '').toLowerCase();
+                return (uid === vLower || mainUid === vLower || disc === vLower);
+            });
+
+            updateUserStatusDisplay();
+            renderDownloadersList();
+        });
+
+        // ฟังข้อมูลรายชื่อผู้ดาวน์โหลด Romarco แบบ Real-time
+        db.ref('romarco_downloads').on('value', (snapshot) => {
+            romarcoDownloadersMap = snapshot.val() || {};
+            updateUserStatusDisplay();
+            renderDownloadersList();
+        });
+
+        function updateUserStatusDisplay() {
+            const noticeBox = document.getElementById('userDownloadNotice');
+            const iconEl = document.getElementById('userStatusIcon');
+            const textEl = document.getElementById('userStatusText');
+            const badgeEl = document.getElementById('userDownloadBadge');
+
+            if (!noticeBox || !textEl || !badgeEl) return;
+
+            const mySafeKey = encodeKey(verifiedUser);
+            const myRecord = romarcoDownloadersMap[mySafeKey];
+            const memberName = currentMember ? currentMember.name : verifiedUser;
+
+            if (myRecord) {
+                iconEl.innerText = '✅';
+                textEl.innerHTML = `คุณ <b>${memberName}</b> เคยดาวน์โหลดแล้วเมื่อ <span class="font-bold text-emerald-700">${myRecord.lastDownloadedThai || myRecord.lastDownloadedAt}</span> (รวมดาวน์โหลด <b>${myRecord.downloadCount}</b> ครั้ง)`;
+                badgeEl.className = 'shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300';
+                badgeEl.innerText = 'ดาวน์โหลดแล้ว';
+            } else {
+                iconEl.innerText = 'ℹ️';
+                textEl.innerHTML = `คุณ <b>${memberName}</b> ยังไม่เคยดาวน์โหลด (ระบบจะบันทึกชื่อตัวละครของคุณเมื่อกดดาวน์โหลด)`;
+                badgeEl.className = 'shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-purple-100 text-purple-800 border border-purple-200';
+                badgeEl.innerText = 'พร้อมดาวน์โหลด';
+            }
+            updateAdminVisibility();
+        }
+
+        function isUserAdmin() {
+            const u = (verifiedUser || '').toLowerCase().trim();
+            const role = (currentMember && currentMember.role) ? currentMember.role : '';
+            return u === 'daffodil2693' || role === 'Admin' || role === 'admin';
+        }
+
+        function updateAdminVisibility() {
+            const section = document.getElementById('adminDownloadRecordsSection');
+            const noticeBox = document.getElementById('userDownloadNotice');
+            const admin = isUserAdmin();
+
+            if (section) {
+                if (admin) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            }
+
+            if (noticeBox) {
+                if (admin) {
+                    noticeBox.classList.remove('hidden');
+                } else {
+                    noticeBox.classList.add('hidden');
+                }
+            }
+        }
+
+        function renderDownloadersList() {
+            updateAdminVisibility();
+
+            const listEl = document.getElementById('downloadersListBody');
+            const countEl = document.getElementById('statUniqueDownloaders');
+            const totalEl = document.getElementById('statTotalDownloads');
+            const searchKeyword = (document.getElementById('downloadSearchInput')?.value || '').toLowerCase().trim();
+
+            if (!listEl) return;
+
+            // หากไม่ใช่แอดมินหรือหัวหน้ากิลด์ ไม่ต้องเรนเดอร์รายชื่อผู้อื่น
+            if (!isUserAdmin()) {
+                listEl.innerHTML = '';
+                return;
+            }
+
+            const records = Object.values(romarcoDownloadersMap);
+
+            // อัปเดตสถิติยอดสรุป
+            const uniqueCount = records.length;
+            const totalDownloads = records.reduce((sum, r) => sum + (Number(r.downloadCount) || 1), 0);
+
+            if (countEl) countEl.innerText = uniqueCount;
+            if (totalEl) totalEl.innerText = totalDownloads;
+
+            // กรองตามคำค้นหา
+            const filtered = records.filter(r => {
+                if (!searchKeyword) return true;
+                return (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+                       (r.discordUser && r.discordUser.toLowerCase().includes(searchKeyword)) ||
+                       (r.charClass && r.charClass.toLowerCase().includes(searchKeyword)) ||
+                       (r.role && r.role.toLowerCase().includes(searchKeyword));
+            });
+
+            // เรียงลำดับจากคนที่ดาวน์โหลดล่าสุดขึ้นก่อน
+            filtered.sort((a, b) => new Date(b.lastDownloadedAt || 0) - new Date(a.lastDownloadedAt || 0));
+
+            if (filtered.length === 0) {
+                if (records.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="text-center py-8">
+                            <span class="text-3xl">📥</span>
+                            <p class="text-xs font-bold text-slate-500 mt-2">ยังไม่มีประวัติการดาวน์โหลด เป็นคนแรกที่ดาวน์โหลดเลย!</p>
+                        </div>
+                    `;
+                } else {
+                    listEl.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">ไม่พบสมาชิกที่ตรงกับคำค้นหา</div>`;
+                }
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((r, idx) => {
+                const icon = getClassIconHtml(r.charClass, 'w-7 h-7');
+                const isMe = encodeKey(r.discordUser) === encodeKey(verifiedUser);
+                const meHighlight = isMe ? 'ring-2 ring-purple-400 bg-purple-50/60' : 'bg-slate-50/70 hover:bg-purple-50/40';
+
+                let roleColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (r.role === 'Admin') roleColor = 'bg-rose-100 text-rose-800 border-rose-200';
+                else if (r.role === 'หัวหน้ากิลด์' || r.role === 'หัวหน้ากิล') roleColor = 'bg-amber-100 text-amber-900 border-amber-300';
+                else if (r.role === 'รองหัวหน้ากิลด์') roleColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+                else if (r.role === 'ผู้จัดการ') roleColor = 'bg-teal-100 text-teal-800 border-teal-200';
+
+                return `
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl ${meHighlight} border border-slate-200/80 transition text-xs gap-3">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-slate-400 font-bold text-[11px] w-5 text-right shrink-0">#${idx + 1}</span>
+                            ${icon}
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-black text-indigo-950">${r.name || r.discordUser}</span>
+                                    <span class="text-[10px] font-bold px-1.5 py-0.2 rounded border ${roleColor}">${r.role || 'สมาชิกกิลด์'}</span>
+                                    <span class="text-purple-700 font-mono text-[10px] bg-purple-50 px-1 py-0.2 rounded border border-purple-200">@${r.discordUser}</span>
+                                    ${isMe ? '<span class="text-[9px] bg-purple-600 text-white font-black px-1.5 py-0.2 rounded-full shadow-2xs">คุณ</span>' : ''}
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                                    <span>อาชีพ: <b>${r.charClass || '-'}</b></span>
+                                    <span>•</span>
+                                    <span>ดาวน์โหลดล่าสุด: <b class="text-slate-700">${r.lastDownloadedThai || r.lastDownloadedAt}</b></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shrink-0 text-right">
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs inline-flex items-center gap-1">
+                                <span>📥</span> ${r.downloadCount || 1} ครั้ง
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterDownloadersList() {
+            renderDownloadersList();
+        }
+
+        // ==========================================
+        // 4. บันทึกและเริ่มดาวน์โหลดไฟล์ (Track Download)
+        // ==========================================
+        function handleDownloadClick(apkUrl, source = 'Direct Download') {
+            const memberName = currentMember ? currentMember.name : verifiedUser;
+            const memberClass = currentMember ? (currentMember.charClass || 'ไม่ระบุ') : 'ไม่ระบุ';
+            const memberRole = currentMember ? (currentMember.role || 'สมาชิกกิลด์') : 'สมาชิกกิลด์';
+            const safeKey = encodeKey(verifiedUser);
+            const thaiTime = getThaiDateTimeString();
+
+            try {
+                // 1. บันทึกลง Firebase romarco_downloads
+                const userRef = db.ref('romarco_downloads/' + safeKey);
+                userRef.transaction(current => {
+                    const count = (current && current.downloadCount) ? current.downloadCount + 1 : 1;
+                    const firstAt = (current && current.firstDownloadedAt) ? current.firstDownloadedAt : new Date().toISOString();
+                    return {
+                        discordUser: verifiedUser,
+                        name: memberName,
+                        role: memberRole,
+                        charClass: memberClass,
+                        downloadCount: count,
+                        firstDownloadedAt: firstAt,
+                        lastDownloadedAt: new Date().toISOString(),
+                        lastDownloadedThai: thaiTime,
+                        version: 'v1.0.0',
+                        source: source
+                    };
+                });
+
+                // 2. บันทึกลง Log รายครั้ง (Audit log)
+                db.ref('romarco_download_logs').push({
+                    discordUser: verifiedUser,
+                    name: memberName,
+                    role: memberRole,
+                    charClass: memberClass,
+                    timestamp: new Date().toISOString(),
+                    thaiTime: thaiTime,
+                    source: source
+                });
+
+                // 3. เริ่มดาวน์โหลดไฟล์ APK
+                const a = document.createElement('a');
+                a.href = apkUrl;
+                a.download = 'Romarco_AutoClicker_v1.0.apk';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // 4. แสดง Toast Feedback
+                alert(`🎉 บันทึกการดาวน์โหลดของสมาชิก "${memberName}" เรียบร้อยแล้ว!\n\nกำลังเริ่มดาวน์โหลดไฟล์ APK...`);
+            } catch (err) {
+                console.error('Record download error:', err);
+                // หาก Firebase มีปัญหา ยังคงให้ดาวน์โหลดไฟล์ได้ตามปกติ
+                const a = document.createElement('a');
+                a.href = apkUrl;
+                a.download = 'Romarco_AutoClicker_v1.0.apk';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
         // Update QR code dynamically with current host URL
         try {
             const currentOrigin = window.location.origin;
-            const fullDownloadUrl = `${currentOrigin}/downloads/Romarco_AutoClicker_v1.0.apk`;
+            const fullDownloadUrl = `${currentOrigin}/download.html`;
             const qrImg = document.getElementById('apkQrCode');
             if (qrImg) {
                 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(fullDownloadUrl)}`;
