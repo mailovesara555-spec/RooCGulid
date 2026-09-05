@@ -210,19 +210,6 @@
                         </button>
                     </div>
 
-                    <!-- Personal Download Status & Recording Notice (แสดงเฉพาะ Admin) -->
-                    <div id="userDownloadNotice" class="hidden p-3 bg-purple-50/70 border border-purple-200/80 rounded-2xl flex items-center justify-between gap-3 text-xs">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span id="userStatusIcon" class="text-base shrink-0">ℹ️</span>
-                            <div class="min-w-0">
-                                <span class="font-bold text-indigo-950">สถานะการดาวน์โหลดของคุณ:</span>
-                                <span id="userStatusText" class="text-slate-600 ml-1">กำลังตรวจสอบข้อมูลสมาชิก...</span>
-                            </div>
-                        </div>
-                        <span id="userDownloadBadge" class="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
-                            กำลังโหลด...
-                        </span>
-                    </div>
                 </div>
 
                 <!-- App Icon & QR Code Card -->
@@ -648,42 +635,14 @@
                 return (uid === vLower || mainUid === vLower || disc === vLower);
             });
 
-            updateUserStatusDisplay();
             renderDownloadersList();
         });
 
         // ฟังข้อมูลรายชื่อผู้ดาวน์โหลด Romarco แบบ Real-time
         db.ref('romarco_downloads').on('value', (snapshot) => {
             romarcoDownloadersMap = snapshot.val() || {};
-            updateUserStatusDisplay();
             renderDownloadersList();
         });
-
-        function updateUserStatusDisplay() {
-            const noticeBox = document.getElementById('userDownloadNotice');
-            const iconEl = document.getElementById('userStatusIcon');
-            const textEl = document.getElementById('userStatusText');
-            const badgeEl = document.getElementById('userDownloadBadge');
-
-            if (!noticeBox || !textEl || !badgeEl) return;
-
-            const mySafeKey = encodeKey(verifiedUser);
-            const myRecord = romarcoDownloadersMap[mySafeKey];
-            const memberName = currentMember ? currentMember.name : verifiedUser;
-
-            if (myRecord) {
-                iconEl.innerText = '✅';
-                textEl.innerHTML = `คุณ <b>${memberName}</b> เคยดาวน์โหลดแล้วเมื่อ <span class="font-bold text-emerald-700">${myRecord.lastDownloadedThai || myRecord.lastDownloadedAt}</span> (รวมดาวน์โหลด <b>${myRecord.downloadCount}</b> ครั้ง)`;
-                badgeEl.className = 'shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300';
-                badgeEl.innerText = 'ดาวน์โหลดแล้ว';
-            } else {
-                iconEl.innerText = 'ℹ️';
-                textEl.innerHTML = `คุณ <b>${memberName}</b> ยังไม่เคยดาวน์โหลด (ระบบจะบันทึกชื่อตัวละครของคุณเมื่อกดดาวน์โหลด)`;
-                badgeEl.className = 'shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md bg-purple-100 text-purple-800 border border-purple-200';
-                badgeEl.innerText = 'พร้อมดาวน์โหลด';
-            }
-            updateAdminVisibility();
-        }
 
         function isUserAdmin() {
             const u = (verifiedUser || '').toLowerCase().trim();
@@ -693,7 +652,6 @@
 
         function updateAdminVisibility() {
             const section = document.getElementById('adminDownloadRecordsSection');
-            const noticeBox = document.getElementById('userDownloadNotice');
             const admin = isUserAdmin();
 
             if (section) {
@@ -701,14 +659,6 @@
                     section.classList.remove('hidden');
                 } else {
                     section.classList.add('hidden');
-                }
-            }
-
-            if (noticeBox) {
-                if (admin) {
-                    noticeBox.classList.remove('hidden');
-                } else {
-                    noticeBox.classList.add('hidden');
                 }
             }
         }
