@@ -49,6 +49,9 @@ app.get('/party', (req, res) => {
 app.get('/auction', (req, res) => {
     res.sendFile(path.join(__dirname, 'auction.html'));
 });
+app.get('/download', (req, res) => {
+    res.sendFile(path.join(__dirname, 'download.html'));
+});
 
 // รายชื่อ Discord Username พื้นฐานที่อนุญาตให้เข้าถึง (Fallback)
 const crypto = require('crypto');

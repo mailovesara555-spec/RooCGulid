@@ -12,6 +12,14 @@
     {
       "src": "images/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "downloads/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.apk",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -38,6 +46,10 @@
     {
       "src": "/auction",
       "dest": "/auction.html"
+    },
+    {
+      "src": "/download",
+      "dest": "/download.html"
     },
     {
       "src": "/(.*)",

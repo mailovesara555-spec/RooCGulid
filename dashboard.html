@@ -102,6 +102,7 @@
                         <a href="auction.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">ประมูล</a>
                         <a href="dashboard.html" class="px-3 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xs">ข้อมูลส่วนตัว</a>
                         <a href="members.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">สมาชิก</a>
+                        <a href="download.html" class="px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">📲 ดาวน์โหลด</a>
                     </div>
                 </div>
                 <!-- User Profile & Logout & Mobile Hamburger Button -->
@@ -132,6 +133,9 @@
                 </a>
                 <a href="members.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
                     <span>👥</span> สมาชิก
+                </a>
+                <a href="download.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-purple-700 hover:bg-purple-50 transition">
+                    <span>📲</span> ดาวน์โหลด Romarco
                 </a>
                 <div class="pt-2 border-t border-purple-100 flex items-center justify-between px-2">
                     <span id="navUsernameMobile" class="text-xs text-slate-600 font-bold">กำลังเชื่อมต่อ...</span>
@@ -524,6 +528,10 @@
         <a href="members.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
             <span class="text-lg leading-tight">👥</span>
             <span class="text-[10px] font-medium mt-0.5">สมาชิก</span>
+        </a>
+        <a href="download.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition text-slate-500 hover:text-purple-700">
+            <span class="text-lg leading-tight">📲</span>
+            <span class="text-[10px] font-medium mt-0.5">ดาวน์โหลด</span>
         </a>
     </div>
 
@@ -1207,9 +1215,8 @@
                     label: 'CP / Combat Power',
                     isPercent: false,
                     patterns: [
-                        /(?:COMBAT\s*POWER|C\s*O\s*M\s*B\s*A\s*T|POWER|พลังรบ|พลังต่อสู้|พลังรวม|พลัง)\s*[\+\:]*\s*([0-9]{3,8})/i,
-                        /\bCP\s*[\+\:]*\s*([0-9]{3,8})/i,
-                        /(?:^|\s)CP[:\s]*([0-9]{4,8})/i
+                        /(?:COMBAT\s*POWER|C\s*O\s*M\s*B\s*A\s*T|POWER|พลังรบ|พลังต่อสู้|พลังรวม|พลัง|\bCP\b)\s*[\+\:\=\—\–\~]*\s*([0-9]{3,8})/i,
+                        /(?:^|\s)CP[:\s]*([0-9]{3,8})/i
                     ]
                 },
                 {
@@ -1217,9 +1224,7 @@
                     label: 'P.Dmg',
                     isPercent: true,
                     patterns: [
-                        /(?:P[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS)|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%|[0-9]{4}%)/i,
-                        /(?:^|\s)(?:P\.?\s*DMG|PHYSICAL\s*DMG|PHYSICAL\s*DAMAGE|P\s*DMG|PHY\s*DMG|P\.?\s*DM[G6]|P\.?\s*OM[G6]|PHY\s*DM[G6])(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%)/i,
-                        /(?:P[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS))\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:P[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS)|โบนัสความเสียหายกายภาพ|ความเสียหายกายภาพ|ดาเมจกายภาพ|เพิ่มกายภาพ|P\.?\s*DMG|PHYSICAL\s*DMG|PHY\s*DMG)(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*(?:\(?%?\)?)?\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?|[0-9]{4}%)/i
                     ]
                 },
                 {
@@ -1227,7 +1232,7 @@
                     label: 'P.Reduc',
                     isPercent: true,
                     patterns: [
-                        /(?:P[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*R[OE]D[A-Z]*|PHYSICAL\s*DMG\s*RED[A-Z]*|PHYSICAL\s*RED[A-Z]*|ลดความเสียหายกายภาพ|ลดดาเมจกายภาพ|ต้านทานกายภาพ|ลดกายภาพ|PHY\s*RED[A-Z]*|P\.?\s*RES[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:P[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*R[OE]D[A-Z]*|PHYSICAL\s*DMG\s*RED[A-Z]*|PHYSICAL\s*RED[A-Z]*|ลดความเสียหายกายภาพ|ลดดาเมจกายภาพ|ต้านทานกายภาพ|ลดกายภาพ|PHY\s*RED[A-Z]*|P\.?\s*RES[A-Z]*|P\.?\s*REDUC)\s*(?:\(?%?\)?)?\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 },
                 {
@@ -1235,9 +1240,7 @@
                     label: 'M.Dmg',
                     isPercent: true,
                     patterns: [
-                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS)|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%|[0-9]{4}%)/i,
-                        /(?:^|\s)(?:M\.?\s*DMG|MAGIC\s*DMG|MAGIC\s*DAMAGE|M\s*DMG|MAG\s*DMG|M\.?\s*DM[G6]|M\.?\s*OM[G6]|MAG\s*DM[G6])(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%)/i,
-                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS))\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*(?:[BP]ON[A-Z]*|INC[A-Z]*|BONUS)|โบนัสความเสียหายเวท(?:ย์)?|ความเสียหายเวท(?:ย์)?|ดาเมจเวท(?:ย์)?|เพิ่มเวท(?:ย์)?|M\.?\s*DMG|MAGIC\s*DMG|MAG\s*DMG)(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*(?:\(?%?\)?)?\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?|[0-9]{4}%)/i
                     ]
                 },
                 {
@@ -1245,8 +1248,7 @@
                     label: 'M.Reduc',
                     isPercent: true,
                     patterns: [
-                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*R[OE]D[A-Z]*|MAGIC\s*DMG\s*RED[A-Z]*|MAGIC\s*RED[A-Z]*|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|MAG\s*RED[A-Z]*|M\.?\s*RES[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([1-9][0-9]{2}(?:\.[0-9]+)?%?)/i,
-                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*R[OE]D[A-Z]*|MAGIC\s*DMG\s*RED[A-Z]*|MAGIC\s*RED[A-Z]*|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|MAG\s*RED[A-Z]*|M\.?\s*RES[A-Z]*)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:M[.\s_]*(?:[OD0]M[G6]|DMG|MG)?\s*R[OE]D[A-Z]*|MAGIC\s*DMG\s*RED[A-Z]*|MAGIC\s*RED[A-Z]*|ลดความเสียหายเวท(?:ย์)?|ลดดาเมจเวท(?:ย์)?|ต้านทานเวท(?:ย์)?|MAG\s*RED[A-Z]*|M\.?\s*RES[A-Z]*|M\.?\s*REDUC)\s*(?:\(?%?\)?)?\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 },
                 {
@@ -1254,9 +1256,7 @@
                     label: 'PVP Reduc',
                     isPercent: false,
                     patterns: [
-                        /(?:[WPVP]{2,3}|PVP)\s*(?:[OD0]M[G6]|DMG|DAMAGE)?\s*R[OE]D[A-Z]*\s*[\+\:\=\—\–]*\s*([0-9]{3,6})/i,
-                        /(?:ลดความเสียหาย\s*PVP|ลดดาเมจ\s*PVP|ต้านทาน\s*PVP|ลด\s*PVP|PVP\s*DEF|PVP\s*RES[A-Z]*)\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i,
-                        /(?:[WPVP]{2,3}|PVP)\s*(?:[OD0]M[G6]|DMG|DAMAGE)?\s*R[OE]D[A-Z]*\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:PVP\s*(?:[OD0]M[G6]|DMG|DAMAGE)?\s*R[OE]D[A-Z]*|ลดความเสียหาย\s*PVP|ลดดาเมจ\s*PVP|ต้านทาน\s*PVP|ลด\s*PVP|PVP\s*DEF|PVP\s*RES[A-Z]*|PVP\s*REDUC)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
                     ]
                 },
                 {
@@ -1264,9 +1264,7 @@
                     label: 'PVP Dmg',
                     isPercent: false,
                     patterns: [
-                        /(?:[WPVP]{2,3}|PVP)\s*(?:[OD0]M[G6]|DMG|DAMAGE)?\s*[BP]ON[A-Z]*\s*[\+\:\=\—\–]*\s*([0-9]{3,6})/i,
-                        /(?:โบนัสความเสียหาย\s*PVP|ความเสียหาย\s*PVP|ดาเมจ\s*PVP|เพิ่ม\s*PVP|PVP\s*ATK)\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i,
-                        /(?:^|\s)(?:PVP\s*DMG|PVP\s*DAMAGE|PVP\s*DM[G6])(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:PVP\s*(?:[OD0]M[G6]|DMG|DAMAGE)?\s*[BP]ON[A-Z]*|โบนัสความเสียหาย\s*PVP|ความเสียหาย\s*PVP|ดาเมจ\s*PVP|เพิ่ม\s*PVP|PVP\s*ATK|PVP\s*DMG|PVP\s*DAMAGE)(?!\s*R[OE]D|\s*RES|\s*DEF|\s*ลด|\s*ต้าน)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
                     ]
                 },
                 {
@@ -1274,7 +1272,7 @@
                     label: 'Crit Dmg',
                     isPercent: true,
                     patterns: [
-                        /(?:CR[I1]T\s*(?:[OD0]M[G6]|DAM|DMG|DAMAGE)\s*(?:[BP]ON[A-Z]*)?|CRITICAL\s*DAMAGE|ความเสียหายคริติคอล|ดาเมจคริติคอล|โบนัสคริติคอล|โบนัสความเสียหายคริ|แรงคริ|คริแดเมจ)(?!\s*RES|\s*R[OE]S|\s*ต้าน)\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?%?|[0O]X%?|[0O]%|[0O]X)/i
+                        /(?:CR[I1]T\s*(?:[OD0]M[G6]|DAM|DMG|DAMAGE)\s*(?:[BP]ON[A-Z]*)?|CR[I1]\s*(?:DAM|DMG|DAMAGE)|CRITICAL\s*DAMAGE|ความเสียหายคริติคอล|ดาเมจคริติคอล|โบนัสคริติคอล|โบนัสความเสียหายคริ|แรงคริ|คริแดเมจ|CRI\s*DAM)(?!\s*RES|\s*R[OE]S|\s*ต้าน)\s*(?:\(?%?\)?)?\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?|[0O]X%?|[0O]%|[0O]X)/i
                     ]
                 },
                 {
@@ -1282,9 +1280,7 @@
                     label: 'Crit Rate',
                     isPercent: false,
                     patterns: [
-                        /(?:CR[I1]T|C[I1]|CRITICAL|CR1T|CR1|คริติคอล|ค่าคริ)\s*[\+\:\=\—\–]*\s*([0-9]{2,5})(?!\s*DAM|\s*DMG|\s*[OD0]M[G6]|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*R[OE]D|\s*RES|\s*R[OE]S|\s*ต้าน|\s*ลด)/i,
-                        /(?:CR[I1]T\s*RATE|CRITICAL\s*RATE|อัตราคริติคอล|อัตราคริ|CR[I1]T\s*RATIO)(?!\s*DAM|\s*DMG|\s*[OD0]M[G6]|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*RES|\s*ต้าน)\s*[\+\:\=\—\–]*\s*([0-9]{1,5})/i,
-                        /(?:^|\s)(?:CR[I1]T|C[I1]|CRITICAL|CR1T|CR1|คริติคอล|ค่าคริ)(?!\s*DAM|\s*DMG|\s*[OD0]M[G6]|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*R[OE]D|\s*RES|\s*R[OE]S|\s*ต้าน|\s*ลด)\s*[\+\:\=\—\–]*\s*([0-9]{1,5})/i
+                        /(?:CR[I1]T\s*RATE|อัตราคริติคอล|อัตราคริ|CR[I1]T\s*RATIO|คริติคอล|ค่าคริ|\bCR[I1]T\b|\bCRI\b|\bCR1\b)(?!\s*DAM|\s*DMG|\s*[OD0]M[G6]|\s*DAMAGE|\s*BONUS|\s*ดาเมจ|\s*ความเสียหาย|\s*R[OE]D|\s*RES|\s*R[OE]S|\s*ต้าน|\s*ลด)\s*[\+\:\=\—\–\~]*\s*([0-9]{1,5})/i
                     ]
                 },
                 {
@@ -1292,8 +1288,8 @@
                     label: 'Ignore P.Def',
                     isPercent: false,
                     patterns: [
-                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*P[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–]*\s*([1-9][0-9]{1,4}(?:\.[0-9]+)?)/i,
-                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*P[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:IGNORE\s*P[.\s_]*D[EF]{1,3}|IGN\s*P[.\s_]*D[EF]{1,3}|ละเว้น\s*P[.\s_]*D[EF]{1,3}|เพิกเฉย\s*P[.\s_]*D[EF]{1,3}|เจาะเกราะกายภาพ|เจาะเกราะ\s*P[.\s_]*D[EF]{1,3}|IGN\s*P\.?DEF|IGN\s*PDEF)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i,
+                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*P[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
                     ]
                 },
                 {
@@ -1301,8 +1297,8 @@
                     label: 'Ignore M.Def',
                     isPercent: false,
                     patterns: [
-                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*M[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–]*\s*([1-9][0-9]{1,4}(?:\.[0-9]+)?)/i,
-                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*M[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–]*\s*([0-9]+(?:\.[0-9]+)?)/i
+                        /(?:IGNORE\s*M[.\s_]*D[EF]{1,3}|IGN\s*M[.\s_]*D[EF]{1,3}|ละเว้น\s*M[.\s_]*D[EF]{1,3}|เพิกเฉย\s*M[.\s_]*D[EF]{1,3}|เจาะเกราะเวท(?:ย์)?|เจาะเกราะ\s*M[.\s_]*D[EF]{1,3}|IGN\s*M\.?DEF|IGN\s*MDEF)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i,
+                        /(?:IGNORE|IGN|ละเว้น|เพิกเฉย|เจาะเกราะ)\s*M[.\s_]*D[EF]{1,3}\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?)/i
                     ]
                 },
                 {
@@ -1310,8 +1306,7 @@
                     label: 'Max HP',
                     isPercent: false,
                     patterns: [
-                        /(?:MAX\s*HP|M\s*A\s*X\s*H\s*P|HP\s*สูงสุด|พลังชีวิตสูงสุด|พลังชีวิต|MAX\s*H\b)\s*[\+\:]*\s*([0-9]{3,9})/i,
-                        /(?:^|\s)HP\s*[\+\:]*\s*([0-9]{4,9})/i
+                        /(?:MAX\s*HP|M\s*A\s*X\s*H\s*P|HP\s*สูงสุด|พลังชีวิตสูงสุด|พลังชีวิต|\bHP\b)\s*[\+\:\=\—\–\~]*\s*([0-9]{3,9})/i
                     ]
                 },
                 {
@@ -1319,8 +1314,7 @@
                     label: 'Max SP',
                     isPercent: false,
                     patterns: [
-                        /(?:MAX\s*SP|M\s*A\s*X\s*S\s*P|SP\s*สูงสุด|มานาสูงสุด|มานา|MAX\s*S\b)\s*[\+\:]*\s*([0-9]{2,7})/i,
-                        /(?:^|\s)SP\s*[\+\:]*\s*([0-9]{3,7})/i
+                        /(?:MAX\s*SP|M\s*A\s*X\s*S\s*P|SP\s*สูงสุด|มานาสูงสุด|มานา|\bSP\b)\s*[\+\:\=\—\–\~]*\s*([0-9]{2,7})/i
                     ]
                 },
                 {
@@ -1328,7 +1322,7 @@
                     label: 'P.Atk',
                     isPercent: false,
                     patterns: [
-                        /(?:^|\s)(?:P\.?\s*ATK|PHYSICAL\s*ATK|PHYSICAL\s*ATTACK|พลังโจมตีกายภาพ|โจมตีกายภาพ|พ\.?\s*โจมตี|P\s*ATK|PHY\s*ATK|P\s*ATTACK|PHY\s*ATTACK)(?!\s*DMG|\s*[OD0]M[G6]|\s*R[OE]D|\s*BONUS)\s*[\+\:\=\—\–]*\s*([0-9]{2,7})/i
+                        /(?:P\.?\s*ATK|PHYSICAL\s*ATK|PHYSICAL\s*ATTACK|พลังโจมตีกายภาพ|โจมตีกายภาพ|พ\.?\s*โจมตี|PHY\s*ATK|PHY\s*ATTACK)(?!\s*DMG|\s*[OD0]M[G6]|\s*R[OE]D|\s*BONUS)\s*[\+\:\=\—\–\~]*\s*([0-9]{2,7})/i
                     ]
                 },
                 {
@@ -1336,7 +1330,7 @@
                     label: 'M.Atk',
                     isPercent: false,
                     patterns: [
-                        /(?:^|\s)(?:M\.?\s*ATK|MAGIC\s*ATK|MAGIC\s*ATTACK|พลังโจมตีเวท(?:ย์)?|โจมตีเวท(?:ย์)?|เวทโจมตี|M\s*ATK|MAG\s*ATK|M\s*ATTACK|MAG\s*ATTACK)(?!\s*DMG|\s*[OD0]M[G6]|\s*R[OE]D|\s*BONUS)\s*[\+\:\=\—\–]*\s*([0-9]{2,7})/i
+                        /(?:M\.?\s*ATK|MAGIC\s*ATK|MAGIC\s*ATTACK|พลังโจมตีเวท(?:ย์)?|โจมตีเวท(?:ย์)?|เวทโจมตี|MAG\s*ATK|MAG\s*ATTACK)(?!\s*DMG|\s*[OD0]M[G6]|\s*R[OE]D|\s*BONUS)\s*[\+\:\=\—\–\~]*\s*([0-9]{2,7})/i
                     ]
                 },
                 {
@@ -1344,7 +1338,7 @@
                     label: 'P.Def',
                     isPercent: false,
                     patterns: [
-                        /(?<!IGNORE\s*|IGN\s*|ละเว้น\s*|เพิกเฉย\s*|เจาะเกราะ\s*)(?:^|\s)(?:P\.?\s*DEF|PHYSICAL\s*DEF|PHYSICAL\s*DEFENSE|พลังป้องกันกายภาพ|ป้องกันกายภาพ|พ\.?\s*ป้องกัน)(?!\s*R[OE]D)\s*[\+\:\=\—\–]*\s*([0-9]{2,7})/i
+                        /(?<!IGNORE\s*|IGN\s*|ละเว้น\s*|เพิกเฉย\s*|เจาะเกราะ\s*)(?:P\.?\s*DEF|PHYSICAL\s*DEF|PHYSICAL\s*DEFENSE|พลังป้องกันกายภาพ|ป้องกันกายภาพ|พ\.?\s*ป้องกัน)(?!\s*R[OE]D)\s*[\+\:\=\—\–\~]*\s*([0-9]{2,7})/i
                     ]
                 },
                 {
@@ -1352,7 +1346,7 @@
                     label: 'M.Def',
                     isPercent: false,
                     patterns: [
-                        /(?<!IGNORE\s*|IGN\s*|ละเว้น\s*|เพิกเฉย\s*|เจาะเกราะ\s*)(?:^|\s)(?:M\.?\s*DEF|MAGIC\s*DEF|MAGIC\s*DEFENSE|พลังป้องกันเวท(?:ย์)?|ป้องกันเวท(?:ย์)?|เวทป้องกัน)(?!\s*R[OE]D)\s*[\+\:\=\—\–]*\s*([0-9]{2,7})/i
+                        /(?<!IGNORE\s*|IGN\s*|ละเว้น\s*|เพิกเฉย\s*|เจาะเกราะ\s*)(?:M\.?\s*DEF|MAGIC\s*DEF|MAGIC\s*DEFENSE|พลังป้องกันเวท(?:ย์)?|ป้องกันเวท(?:ย์)?|เวทป้องกัน)(?!\s*R[OE]D)\s*[\+\:\=\—\–\~]*\s*([0-9]{2,7})/i
                     ]
                 },
                 {
@@ -1400,8 +1394,7 @@
                     label: 'ASPD%',
                     isPercent: true,
                     patterns: [
-                        /(?:A\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วโจมตี|ความเร็วการโจมตี|ATK\s*SPD|ATTACK\s*SPEED)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /\bASPD\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:A\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วโจมตี|ความเร็วการโจมตี|ATK\s*SPD|ATTACK\s*SPEED|\bASPD\b)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 },
                 {
@@ -1409,8 +1402,7 @@
                     label: 'MSPD%',
                     isPercent: true,
                     patterns: [
-                        /(?:M\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วเคลื่อนที่|ความเร็วการเคลื่อนที่|MOVE\s*SPD|MOVEMENT\s*SPEED)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i,
-                        /\bMSPD\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
+                        /(?:M\s*S\s*P\s*D\s*(?:PERCENT|%|เปอร์เซ็นต์)?|ความเร็วเคลื่อนที่|ความเร็วการเคลื่อนที่|MOVE\s*SPD|MOVEMENT\s*SPEED|\bMSPD\b)\s*[\+\:\=\—\–\~]*\s*([0-9]+(?:\.[0-9]+)?%?)/i
                     ]
                 }
             ];
