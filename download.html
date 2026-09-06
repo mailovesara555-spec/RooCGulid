@@ -169,11 +169,12 @@
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100/80 border border-purple-200 text-purple-800 text-xs font-bold">
                         <span>⚡</span>
                         <span>เครื่องมือเสริมพิเศษสำหรับสมาชิกกิลด์</span>
-                        <span class="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">v1.0 + Auto-Reconnect</span>
+                        <span class="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">v1.0 (สำหรับสมาชิก)</span>
                     </div>
 
                     <h2 class="text-3xl sm:text-4xl font-black text-indigo-950 tracking-tight leading-tight">
                         Romarco <span class="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent">Auto Clicker & Reconnect</span>
+                        <span class="text-xs sm:text-sm font-extrabold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-xl border border-purple-200 ml-2 align-middle">v1.0 สมาชิก</span>
                     </h2>
 
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
@@ -183,10 +184,10 @@
                     <!-- Key Spec Badges -->
                     <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
                         <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-purple-900 flex items-center gap-1.5 shadow-2xs">
-                            <span>🔄</span> ใหม่! ระบบ Auto-Reconnect
+                            <span>🔄</span> ระบบ Auto-Reconnect
                         </span>
                         <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-purple-900 flex items-center gap-1.5 shadow-2xs">
-                            <span>📦</span> ขนาดไฟล์ 6.35 MB
+                            <span>📦</span> ขนาดไฟล์ 5.38 MB (v1.0)
                         </span>
                         <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-purple-900 flex items-center gap-1.5 shadow-2xs">
                             <span>🧠</span> กิน RAM ต่ำ (~20 - 30 MB)
@@ -201,12 +202,12 @@
 
                     <!-- Download Buttons -->
                     <div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
-                        <button type="button" onclick="handleDownloadClick('downloads/Romarco_AutoClicker_v1.0.apk', 'Main APK')" class="roo-button download-glow w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 cursor-pointer">
+                        <button type="button" onclick="handleDownloadClick('downloads/Romarco_AutoClicker_v1.0.apk', 'Main APK v1.0', 'v1.0')" class="roo-button download-glow w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 cursor-pointer">
                             <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            <span>ดาวน์โหลดไฟล์ APK (v1.0)</span>
+                            <span>ดาวน์โหลด Romarco (v1.0 สมาชิก)</span>
                         </button>
-                        <button type="button" onclick="handleDownloadClick('Romarco_AutoClicker_v1.0.apk', 'Direct Mirror')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/90 hover:bg-purple-50 text-purple-800 border border-purple-200 font-bold text-sm text-center transition shadow-xs cursor-pointer">
-                            ลิงก์สำรอง (Direct Mirror)
+                        <button type="button" onclick="handleDownloadClick('Romarco_AutoClicker_v1.0.apk', 'Direct Mirror v1.0', 'v1.0')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/90 hover:bg-purple-50 text-purple-800 border border-purple-200 font-bold text-sm text-center transition shadow-xs cursor-pointer">
+                            ลิงก์สำรอง (v1.0 Mirror)
                         </button>
                     </div>
 
@@ -226,10 +227,87 @@
                         <!-- QR Code for Mobile Scanning -->
                         <div class="pt-2 border-t border-purple-100 w-full flex flex-col items-center">
                             <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <img id="apkQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https://roocguild.xyz/downloads/Romarco_AutoClicker_v1.0.apk" alt="Scan to Download APK" class="w-28 h-28 object-contain">
+                                <img id="apkQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https://roocguild.xyz/downloads/Romarco_AutoClicker_v1.0.apk" alt="Scan to Download APK v1.0" class="w-28 h-28 object-contain">
                             </div>
                             <span class="text-[10px] text-slate-500 font-medium mt-1.5 flex items-center gap-1">
-                                <span>📷</span> สแกนด้วยมือถือเพื่อดาวน์โหลด
+                                <span>📷</span> สแกนโหลด APK v1.0 (สมาชิก)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin v2.0 Exclusive Section (Visible & Downloadable ONLY by Admin) -->
+        <div id="adminV2Section" class="hidden roo-card rounded-3xl p-6 sm:p-10 border-2 border-amber-300/80 bg-gradient-to-br from-amber-50/90 via-purple-50/60 to-rose-50/70 shadow-xl relative overflow-hidden animate-fade-in text-center sm:text-left">
+            <!-- Decorative Background Glow -->
+            <div class="absolute -top-24 -right-24 w-80 h-80 bg-amber-300/30 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-rose-300/25 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-8 relative z-10">
+                <!-- App Info -->
+                <div class="space-y-4 max-w-xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold">
+                        <span>👑</span>
+                        <span>สิทธิ์พิเศษเฉพาะ Admin เท่านั้น (Admin Exclusive)</span>
+                        <span class="bg-gradient-to-r from-amber-600 to-rose-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs">v2.0 Dual-Mode</span>
+                    </div>
+
+                    <h2 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                        Romarco <span class="bg-gradient-to-r from-amber-600 via-rose-600 to-purple-600 bg-clip-text text-transparent">v2.0 (Dual-Mode Edition)</span>
+                    </h2>
+
+                    <p class="text-slate-700 text-sm sm:text-base leading-relaxed">
+                        เวอร์ชันอัปเกรดพิเศษ <strong>Dual-Mode Reconnect</strong> รองรับทั้ง <strong>Image Mode</strong> (ตรวจจับภาพหน้าจอ + ตัวกรองเฟรมซ้ำกันหลุดปลอม) และ <strong>Timeline Mode</strong> (ประหยัดพลังงาน ไม่ต้องแคปจอ ใช้จับเวลาวนลูปอัตโนมัติ) พร้อมระบบ <strong>Auto-Resume Macro</strong> อัตโนมัติหลังกู้คืนเกมสำเร็จ
+                    </p>
+
+                    <!-- Key Spec Badges -->
+                    <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
+                        <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-amber-950 bg-amber-100/90 border border-amber-300 flex items-center gap-1.5 shadow-2xs">
+                            <span>✨</span> Dual-Mode: Image & Timeline
+                        </span>
+                        <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-950 bg-rose-100/90 border border-rose-300 flex items-center gap-1.5 shadow-2xs">
+                            <span>🛡️</span> Consecutive Frame Filter (กันหลุดปลอม)
+                        </span>
+                        <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-purple-950 bg-purple-100/90 border border-purple-300 flex items-center gap-1.5 shadow-2xs">
+                            <span>📦</span> ขนาดไฟล์ 5.39 MB (v2.0)
+                        </span>
+                        <span class="feature-badge px-3 py-1.5 rounded-xl text-xs font-semibold text-amber-950 bg-amber-100/90 border border-amber-300 flex items-center gap-1.5 shadow-2xs">
+                            <span>👑</span> สิทธิ์โหลดเฉพาะ Admin
+                        </span>
+                    </div>
+
+                    <!-- Download Buttons -->
+                    <div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
+                        <button type="button" onclick="handleDownloadClick('downloads/Romarco_AutoClicker_v2.0.apk', 'Admin APK v2.0', 'v2.0')" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 cursor-pointer bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:from-amber-600 hover:to-purple-700 text-white shadow-lg shadow-amber-500/25 transition transform active:scale-98">
+                            <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span>ดาวน์โหลด Romarco (v2.0 Admin)</span>
+                        </button>
+                        <button type="button" onclick="handleDownloadClick('Romarco_AutoClicker_v2.0.apk', 'Admin Mirror v2.0', 'v2.0')" class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/90 hover:bg-amber-50 text-amber-900 border border-amber-300 font-bold text-sm text-center transition shadow-xs cursor-pointer">
+                            ลิงก์สำรอง (v2.0 Mirror)
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- App Icon & QR Code Card for v2 -->
+                <div class="w-full sm:w-auto shrink-0 flex flex-col items-center">
+                    <div class="bg-gradient-to-br from-amber-100/80 to-rose-100/80 p-6 rounded-3xl border border-amber-300 shadow-md flex flex-col items-center gap-3">
+                        <div class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-5xl shadow-lg shadow-amber-500/30">
+                            👑
+                        </div>
+                        <div class="text-center">
+                            <h4 class="font-extrabold text-amber-950 text-sm">Romarco v2.0.0 (Admin)</h4>
+                            <p class="text-[11px] text-amber-800">Dual-Mode Reconnect Edition</p>
+                        </div>
+
+                        <!-- QR Code for Mobile Scanning v2 -->
+                        <div class="pt-2 border-t border-amber-200 w-full flex flex-col items-center">
+                            <div class="p-2 bg-white rounded-xl border border-amber-300 shadow-2xs">
+                                <img id="apkQrCodeV2" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https://roocguild.xyz/downloads/Romarco_AutoClicker_v2.0.apk" alt="Scan to Download APK v2.0" class="w-28 h-28 object-contain">
+                            </div>
+                            <span class="text-[10px] text-amber-900 font-bold mt-1.5 flex items-center gap-1">
+                                <span>📱</span> สแกนโหลด APK v2.0 (Admin)
                             </span>
                         </div>
                     </div>
@@ -514,7 +592,8 @@
         const navLogoutBtn = document.getElementById('navLogoutBtn');
 
         if (verifiedUser) {
-            const displayName = `${verifiedUser} (สมาชิกกิลด์)`;
+            const isAdm = verifiedUser.toLowerCase() === 'daffodil2693';
+            const displayName = isAdm ? `${verifiedUser} (⚡ Admin)` : `${verifiedUser} (สมาชิกกิลด์)`;
             if (navUsername) navUsername.innerText = displayName;
             if (navUsernameMobile) navUsernameMobile.innerText = displayName;
             if (navLogoutBtn) navLogoutBtn.classList.remove('hidden');
@@ -652,6 +731,7 @@
 
         function updateAdminVisibility() {
             const section = document.getElementById('adminDownloadRecordsSection');
+            const v2Section = document.getElementById('adminV2Section');
             const admin = isUserAdmin();
 
             if (section) {
@@ -659,6 +739,14 @@
                     section.classList.remove('hidden');
                 } else {
                     section.classList.add('hidden');
+                }
+            }
+
+            if (v2Section) {
+                if (admin) {
+                    v2Section.classList.remove('hidden');
+                } else {
+                    v2Section.classList.add('hidden');
                 }
             }
         }
@@ -725,6 +813,10 @@
                 else if (r.role === 'รองหัวหน้ากิลด์') roleColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
                 else if (r.role === 'ผู้จัดการ') roleColor = 'bg-teal-100 text-teal-800 border-teal-200';
 
+                const verBadge = (r.version === 'v2.0' || (r.version && r.version.includes('v2'))) 
+                    ? '<span class="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900 border border-amber-300">v2.0 Admin</span>'
+                    : '<span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 border border-purple-200">v1.0</span>';
+
                 return `
                     <div class="flex items-center justify-between p-2.5 rounded-2xl ${meHighlight} border border-slate-200/80 transition text-xs gap-3">
                         <div class="flex items-center gap-2.5 min-w-0">
@@ -734,6 +826,7 @@
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="font-black text-indigo-950">${r.name || r.discordUser}</span>
                                     <span class="text-[10px] font-bold px-1.5 py-0.2 rounded border ${roleColor}">${r.role || 'สมาชิกกิลด์'}</span>
+                                    ${verBadge}
                                     <span class="text-purple-700 font-mono text-[10px] bg-purple-50 px-1 py-0.2 rounded border border-purple-200">@${r.discordUser}</span>
                                     ${isMe ? '<span class="text-[9px] bg-purple-600 text-white font-black px-1.5 py-0.2 rounded-full shadow-2xs">คุณ</span>' : ''}
                                 </div>
@@ -761,12 +854,20 @@
         // ==========================================
         // 4. บันทึกและเริ่มดาวน์โหลดไฟล์ (Track Download)
         // ==========================================
-        function handleDownloadClick(apkUrl, source = 'Direct Download') {
+        function handleDownloadClick(apkUrl, source = 'Direct Download', version = 'v1.0') {
+            // ป้องกันการดาวน์โหลด v2 หากไม่ใช่ Admin
+            if ((version === 'v2.0' || apkUrl.includes('v2')) && !isUserAdmin()) {
+                alert('⚠️ ขออภัยครับ เวอร์ชัน v2.0 (Dual-Mode Edition) เปิดให้ดาวน์โหลดเฉพาะ Admin เท่านั้น');
+                return;
+            }
+
             const memberName = currentMember ? currentMember.name : verifiedUser;
             const memberClass = currentMember ? (currentMember.charClass || 'ไม่ระบุ') : 'ไม่ระบุ';
             const memberRole = currentMember ? (currentMember.role || 'สมาชิกกิลด์') : 'สมาชิกกิลด์';
             const safeKey = encodeKey(verifiedUser);
             const thaiTime = getThaiDateTimeString();
+            const downloadFilename = apkUrl.includes('v2') ? 'Romarco_AutoClicker_v2.0.apk' : 'Romarco_AutoClicker_v1.0.apk';
+            const targetVersion = version || (apkUrl.includes('v2') ? 'v2.0' : 'v1.0');
 
             try {
                 // 1. บันทึกลง Firebase romarco_downloads
@@ -783,7 +884,7 @@
                         firstDownloadedAt: firstAt,
                         lastDownloadedAt: new Date().toISOString(),
                         lastDownloadedThai: thaiTime,
-                        version: 'v1.0.0',
+                        version: targetVersion,
                         source: source
                     };
                 });
@@ -796,25 +897,26 @@
                     charClass: memberClass,
                     timestamp: new Date().toISOString(),
                     thaiTime: thaiTime,
+                    version: targetVersion,
                     source: source
                 });
 
                 // 3. เริ่มดาวน์โหลดไฟล์ APK
                 const a = document.createElement('a');
                 a.href = apkUrl;
-                a.download = 'Romarco_AutoClicker_v1.0.apk';
+                a.download = downloadFilename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
 
                 // 4. แสดง Toast Feedback
-                alert(`🎉 บันทึกการดาวน์โหลดของสมาชิก "${memberName}" เรียบร้อยแล้ว!\n\nกำลังเริ่มดาวน์โหลดไฟล์ APK...`);
+                alert(`🎉 บันทึกการดาวน์โหลด Romarco (${targetVersion}) ของ "${memberName}" เรียบร้อยแล้ว!\n\nกำลังเริ่มดาวน์โหลดไฟล์ APK...`);
             } catch (err) {
                 console.error('Record download error:', err);
                 // หาก Firebase มีปัญหา ยังคงให้ดาวน์โหลดไฟล์ได้ตามปกติ
                 const a = document.createElement('a');
                 a.href = apkUrl;
-                a.download = 'Romarco_AutoClicker_v1.0.apk';
+                a.download = downloadFilename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -824,10 +926,15 @@
         // Update QR code dynamically with current host URL
         try {
             const currentOrigin = window.location.origin;
-            const fullDownloadUrl = `${currentOrigin}/download.html`;
+            const fullDownloadUrl = `${currentOrigin}/downloads/Romarco_AutoClicker_v1.0.apk`;
             const qrImg = document.getElementById('apkQrCode');
             if (qrImg) {
                 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(fullDownloadUrl)}`;
+            }
+            const qrImgV2 = document.getElementById('apkQrCodeV2');
+            if (qrImgV2) {
+                const fullDownloadUrlV2 = `${currentOrigin}/downloads/Romarco_AutoClicker_v2.0.apk`;
+                qrImgV2.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(fullDownloadUrlV2)}`;
             }
         } catch(e) {}
     </script>
