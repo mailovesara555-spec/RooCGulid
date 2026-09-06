@@ -1674,8 +1674,8 @@
                                 color: 0x9333ea,
                                 fields: [
                                     { name: "📅 รอบประจำวันที่", value: `${cycle.startStr} ถึง ${cycle.endStr}`, inline: true },
-                                    { name: "⏰ กำหนดส่ง", value: "ภายในวันนี้ก่อนเที่ยงคืน", inline: true },
-                                    { name: "🌐 เว็บไซต์กิลด์", value: "[คลิกเข้าสู่ระบบเว็บกิลด์](https://rooc-guild.vercel.app/)", inline: false }
+                                    { name: "⏰ กำหนดส่ง", value: "ก่อนเที่ยงวันจันทร์ (หากยังไม่อัปเดตจะแจ้งเตือนทวงรายชื่อ)", inline: true },
+                                    { name: "🌐 เว็บไซต์กิลด์", value: "[คลิกเข้าสู่ระบบเว็บกิลด์](https://roocguild.xyz/)", inline: false }
                                 ],
                                 footer: { text: "ROOC Guild Management System • ระบบแจ้งเตือนอัตโนมัติ" },
                                 timestamp: new Date().toISOString()
@@ -1715,7 +1715,7 @@
                                 color: 0xf43f5e,
                                 fields: [
                                     ...fields,
-                                    { name: "🔗 ช่องทางอัปเดต", value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://rooc-guild.vercel.app/dashboard.html)", inline: false }
+                                    { name: "🔗 ช่องทางอัปเดต", value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://roocguild.xyz/dashboard.html)", inline: false }
                                 ],
                                 footer: { text: `รอบวันที่ ${cycle.startStr} - ${cycle.endStr} • เตือนประจำวันเวลา 12:00 น.` },
                                 timestamp: new Date().toISOString()

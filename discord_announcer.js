@@ -229,12 +229,12 @@ async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
                     },
                     {
                         name: "⏰ กำหนดส่ง",
-                        value: "ภายในวันนี้ก่อนเที่ยงคืน",
+                        value: "ก่อนเที่ยงวันจันทร์ (หากยังไม่อัปเดตจะแจ้งเตือนทวงรายชื่อ)",
                         inline: true
                     },
                     {
                         name: "🌐 เว็บไซต์กิลด์",
-                        value: "[คลิกเข้าสู่ระบบเว็บกิลด์](https://rooc-guild.vercel.app/)",
+                        value: "[คลิกเข้าสู่ระบบเว็บกิลด์](https://roocguild.xyz/)",
                         inline: false
                     }
                 ],
@@ -304,7 +304,7 @@ async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
                     ...fields,
                     {
                         name: "🔗 ช่องทางอัปเดต",
-                        value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://rooc-guild.vercel.app/dashboard.html)",
+                        value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://roocguild.xyz/dashboard.html)",
                         inline: false
                     }
                 ],
