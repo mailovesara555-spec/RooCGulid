@@ -55,5 +55,11 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/discord/cron",
+      "schedule": "0 5 * * *"
+    }
   ]
 }

@@ -417,6 +417,7 @@ module.exports = {
     sendSundayAnnouncement,
     sendDailyReminderAnnouncement,
     checkAndTriggerScheduler,
+    hasSentToday,
     startScheduler,
     stopScheduler
 };

@@ -277,7 +277,48 @@ app.post('/api/discord/announce-now', async (req, res) => {
     }
 });
 
-// เริ่มต้นระบบ Background Scheduler ตรวจสอบเวลา 12:00 น. ทุกวัน
+// API: สำหรับ Cron Job (Vercel Cron / GitHub Actions / Cron-job.org)
+app.all('/api/discord/cron', async (req, res) => {
+    try {
+        const bkkNow = announcer.getBangkokDate();
+        const cycle = announcer.getCycleInfo(bkkNow);
+        const isForce = req.query.force === 'true';
+
+        console.log(`[Cron Triggered] วันที่ไทย: ${bkkNow.toLocaleString('th-TH')}, รอบที่: ${cycle.cycleNumber}, วันในรอบ: ${cycle.dayInCycle}`);
+
+        // ตรวจสอบว่าวันนี้ส่งไปแล้วหรือยัง (ป้องกันส่งซ้ำซ้อน)
+        const alreadySent = await announcer.hasSentToday();
+        if (alreadySent && !isForce) {
+            return res.json({
+                success: true,
+                message: 'วันนี้ได้ส่งประกาศไปเรียบร้อยแล้ว (Already sent today)',
+                cycle
+            });
+        }
+
+        let result;
+        if (cycle.isSundayStart) {
+            console.log('[Cron] กำลังส่งประกาศวันอาทิตย์ (@everyone)...');
+            result = await announcer.sendSundayAnnouncement();
+        } else if (cycle.isReminderPeriod) {
+            console.log('[Cron] กำลังส่งประกาศแจ้งเตือนประจำวัน (ทวงคนที่ยังไม่อัปเดต)...');
+            result = await announcer.sendDailyReminderAnnouncement();
+        } else {
+            result = { message: 'ไม่อยู่ในช่วงเวลาการส่งประกาศ' };
+        }
+
+        res.json({
+            success: true,
+            cycle,
+            result
+        });
+    } catch (err) {
+        console.error('[Cron Error]', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// เริ่มต้นระบบ Background Scheduler ตรวจสอบเวลา 12:00 น. ทุกวัน (สำหรับกรณีรัน Node แบบ 24/7)
 announcer.startScheduler();
 
 // Export สำหรับ Vercel Serverless Function
