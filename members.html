@@ -213,6 +213,17 @@
                 </div>
 
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                        <span>🆔 Discord User ID (ตัวเลข 18-19 หลัก)</span>
+                        <span class="text-[10px] text-purple-600 font-bold">✨ จำเป็นเพื่อให้แท็กติด @ชื่อเล่น</span>
+                    </label>
+                    <input type="text" id="editDiscordId" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-2 text-sm font-mono font-bold text-slate-800 shadow-xs" placeholder="เช่น 345678901234567890">
+                    <p class="text-[10px] text-slate-400 mt-1">
+                        💡 วิธีหา ID: ใน Discord คลิกขวาที่ชื่อ &gt; "Copy User ID" (หรือพิมพ์ \@ชื่อ ในแชท Discord เพื่อดูเลข ID)
+                    </p>
+                </div>
+
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อตัวละครในเกม</label>
                     <input type="text" id="editName" class="w-full bg-white border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-xs">
                 </div>
@@ -516,6 +527,20 @@
                     <div class="p-3 bg-rose-50/70 border border-rose-100 rounded-2xl">
                         <div class="text-[10px] font-bold text-rose-700 uppercase tracking-wider">📊 สถานะสมาชิกกิลด์</div>
                         <div id="discordMemberStatsSummary" class="text-xs font-black text-rose-950 mt-1">ยังไม่อัปเดต 0 / 0 ท่าน</div>
+                    </div>
+                </div>
+
+                <!-- Info Hint Banner about Discord Mention ID -->
+                <div class="p-3 bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 border border-purple-200 rounded-2xl flex items-start gap-2.5 text-xs text-purple-950 shadow-2xs">
+                    <span class="text-base shrink-0">💡</span>
+                    <div class="space-y-0.5 leading-relaxed">
+                        <div class="font-black text-indigo-950 flex items-center gap-1.5 flex-wrap">
+                            <span>การแท็กชื่อใน Discord ให้ขึ้นแถบชื่อเล่น (เช่น @BalL / บอล):</span>
+                            <span class="text-[10px] bg-purple-200/80 text-purple-900 font-bold px-1.5 py-0.2 rounded-full">สำคัญ</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px]">
+                            Discord จะแท็กและแจ้งเตือนติดเฉพาะเมื่อใช้ <strong>Discord User ID (ตัวเลข 18-19 หลัก)</strong> เท่านั้น หากสมาชิกคนไหนขึ้น <span class="px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-bold">⚠️ @username</span> สามารถกดปุ่ม <span class="px-1.5 py-0.2 bg-indigo-600 text-white rounded font-bold text-[10px]">➕ ใส่ ID</span> เพื่อใส่เลข ID ได้ทันทีครับ
+                        </p>
                     </div>
                 </div>
 
@@ -924,6 +949,7 @@
             if (!member) return;
 
             document.getElementById('editUid').value = member.uid;
+            document.getElementById('editDiscordId').value = member.discordId || '';
             document.getElementById('editName').value = member.name || '';
             document.getElementById('editClass').value = member.charClass || 'Sniper';
             document.getElementById('editSubRole').value = member.subRole ? `🚩 ${member.subRole}` : '';
@@ -1045,6 +1071,9 @@
             const charClass = document.getElementById('editClass').value;
             const role = document.getElementById('editRole').value;
             const active = document.getElementById('editActive').checked;
+            const rawDiscordId = (document.getElementById('editDiscordId')?.value || '').trim();
+            const idMatch = rawDiscordId.match(/\d{17,20}/);
+            const discordIdVal = idMatch ? idMatch[0] : (rawDiscordId || null);
 
             if (!name) {
                 alert('กรุณากรอกชื่อตัวละคร');
@@ -1054,7 +1083,8 @@
             const updates = {
                 name: name,
                 charClass: charClass,
-                active: active
+                active: active,
+                discordId: discordIdVal || null
             };
 
             const isChar2 = uid.includes('(ตัวที่ 2)');
@@ -1062,6 +1092,16 @@
                 updates.role = 'สมาชิกกิลด์';
             } else if (isAdmin && uid.toLowerCase() !== 'daffodil2693') {
                 updates.role = role;
+            }
+
+            const cleanBaseUser = String(uid).replace(/\s*\(ตัวที่ 2\)/g, '').trim();
+            if (cleanBaseUser) {
+                const safeWlKey = encodeWhitelistKey(cleanBaseUser);
+                if (discordIdVal) {
+                    db.ref('whitelist/' + safeWlKey + '/discordId').set(discordIdVal).catch(() => {});
+                } else {
+                    db.ref('whitelist/' + safeWlKey + '/discordId').remove().catch(() => {});
+                }
             }
 
             const safeKey = getFirebaseUidKey(uid);
@@ -1592,7 +1632,13 @@
 
             listEl.innerHTML = filtered.map((m, idx) => {
                 const icon = getClassIconHtml(m.charClass, 'w-6 h-6 rounded-md');
-                const tagDisplay = m.discordId ? `<span class="text-indigo-600 font-mono font-bold bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 text-[10px]">&lt;@${m.discordId}&gt;</span>` : `<span class="text-slate-600 font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">@${m.discordUsername}</span>`;
+                const tagDisplay = m.discordId 
+                    ? `<span class="text-indigo-700 font-mono font-bold bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200 text-[10px] inline-flex items-center gap-1 shadow-2xs"><span>✅</span>&lt;@${m.discordId}&gt;</span>` 
+                    : `<span class="text-amber-800 font-mono text-[10px] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 inline-flex items-center gap-1"><span>⚠️</span>@${m.discordUsername}</span>`;
+
+                const idActionBtn = m.discordId
+                    ? `<button type="button" onclick="promptSetDiscordId('${m.name}', '${m.discordUsername}', '${m.discordId}')" class="text-[10px] text-slate-400 hover:text-indigo-600 font-bold px-1.5 py-0.5 rounded hover:bg-purple-100 transition cursor-pointer" title="แก้ไข Discord ID">✏️</button>`
+                    : `<button type="button" onclick="promptSetDiscordId('${m.name}', '${m.discordUsername}', '')" class="text-[10px] text-white font-bold px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-2xs transition cursor-pointer inline-flex items-center gap-1" title="ใส่ Discord User ID เพื่อให้แท็กติด @ชื่อเล่น"><span>➕</span> ใส่ ID</button>`;
 
                 return `
                     <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-purple-50/50 border border-slate-200/80 transition text-xs">
@@ -1604,6 +1650,7 @@
                                     <span class="font-black text-indigo-950">${m.name}</span>
                                     <span class="text-[10px] text-purple-700 font-medium">${m.charClass}</span>
                                     ${tagDisplay}
+                                    ${idActionBtn}
                                 </div>
                                 <div class="text-[10px] text-slate-500 mt-0.5">
                                     ตำแหน่ง: ${m.role} • อัปเดตล่าสุด: <span class="font-medium text-rose-600">${m.lastUpdate}</span>
@@ -1620,6 +1667,45 @@
 
         function filterDiscordUnupdatedList() {
             renderDiscordUnupdatedList();
+        }
+
+        function promptSetDiscordId(name, username, currentId = '') {
+            const tip = "💡 วิธีหา ID:\n1. ใน Discord พิมพ์ \\@ชื่อ ในช่องแชทแล้วกดส่ง (เช่น \\@BalL / บอล) จะได้เลข ID ออกมาเป็น <@12345...>\n2. หรือไปที่ Discord Settings > Advanced > เปิด Developer Mode แล้วคลิกขวาที่ชื่อ > Copy User ID";
+            const val = prompt(`กรุณากรอก Discord User ID (ตัวเลข 18-19 หลัก) สำหรับ "${name}" (@${username}):\n\n${tip}`, currentId || '');
+            if (val === null) return;
+
+            const match = String(val).match(/\d{17,20}/);
+            const discordId = match ? match[0] : val.trim();
+
+            if (val.trim() && !discordId) {
+                alert('⚠️ รูปแบบ ID ไม่ถูกต้อง กรุณากรอกเป็นตัวเลข 18-19 หลักครับ');
+                return;
+            }
+
+            const cleanBaseUser = String(username).replace(/\s*\(ตัวที่ 2\)/g, '').trim();
+            const safeWlKey = encodeWhitelistKey(cleanBaseUser);
+            const safeMemberKey = getFirebaseUidKey(cleanBaseUser);
+
+            const promises = [];
+            if (discordId) {
+                promises.push(db.ref(`members/${safeMemberKey}/discordId`).set(discordId));
+                promises.push(db.ref(`whitelist/${safeWlKey}/discordId`).set(discordId));
+            } else {
+                promises.push(db.ref(`members/${safeMemberKey}/discordId`).remove());
+                promises.push(db.ref(`whitelist/${safeWlKey}/discordId`).remove());
+            }
+
+            Promise.all(promises).then(() => {
+                alert(`✨ บันทึก Discord ID ของ "${name}" เรียบร้อยแล้ว! (${discordId ? `<@${discordId}>` : 'ลบ ID'})`);
+                // อัปเดตใน state ทันที
+                const target = currentDiscordUnupdated.find(m => m.discordUsername === username || m.name === name);
+                if (target) target.discordId = discordId || null;
+                const mem = allMembersData.find(m => (m.mainUid || m.uid || '').toLowerCase() === cleanBaseUser.toLowerCase());
+                if (mem) mem.discordId = discordId || null;
+                renderDiscordUnupdatedList();
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
         }
 
         async function triggerDiscordAnnouncement(type) {
@@ -1668,6 +1754,9 @@
                     if (type === 'SUNDAY') {
                         payload = {
                             content: "@everyone 📢 **[ROOC GUILD ANNOUNCEMENT] แจ้งเตือนอัปเดตสเตตัสประจำรอบ 2 สัปดาห์!**",
+                            allowed_mentions: {
+                                parse: ['everyone', 'users', 'roles']
+                            },
                             embeds: [{
                                 title: "🛡️ กิลด์ ROOC: รบกวนสมาชิกทุกคนอัปเดตสเตตัสล่าสุด",
                                 description: `สวัสดีสมาชิกทุกคนครับ! วันนี้เริ่มต้นรอบการประเมินสเตตัสประจำรอบ **${cycle.startStr} - ${cycle.endStr}**\n\nรบกวนสมาชิกทุกคนช่วยเข้าไปอัปโหลดและอัปเดตสเตตัสตัวละครที่หน้าเว็บกิลด์ เพื่อให้ทีมผู้นำนำไปจัดผังปาร์ตี้ **GVG / KVM / PVE** ได้อย่างแม่นยำและเต็มประสิทธิภาพครับ ✨`,
@@ -1709,6 +1798,9 @@
 
                         payload = {
                             content: `⚠️ **แจ้งเตือนสมาชิกที่ยังไม่ได้อัปเดตสเตตัส (${currentDiscordUnupdated.length} ท่าน):**\n${mentions}`,
+                            allowed_mentions: {
+                                parse: ['users', 'roles', 'everyone']
+                            },
                             embeds: [{
                                 title: `⚠️ แจ้งเตือน: สมาชิกที่ยังไม่ได้อัปเดตสเตตัส (${currentDiscordUnupdated.length} คน)`,
                                 description: `รบกวนสมาชิกที่มีรายชื่อด้านล่างช่วยเข้าไปอัปเดตค่าสเตตัสล่าสุดที่หน้าเว็บด้วยนะครับ เพื่อความพร้อมในการแข่งขันกิลด์ครับ 🙏✨`,

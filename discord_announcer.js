@@ -216,6 +216,9 @@ async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
 
     const payload = {
         content: "@everyone 📢 **[ROOC GUILD ANNOUNCEMENT] แจ้งเตือนอัปเดตสเตตัสประจำรอบ 2 สัปดาห์!**",
+        allowed_mentions: {
+            parse: ['everyone', 'users', 'roles']
+        },
         embeds: [
             {
                 title: "🛡️ กิลด์ ROOC: รบกวนสมาชิกทุกคนอัปเดตสเตตัสล่าสุด",
@@ -295,6 +298,9 @@ async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
 
     const payload = {
         content: mentionsContent,
+        allowed_mentions: {
+            parse: ['users', 'roles', 'everyone']
+        },
         embeds: [
             {
                 title: `⚠️ แจ้งเตือน: สมาชิกที่ยังไม่ได้อัปเดตสเตตัส (${unupdatedMembers.length} คน)`,

@@ -571,7 +571,7 @@
         });
 
         // Helper สำหรับถอดรหัสและตรวจความถูกต้องของ Signed Auth Token
-        function getVerifiedUserFromToken(token) {
+        function getVerifiedPayloadFromToken(token) {
             if (!token || typeof token !== 'string') return null;
             const parts = token.split('.');
             if (parts.length !== 2) return null;
@@ -583,10 +583,15 @@
                 if (!payload.u || !payload.t || (Date.now() - payload.t > maxAge)) {
                     return null;
                 }
-                return String(payload.u).trim();
+                return payload;
             } catch(e) {
                 return null;
             }
+        }
+
+        function getVerifiedUserFromToken(token) {
+            const p = getVerifiedPayloadFromToken(token);
+            return p ? String(p.u).trim() : null;
         }
 
         // 2. User & Session Verification (ป้องกันการเปลี่ยน ?user= เพื่อสวมรอย)
@@ -594,7 +599,9 @@
         const urlAuthToken = urlParams.get('auth_token');
         const storedToken = sessionStorage.getItem('rooc_auth_token') || localStorage.getItem('rooc_auth_token');
         const activeToken = urlAuthToken || storedToken;
-        const verifiedUser = getVerifiedUserFromToken(activeToken);
+        const tokenPayload = getVerifiedPayloadFromToken(activeToken);
+        const verifiedUser = tokenPayload ? String(tokenPayload.u).trim() : null;
+        const currentDiscordId = tokenPayload && tokenPayload.id ? String(tokenPayload.id).trim() : null;
 
         if (!verifiedUser) {
             localStorage.removeItem('rooc_auth_token');
@@ -973,6 +980,7 @@
                 const payload = {
                     uid: charUid,
                     mainUid: currentUser,
+                    discordId: currentDiscordId || existing.discordId || null,
                     isChar2: (activeCharIndex === 2),
                     name: name,
                     charClass: charClass,
@@ -1034,8 +1042,14 @@
             };
 
             const safeKey = getActiveFirebaseKey();
-            db.ref('members/' + safeKey + '/stats').set(stats).then(() => {
-                db.ref('members/' + safeKey + '/lastUpdate').set(getFormattedDate());
+            const updates = {
+                stats: stats,
+                lastUpdate: getFormattedDate()
+            };
+            if (currentDiscordId) {
+                updates.discordId = currentDiscordId;
+            }
+            db.ref('members/' + safeKey).update(updates).then(() => {
                 const charTypeStr = (activeCharIndex === 1) ? 'ตัวละครหลัก' : 'ตัวละครรอง (ตัวที่ 2)';
                 alert(`✨ บันทึกสเตตัสของ ${charTypeStr} ขึ้นระบบกิลด์เรียบร้อยแล้ว!`);
             }).catch(err => {

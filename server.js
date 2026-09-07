@@ -214,6 +214,36 @@ app.get('/auth/discord/callback', async (req, res) => {
         }
 
         if (isAllowed) {
+            // ซิงค์ Discord User ID (Snowflake) ลง Firebase RTDB อัตโนมัติ เพื่อให้ระบบแท็ก @mention ใน Discord ทำงานได้จริง
+            try {
+                const fbUrl = 'https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app';
+                const cleanKey = username.replace(/\./g, '__dot__');
+                // 1. อัปเดตใน whitelist
+                await axios.patch(`${fbUrl}/whitelist/${cleanKey}.json`, {
+                    discordId: userId,
+                    discordUsername: discordUser.username
+                }).catch(() => {});
+
+                // 2. อัปเดตใน members สำหรับทุกตัวละครของ username นี้
+                const membersRes = await axios.get(`${fbUrl}/members.json`).catch(() => null);
+                if (membersRes && membersRes.data) {
+                    const membersObj = membersRes.data;
+                    for (const [mKey, mVal] of Object.entries(membersObj)) {
+                        const mUid = String(mVal.uid || '').toLowerCase();
+                        const mMain = String(mVal.mainUid || '').toLowerCase();
+                        const mDisc = String(mVal.discordUser || '').toLowerCase();
+                        if (mUid === username || mMain === username || mDisc === username) {
+                            await axios.patch(`${fbUrl}/members/${mKey}.json`, {
+                                discordId: userId,
+                                discordUser: discordUser.username
+                            }).catch(() => {});
+                        }
+                    }
+                }
+            } catch (syncErr) {
+                console.warn('Auto-sync discordId error:', syncErr.message);
+            }
+
             // สร้าง Cryptographic Signed Token เพื่อความปลอดภัย ป้องกันการเปลี่ยน query param สวมรอย
             const authToken = generateAuthToken(discordUser);
             // ส่งต่อไปยังหน้า Dashboard พร้อม Token และลบการพึ่งพา ?user= แบบลอยๆ
