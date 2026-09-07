@@ -203,6 +203,9 @@ app.get('/auth/discord/callback', async (req, res) => {
                                 allowedList.add(cleanU.replace(/__dot__/g, '.'));
                                 allowedList.add(cleanU.replace(/__dot__/g, ''));
                             }
+                            if (item && item.discordId) {
+                                allowedList.add(String(item.discordId).trim());
+                            }
                         }
                     }
 
@@ -218,13 +221,21 @@ app.get('/auth/discord/callback', async (req, res) => {
             try {
                 const fbUrl = 'https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app';
                 const cleanKey = username.replace(/\./g, '__dot__');
-                // 1. อัปเดตใน whitelist
+                // 1. อัปเดตใน whitelist (ทั้งคีย์ชื่อและคีย์ ID)
                 await axios.patch(`${fbUrl}/whitelist/${cleanKey}.json`, {
                     discordId: userId,
                     discordUsername: discordUser.username
                 }).catch(() => {});
 
-                // 2. อัปเดตใน members สำหรับทุกตัวละครของ username นี้
+                if (cleanKey !== userId) {
+                    await axios.patch(`${fbUrl}/whitelist/${userId}.json`, {
+                        discordId: userId,
+                        discordUsername: discordUser.username,
+                        username: discordUser.username
+                    }).catch(() => {});
+                }
+
+                // 2. อัปเดตใน members สำหรับทุกตัวละครของสมาชิกนี้ (จับคู่จาก username หรือ ID)
                 const membersRes = await axios.get(`${fbUrl}/members.json`).catch(() => null);
                 if (membersRes && membersRes.data) {
                     const membersObj = membersRes.data;
@@ -232,7 +243,8 @@ app.get('/auth/discord/callback', async (req, res) => {
                         const mUid = String(mVal.uid || '').toLowerCase();
                         const mMain = String(mVal.mainUid || '').toLowerCase();
                         const mDisc = String(mVal.discordUser || '').toLowerCase();
-                        if (mUid === username || mMain === username || mDisc === username) {
+                        const mDId = String(mVal.discordId || '').trim();
+                        if (mUid === username || mMain === username || mDisc === username || mDId === userId || mUid === userId || mMain === userId) {
                             await axios.patch(`${fbUrl}/members/${mKey}.json`, {
                                 discordId: userId,
                                 discordUser: discordUser.username

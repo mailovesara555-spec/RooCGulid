@@ -438,23 +438,29 @@
                 <button onclick="closeWhitelistModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
 
-            <!-- Form เพิ่ม Username ใหม่ -->
+            <!-- Form เพิ่ม Username หรือ Discord User ID ใหม่ -->
             <div class="p-4 bg-purple-50/70 rounded-2xl border border-purple-200 mb-5 space-y-3 shadow-xs">
-                <h4 class="text-xs font-bold text-purple-700 flex items-center gap-1.5">
-                    <span>➕</span> เพิ่ม Discord Username ที่อนุญาต (ไม่จำกัด)
-                </h4>
+                <div class="flex items-center justify-between flex-wrap gap-1">
+                    <h4 class="text-xs font-bold text-purple-700 flex items-center gap-1.5">
+                        <span>➕</span> เพิ่มสิทธิ์การเข้าใช้งาน (Discord User ID หรือ Username)
+                    </h4>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-300">
+                        🌟 แนะนำใส่ Discord User ID เพื่อแท็กชื่อเล่นติดทันที
+                    </span>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Discord Username (เช่น onlyfunz.gg)</label>
-                        <input type="text" id="newWhitelistUser" placeholder="เช่น onlyfunz.gg หรือ amooma_aom" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Discord User ID หรือ Username</label>
+                        <input type="text" id="newWhitelistUser" placeholder="ตัวเลข ID (เช่น 345678901234567890) หรือชื่อดิสคอร์ด" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs font-mono">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">หมายเหตุ / ชื่อเล่น</label>
-                        <input type="text" id="newWhitelistNote" placeholder="เช่น นายต้น สมาชิกกิลด์" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">หมายเหตุ / ชื่อเล่นตัวละคร</label>
+                        <input type="text" id="newWhitelistNote" placeholder="เช่น BalL / บอล หรือชื่อตัวละคร" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 shadow-xs">
                     </div>
                 </div>
-                <div class="flex justify-end pt-1">
-                    <button onclick="addWhitelistUser()" class="roo-button px-5 py-2 font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-2 pt-1">
+                    <span class="text-[10px] text-slate-500">💡 วิธีหา ID: ใน Discord คลิกขวาที่ชื่อ &gt; "Copy User ID" หรือพิมพ์ \@ชื่อ ในแชท</span>
+                    <button onclick="addWhitelistUser()" class="roo-button px-5 py-2 font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer shrink-0">
                         ➕ อนุญาตสิทธิ์เข้าใช้งาน
                     </button>
                 </div>
@@ -1330,24 +1336,49 @@
                 return;
             }
 
-            const rawUser = document.getElementById('newWhitelistUser').value.trim();
+            const rawInput = document.getElementById('newWhitelistUser').value.trim();
             const note = document.getElementById('newWhitelistNote').value.trim();
 
-            if (!rawUser) {
-                alert('กรุณากรอก Discord Username');
+            if (!rawInput) {
+                alert('กรุณากรอก Discord User ID หรือ Discord Username');
                 return;
             }
 
-            const cleanUser = rawUser.replace(/#/g, '').trim();
-            const safeKey = encodeWhitelistKey(cleanUser);
+            // ตัดสัญลักษณ์ <@!>, # และช่องว่างออก
+            const cleanInput = rawInput.replace(/[<@!>#]/g, '').trim();
+            const isNumericId = /^\d{17,20}$/.test(cleanInput);
 
-            db.ref('whitelist/' + safeKey).set({
-                username: cleanUser,
+            let safeKey = '';
+            let payload = {
                 addedAt: new Date().toISOString(),
                 addedBy: `${currentUser} [${currentUserRole}]`,
                 note: note || '-'
-            }).then(() => {
-                alert(`✨ อนุญาตสิทธิ์ให้ "${cleanUser}" เข้าใช้งานเว็บเรียบร้อยแล้ว! (ไม่จำกัดจำนวนคน)`);
+            };
+
+            if (isNumericId) {
+                safeKey = cleanInput;
+                payload.discordId = cleanInput;
+                payload.username = note || cleanInput;
+            } else {
+                safeKey = encodeWhitelistKey(cleanInput);
+                payload.username = cleanInput;
+            }
+
+            db.ref('whitelist/' + safeKey).set(payload).then(() => {
+                // หากกรอกเป็น Discord User ID และมีการระบุ note (เช่น ชื่อตัวละคร) ให้พยายามอัปเดต discordId ใน members table ด้วย
+                if (isNumericId && note) {
+                    const matchedMembers = allMembersData.filter(m => 
+                        (m.name && m.name.toLowerCase().includes(note.toLowerCase())) ||
+                        (m.uid && m.uid.toLowerCase().includes(note.toLowerCase()))
+                    );
+                    matchedMembers.forEach(m => {
+                        if (m.uid) {
+                            db.ref('members/' + m.uid + '/discordId').set(cleanInput).catch(() => {});
+                        }
+                    });
+                }
+
+                alert(`✨ อนุญาตสิทธิ์ให้ "${isNumericId ? ('Discord ID: ' + cleanInput) : cleanInput}" เข้าใช้งานเว็บเรียบร้อยแล้ว! (ไม่จำกัดจำนวนคน)`);
                 document.getElementById('newWhitelistUser').value = '';
                 document.getElementById('newWhitelistNote').value = '';
             }).catch(err => {
@@ -1375,6 +1406,58 @@
             }
         }
 
+        function promptSetDiscordIdFromWhitelist(safeKey, username) {
+            const currentItem = currentWhitelist[safeKey] || {};
+            const currentId = currentItem.discordId || '';
+            const tip = "💡 วิธีหา ID:\n1. ใน Discord พิมพ์ \\@ชื่อ ในช่องแชทแล้วกดส่ง (เช่น \\@BalL / บอล) จะได้เลข ID ออกมาเป็น <@12345...>\n2. หรือคลิกขวาที่ชื่อผู้ใช้ใน Discord > Copy User ID";
+            const val = prompt(`กรุณากรอก Discord User ID (ตัวเลข 17-20 หลัก) สำหรับ "${username}":\n\n${tip}`, currentId);
+            if (val === null) return;
+
+            const match = String(val).match(/\d{17,20}/);
+            const discordId = match ? match[0] : val.trim();
+
+            if (val.trim() && !discordId) {
+                alert('⚠️ รูปแบบ ID ไม่ถูกต้อง กรุณากรอกเป็นตัวเลข 17-20 หลักครับ');
+                return;
+            }
+
+            const promises = [];
+            if (discordId) {
+                promises.push(db.ref(`whitelist/${safeKey}/discordId`).set(discordId));
+                // หาก safeKey ไม่ตรงกับ discordId สร้าง alias id ด้วย
+                if (safeKey !== discordId) {
+                    promises.push(db.ref(`whitelist/${discordId}`).update({
+                        discordId: discordId,
+                        username: username || discordId,
+                        note: currentItem.note || '-'
+                    }));
+                }
+            } else {
+                promises.push(db.ref(`whitelist/${safeKey}/discordId`).remove());
+            }
+
+            // ค้นหาและอัปเดตสมาชิกใน members table ที่มี username หรือชื่อตรงกัน
+            const cleanBaseUser = String(username).replace(/\s*\(ตัวที่ 2\)/g, '').trim().toLowerCase();
+            allMembersData.forEach(m => {
+                const mUid = String(m.uid || '').toLowerCase();
+                const mMain = String(m.mainUid || '').toLowerCase();
+                const mDisc = String(m.discordUser || '').toLowerCase();
+                if (mUid === cleanBaseUser || mMain === cleanBaseUser || mDisc === cleanBaseUser) {
+                    if (discordId) {
+                        promises.push(db.ref(`members/${m.uid}/discordId`).set(discordId));
+                    } else {
+                        promises.push(db.ref(`members/${m.uid}/discordId`).remove());
+                    }
+                }
+            });
+
+            Promise.all(promises).then(() => {
+                alert(`✨ บันทึก Discord ID สำหรับ "${username}" เรียบร้อยแล้ว! (${discordId ? `<@${discordId}>` : 'ลบ ID'})`);
+            }).catch(err => {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+            });
+        }
+
         function renderWhitelistList() {
             const tbody = document.getElementById('whitelistTableBody');
             const countBadge = document.getElementById('whitelistCount');
@@ -1391,10 +1474,11 @@
             let filteredKeys = keys.filter(k => {
                 const item = currentWhitelist[k] || {};
                 const user = (item.username || decodeWhitelistKey(k)).toLowerCase();
+                const dId = String(item.discordId || '').toLowerCase();
                 const note = ((typeof item === 'object' && item.note) ? item.note : '').toLowerCase();
-                const matched = allMembersData.find(m => m.uid && m.uid.toLowerCase() === user);
+                const matched = allMembersData.find(m => (m.uid && m.uid.toLowerCase() === user) || (m.discordId && m.discordId === dId));
                 const charName = matched ? (matched.name || '').toLowerCase() : '';
-                return user.includes(filterKeyword) || note.includes(filterKeyword) || charName.includes(filterKeyword);
+                return user.includes(filterKeyword) || dId.includes(filterKeyword) || note.includes(filterKeyword) || charName.includes(filterKeyword);
             });
 
             if (filteredKeys.length === 0) {
@@ -1405,11 +1489,19 @@
             tbody.innerHTML = filteredKeys.map((safeKey) => {
                 const item = currentWhitelist[safeKey] || {};
                 const trueUsername = item.username || decodeWhitelistKey(safeKey);
+                const discordId = item.discordId || null;
                 const note = (typeof item === 'object' && item.note) ? item.note : '-';
                 const isSuper = (trueUsername.toLowerCase() === 'daffodil2693');
 
-                const mainChar = allMembersData.find(m => m.uid && m.uid.toLowerCase() === trueUsername.toLowerCase() && !m.isChar2);
-                const secondChar = allMembersData.find(m => m.uid && (m.uid.toLowerCase() === `${trueUsername.toLowerCase()} (ตัวที่ 2)` || (m.uid.toLowerCase() === trueUsername.toLowerCase() && m.isChar2)));
+                const mainChar = allMembersData.find(m => 
+                    ((m.uid && m.uid.toLowerCase() === trueUsername.toLowerCase()) || 
+                     (discordId && m.discordId === discordId)) && !m.isChar2
+                );
+                const secondChar = allMembersData.find(m => 
+                    (m.uid && (m.uid.toLowerCase() === `${trueUsername.toLowerCase()} (ตัวที่ 2)` || 
+                     (m.uid.toLowerCase() === trueUsername.toLowerCase() && m.isChar2))) ||
+                    (discordId && m.discordId === discordId && m.isChar2)
+                );
 
                 let charBadges = '';
                 if (mainChar) {
@@ -1429,6 +1521,22 @@
                     }
                 } else {
                     charBadges = `<span class="text-[10px] text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700">ยังไม่สร้างโปรไฟล์</span>`;
+                }
+
+                // Discord ID Badge หรือปุ่มใส่ ID
+                let discordIdBadge = '';
+                if (discordId) {
+                    discordIdBadge = `
+                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-950 text-indigo-300 rounded border border-indigo-700/60 text-[10px] font-mono font-bold shadow-2xs" title="Discord User ID (แท็กชื่อเล่นติดอัตโนมัติ)">
+                            🆔 <span class="text-indigo-200">&lt;@${discordId}&gt;</span>
+                        </span>
+                    `;
+                } else {
+                    discordIdBadge = `
+                        <button type="button" onclick="promptSetDiscordIdFromWhitelist('${safeKey}', '${trueUsername}')" class="px-1.5 py-0.5 bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded text-[10px] font-bold transition shadow-xs cursor-pointer inline-flex items-center gap-0.5" title="ใส่ Discord User ID เพื่อให้แท็ก @ชื่อเล่น ติดใน Discord">
+                            ➕ ใส่ ID
+                        </button>
+                    `;
                 }
 
                 let subtitle = '';
@@ -1451,6 +1559,7 @@
                                 <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
                                     <span class="text-xs font-mono font-bold text-slate-100 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700 shadow-2xs">${trueUsername}</span>
                                     ${isSuper ? '<span class="text-[10px] bg-rose-950/70 text-rose-300 font-extrabold px-1.5 py-0.5 rounded border border-rose-800/80">Admin</span>' : ''}
+                                    ${discordIdBadge}
                                     <span class="text-slate-500 text-xs">➔</span>
                                     ${charBadges}
                                 </div>
