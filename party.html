@@ -217,11 +217,17 @@
                 </p>
             </div>
             
-            <div class="flex items-center gap-3 flex-wrap">
-                <button id="btnExportPartyJpg" onclick="exportPartyAsJpg()" class="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
-                    <span>📷</span> Export เป็น JPG
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <button id="btnExportPartyMainJpg" onclick="exportPartyTeamAsJpg('main')" class="px-3.5 py-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer" title="บันทึกรูปภาพผังทีมหลัก ปาร์ตี้ 1 - 8">
+                    <span>🛡️</span> Export ทีมหลัก (1-8)
                 </button>
-                <button onclick="exportPartyLineup()" class="roo-button px-4 py-2 font-black rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                <button id="btnExportPartySubJpg" onclick="exportPartyTeamAsJpg('sub')" class="px-3.5 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer" title="บันทึกรูปภาพผังทีมรอง ปาร์ตี้ 9 - 16">
+                    <span>⚔️</span> Export ทีมรอง (9-16)
+                </button>
+                <button id="btnExportPartyAllJpg" onclick="exportPartyTeamAsJpg('all')" class="px-3 py-2 bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-bold rounded-xl text-xs border border-slate-200 shadow-2xs transition flex items-center gap-1.5 cursor-pointer" title="บันทึกรูปภาพผังครบทั้งหมด 16 ปาร์ตี้">
+                    <span>📷</span> Export ทั้งหมด (1-16)
+                </button>
+                <button onclick="exportPartyLineup()" class="roo-button px-3.5 py-2 font-black rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                     📋 Export ตาราง
                 </button>
                 <button onclick="autoFillParties()" id="btnAutoFill" class="px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs border border-purple-200 shadow-2xs transition flex items-center gap-1.5 cursor-pointer">
@@ -271,9 +277,14 @@
                         <h3 id="sectionTitleMain" class="text-sm font-black text-indigo-950 flex items-center gap-2">
                             <span id="sectionIconMain" class="text-purple-600">🛡️</span> <span id="sectionLabelMain">ทีมหลัก (Main Team)</span> - <span id="assignedMainCount" class="text-purple-700 font-black">0</span>/<span id="assignedMainMax">40</span> คน
                         </h3>
-                        <span id="sectionBadgeMain" class="text-xs bg-purple-50 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
-                            ปาร์ตี้ 1 - 8
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="exportPartyTeamAsJpg('main')" class="px-3 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white font-bold rounded-xl text-xs shadow-xs transition flex items-center gap-1 cursor-pointer" title="Export เฉพาะทีมหลัก 1-8 เป็น JPG">
+                                <span>📷</span> Export ทีมหลัก (JPG)
+                            </button>
+                            <span id="sectionBadgeMain" class="text-xs bg-purple-50 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
+                                ปาร์ตี้ 1 - 8
+                            </span>
+                        </div>
                     </div>
 
                     <!-- 8 Parties Grid (Main) -->
@@ -288,9 +299,14 @@
                         <h3 id="sectionTitleSub" class="text-sm font-black text-indigo-950 flex items-center gap-2">
                             <span id="sectionIconSub" class="text-purple-600">⚔️</span> <span id="sectionLabelSub">ทีมรอง (Sub Team)</span> - <span id="assignedSubCount" class="text-purple-700 font-black">0</span>/<span id="assignedSubMax">40</span> คน
                         </h3>
-                        <span id="sectionBadgeSub" class="text-xs bg-purple-50 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
-                            ปาร์ตี้ 9 - 16
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="exportPartyTeamAsJpg('sub')" class="px-3 py-1 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:opacity-95 text-white font-bold rounded-xl text-xs shadow-xs transition flex items-center gap-1 cursor-pointer" title="Export เฉพาะทีมรอง 9-16 เป็น JPG">
+                                <span>📷</span> Export ทีมรอง (JPG)
+                            </button>
+                            <span id="sectionBadgeSub" class="text-xs bg-purple-50 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
+                                ปาร์ตี้ 9 - 16
+                            </span>
+                        </div>
                     </div>
 
                     <!-- 8 Parties Grid (Sub) -->
@@ -508,15 +524,21 @@
                 <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
             <textarea id="exportTextarea" readonly class="w-full h-80 bg-purple-50/50 border border-purple-200 rounded-2xl p-4 text-xs font-mono text-slate-800 focus:outline-none shadow-inner leading-relaxed select-all"></textarea>
-            <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-purple-100 flex-wrap">
-                <button onclick="closeExportModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition cursor-pointer">
+            <div class="flex items-center justify-end gap-2.5 mt-4 pt-4 border-t border-purple-100 flex-wrap">
+                <button onclick="closeExportModal()" class="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition cursor-pointer">
                     ปิด
                 </button>
-                <button onclick="exportPartyAsJpg()" class="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
-                    <span>📷</span> บันทึกเป็นรูปภาพ JPG
+                <button onclick="exportPartyTeamAsJpg('main')" class="px-3.5 py-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer" title="บันทึกรูปภาพผังทีมหลัก ปาร์ตี้ 1 - 8">
+                    <span>🛡️</span> เซฟทีมหลัก (JPG)
                 </button>
-                <button onclick="copyExportText()" class="roo-button px-5 py-2 rounded-xl font-black text-xs shadow-md flex items-center gap-1.5 cursor-pointer">
-                    📋 คัดลอกข้อความทั้งหมด
+                <button onclick="exportPartyTeamAsJpg('sub')" class="px-3.5 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer" title="บันทึกรูปภาพผังทีมรอง ปาร์ตี้ 9 - 16">
+                    <span>⚔️</span> เซฟทีมรอง (JPG)
+                </button>
+                <button onclick="exportPartyTeamAsJpg('all')" class="px-3 py-2 bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center gap-1 cursor-pointer" title="บันทึกรูปภาพผังครบทั้งหมด 16 ปาร์ตี้">
+                    <span>📷</span> เซฟทั้งหมด (JPG)
+                </button>
+                <button onclick="copyExportText()" class="roo-button px-4 py-2 rounded-xl font-black text-xs shadow-md flex items-center gap-1.5 cursor-pointer">
+                    📋 คัดลอกข้อความ
                 </button>
             </div>
         </div>
@@ -2003,21 +2025,25 @@
             });
         }
 
-        async function exportPartyAsJpg() {
-            const btn = document.getElementById('btnExportPartyJpg');
-            const origHtml = btn ? btn.innerHTML : '';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+        function exportPartyAsJpg() {
+            exportPartyTeamAsJpg('all');
+        }
+
+        async function exportPartyTeamAsJpg(teamType = 'all') {
+            // Find active trigger button to show spinner
+            let activeBtn = null;
+            if (teamType === 'main') activeBtn = document.getElementById('btnExportPartyMainJpg');
+            else if (teamType === 'sub') activeBtn = document.getElementById('btnExportPartySubJpg');
+            else activeBtn = document.getElementById('btnExportPartyAllJpg');
+            
+            const origHtml = activeBtn ? activeBtn.innerHTML : '';
+            if (activeBtn) {
+                activeBtn.disabled = true;
+                activeBtn.innerHTML = '<span>⏳</span> กำลังสร้างรูป...';
             }
 
             try {
-                const target = document.getElementById('partiesLineupWrapper');
-                if (!target) {
-                    alert('ไม่พบข้อมูลผังปาร์ตี้');
-                    return;
-                }
-
+                const isCardAuction = (currentMode === 'cardAuction');
                 let modeTitle = '🏆 Guild League (40v40)';
                 if (currentMode === 'emperiumOverrun') modeTitle = '🏰 Emperium Overrun';
                 if (currentMode === 'cardAuction') modeTitle = '🃏 ปาร์ตี้ประมูลการ์ด';
@@ -2027,20 +2053,53 @@
                 const subCount = document.getElementById('assignedSubCount') ? document.getElementById('assignedSubCount').innerText : '0';
                 const subMax = document.getElementById('assignedSubMax') ? document.getElementById('assignedSubMax').innerText : '40';
 
-                // Create offscreen container with desktop width for high fidelity
+                // Determine party range
+                let startP = 1;
+                let endP = 16;
+                let displayTitle = 'ผังจัดปาร์ตี้ทั้งหมด (Parties 1 - 16)';
+                let teamPillHtml = '';
+
+                if (teamType === 'main') {
+                    startP = 1;
+                    endP = 8;
+                    displayTitle = isCardAuction ? 'ผังปาร์ตี้ประมูลการ์ด (ปาร์ตี้ 1 - 8)' : 'ผังจัดปาร์ตี้ทีมหลัก (Party 1 - 8)';
+                    teamPillHtml = `<span style="background:#eef2ff;color:#4338ca;padding:7px 16px;border-radius:12px;font-size:13px;font-weight:900;border:1.5px solid #c7d2fe;">🛡️ สมาชิกทีมหลัก: ${mainCount}/${mainMax} คน</span>`;
+                } else if (teamType === 'sub') {
+                    startP = 9;
+                    endP = 16;
+                    displayTitle = isCardAuction ? 'ผังปาร์ตี้ประมูลการ์ด (ปาร์ตี้ 9 - 16)' : 'ผังจัดปาร์ตี้ทีมรอง (Party 9 - 16)';
+                    teamPillHtml = `<span style="background:#fdf2f8;color:#be123c;padding:7px 16px;border-radius:12px;font-size:13px;font-weight:900;border:1.5px solid #fecdd3;">⚔️ สมาชิกทีมรอง: ${subCount}/${subMax} คน</span>`;
+                } else {
+                    startP = 1;
+                    endP = 16;
+                    displayTitle = isCardAuction ? 'ผังปาร์ตี้ประมูลการ์ดทั้งหมด (1 - 16)' : 'ผังจัดปาร์ตี้กิลด์ทั้งหมด (Party 1 - 16)';
+                    if (isCardAuction) {
+                        teamPillHtml = `<span style="background:#f3e8ff;color:#6b21a8;padding:7px 16px;border-radius:12px;font-size:13px;font-weight:900;border:1.5px solid #d8b4fe;">🃏 รวมสมาชิก: ${mainCount}/${mainMax} คน</span>`;
+                    } else {
+                        teamPillHtml = `
+                            <div style="display:flex;gap:10px;">
+                                <span style="background:#eef2ff;color:#4338ca;padding:7px 16px;border-radius:12px;font-size:13px;font-weight:900;border:1.5px solid #c7d2fe;">🛡️ ทีมหลัก: ${mainCount}/${mainMax} คน</span>
+                                <span style="background:#fdf2f8;color:#be123c;padding:7px 16px;border-radius:12px;font-size:13px;font-weight:900;border:1.5px solid #fecdd3;">⚔️ ทีมรอง: ${subCount}/${subMax} คน</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Create offscreen container with wide layout (1500px)
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'fixed';
                 tempContainer.style.top = '-99999px';
                 tempContainer.style.left = '0';
-                tempContainer.style.width = '1280px';
+                tempContainer.style.width = '1500px';
                 tempContainer.style.backgroundColor = '#ffffff';
-                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff1f5 50%, #fffcf0 100%)';
                 tempContainer.style.padding = '36px';
                 tempContainer.style.boxSizing = 'border-box';
-                tempContainer.style.borderRadius = '24px';
+                tempContainer.style.borderRadius = '28px';
+                tempContainer.style.fontFamily = "'Prompt', sans-serif";
                 tempContainer.style.zIndex = '-9999';
 
-                // Guild Infographic Header
+                // Header Banner (Uses solid colors only - NO gradient text clipping to avoid purple box bugs!)
                 const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                 const headerDiv = document.createElement('div');
                 headerDiv.style.display = 'flex';
@@ -2049,45 +2108,184 @@
                 headerDiv.style.marginBottom = '24px';
                 headerDiv.style.paddingBottom = '18px';
                 headerDiv.style.borderBottom = '2.5px solid #e9d5ff';
-
-                let countSummaryHtml = '';
-                if (currentMode === 'cardAuction') {
-                    countSummaryHtml = `<span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">🃏 รวมสมาชิก: ${mainCount}/${mainMax} คน</span>`;
-                } else {
-                    countSummaryHtml = `
-                        <div style="display:flex;gap:10px;">
-                            <span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">🛡️ ทีมหลัก: ${mainCount}/${mainMax} คน</span>
-                            <span style="background:#f1f5f9;color:#334155;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #cbd5e1;">⚔️ ทีมรอง: ${subCount}/${subMax} คน</span>
-                        </div>
-                    `;
-                }
-
                 headerDiv.innerHTML = `
                     <div style="display:flex;align-items:center;gap:16px;">
                         <img src="images/guild_icon.jpg" style="width:58px;height:58px;border-radius:16px;object-fit:cover;box-shadow:0 6px 16px rgba(124,58,237,0.2);border:2px solid #ffffff;">
                         <div>
-                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• ผังจัดปาร์ตี้</span></div>
-                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">กิจกรรม: <strong style="color:#7e22ce;">${modeTitle}</strong> • ข้อมูล ณ วันที่: ${dateStr}</div>
+                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">
+                                Wendell Guild <span style="color:#7e22ce;">• ${displayTitle}</span>
+                            </div>
+                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">
+                                กิจกรรม: <strong style="color:#7e22ce;">${modeTitle}</strong> • ข้อมูล ณ วันที่: ${dateStr}
+                            </div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        ${countSummaryHtml}
+                        ${teamPillHtml}
                     </div>
                 `;
                 tempContainer.appendChild(headerDiv);
 
-                // Clone party grid
-                const clone = target.cloneNode(true);
-                clone.style.width = '100%';
-                
-                // Remove buttons or drag artifacts inside clone
-                clone.querySelectorAll('button').forEach(b => {
-                    if (b.innerText.includes('โอนคิว')) {
-                        b.style.display = 'none';
-                    }
-                });
+                // Helper to render party card HTML
+                function buildPartyCard(pNum) {
+                    const pKey = `p${pNum}`;
+                    const pData = partyAssignments[pKey] || {};
+                    const isSubTeam = (!isCardAuction && pNum >= 9);
 
-                tempContainer.appendChild(clone);
+                    let pCount = 0;
+                    for (let s = 1; s <= 5; s++) {
+                        if (pData[`slot${s}`]) pCount++;
+                    }
+
+                    let countBadgeStyle = 'background:#f8fafc; color:#475569; border:1px solid #cbd5e1;';
+                    let countText = `${pCount}/5 คน`;
+                    if (pCount === 5) {
+                        countBadgeStyle = 'background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;';
+                        countText = '✅ 5/5 คน';
+                    } else if (isCardAuction) {
+                        countBadgeStyle = 'background:#fffbeb; color:#b45309; border:1px solid #fde68a;';
+                        countText = `⚠️ ${pCount}/5 คน`;
+                    }
+
+                    const subTeamBadge = isSubTeam 
+                        ? `<span style="background:#fdf2f8; color:#db2777; font-size:10px; font-weight:800; padding:2px 6px; border-radius:6px; border:1px solid #fbcfe8;">⚔️ ทีมรอง</span>`
+                        : '';
+
+                    let slotsHtml = '';
+                    for (let s = 1; s <= 5; s++) {
+                        const memberName = pData[`slot${s}`];
+                        if (memberName) {
+                            const member = allGuildMembers.find(m => m.name === memberName || m.uid === memberName) || { name: memberName };
+                            const effectiveClass = getMemberPartyClass(member);
+                            const iconHtml = getClassIconHtml(effectiveClass, 'w-7 h-7');
+                            const isLeave = isMemberOnLeave(member);
+
+                            const subRoleHtml = member.subRole ? `<span style="background:#eef2ff; color:#4338ca; font-size:10px; font-weight:800; padding:1px 5px; border-radius:6px; border:1px solid #c7d2fe;">🚩 ${member.subRole}</span>` : '';
+                            const isChar2 = member.isChar2 || member.name.includes('(ตัวที่ 2)') || (member.uid && member.uid.includes('(ตัวที่ 2)'));
+                            const char2Html = isChar2 ? `<span style="background:#f0fdfa; color:#0d9488; font-size:10px; font-weight:800; padding:1px 5px; border-radius:6px; border:1px solid #99f6e4;">✌️2</span>` : '';
+                            const cardIconHtml = (isCardAuction && hasCardIcon(member.name)) ? `<span style="background:#f5f3ff; color:#7c3aed; font-size:10px; font-weight:800; padding:1px 5px; border-radius:6px; border:1px solid #ddd6fe;"><img src="images/item_card.png" style="width:12px;height:12px;display:inline-block;vertical-align:middle;"> 🃏</span>` : '';
+
+                            const nextGuildItem = isCardAuction ? getNextGuildCardReceiver() : null;
+                            const isNextInGuild = nextGuildItem && nextGuildItem.memberName === member.name;
+                            const isRightHolder = isCardAuction && (getPartyCardRightHolder(pKey) === member.name);
+
+                            let rightBadgeHtml = '';
+                            if (isNextInGuild) {
+                                rightBadgeHtml = `<span style="background:#7c3aed; color:#ffffff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px;">⭐ คิวถัดไป</span>`;
+                            } else if (isRightHolder) {
+                                rightBadgeHtml = `<span style="background:#f5f3ff; color:#7c3aed; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; border:1px solid #ddd6fe;">🎯 สิทธิ์ในตี้</span>`;
+                            }
+
+                            const leavePillHtml = isLeave ? `<span style="background:#ffe4e6; color:#e11d48; font-size:10px; font-weight:800; padding:1px 6px; border-radius:6px;">🏖️ ลา</span>` : '';
+
+                            slotsHtml += `
+                                <div style="background:${isLeave ? '#fff5f5' : '#f8fafc'}; border:1.5px solid ${isLeave ? '#fecdd3' : '#e2e8f0'}; border-radius:12px; padding:7px 10px; margin-bottom:7px; display:flex; align-items:center; gap:10px;">
+                                    <div style="width:34px; height:34px; border-radius:10px; background:#ffffff; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        ${iconHtml}
+                                    </div>
+                                    <div style="flex:1; min-width:0;">
+                                        <div style="display:flex; align-items:center; justify-content:space-between; gap:4px;">
+                                            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                                                <span style="font-size:15px; font-weight:900; color:${isLeave ? '#be123c' : '#0f172a'}; line-height:1.2;">${member.name}</span>
+                                                ${subRoleHtml}
+                                                ${char2Html}
+                                                ${cardIconHtml}
+                                            </div>
+                                            ${rightBadgeHtml}
+                                        </div>
+                                        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
+                                            <span style="font-size:12px; font-weight:700; color:${isLeave ? '#e11d48' : '#7c3aed'};">${effectiveClass || '-'}</span>
+                                            ${leavePillHtml}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            slotsHtml += `
+                                <div style="background:#ffffff; border:1.5px dashed #cbd5e1; border-radius:12px; padding:7px 10px; margin-bottom:7px; height:50px; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
+                                    <span style="font-size:12px; font-weight:700; color:#94a3b8;">[ ว่าง - Slot ${s} ]</span>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    return `
+                        <div style="background:#ffffff; border-radius:18px; border:1.5px solid #e2e8f0; padding:14px; box-shadow:0 4px 12px rgba(124,58,237,0.04);">
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; margin-bottom:10px; border-bottom:1.5px solid #f1f5f9;">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:16px; font-weight:900; color:#1e1b4b;">Party ${pNum}</span>
+                                    ${subTeamBadge}
+                                </div>
+                                <span style="font-size:12px; font-weight:800; padding:3px 10px; border-radius:8px; ${countBadgeStyle}">
+                                    ${countText}
+                                </span>
+                            </div>
+                            ${slotsHtml}
+                        </div>
+                    `;
+                }
+
+                // Render Party Grid
+                if (teamType === 'all' && !isCardAuction) {
+                    // Render Main Team Section
+                    const mainHeader = document.createElement('div');
+                    mainHeader.style.fontSize = '15px';
+                    mainHeader.style.fontWeight = '900';
+                    mainHeader.style.color = '#1e1b4b';
+                    mainHeader.style.marginBottom = '12px';
+                    mainHeader.style.padding = '8px 16px';
+                    mainHeader.style.background = '#eef2ff';
+                    mainHeader.style.borderRadius = '12px';
+                    mainHeader.style.border = '1.5px solid #c7d2fe';
+                    mainHeader.style.display = 'flex';
+                    mainHeader.style.justifyContent = 'space-between';
+                    mainHeader.innerHTML = `<span>🛡️ ทีมหลัก (Main Team) - ปาร์ตี้ 1 - 8</span> <span>${mainCount}/${mainMax} คน</span>`;
+                    tempContainer.appendChild(mainHeader);
+
+                    const gridMain = document.createElement('div');
+                    gridMain.style.display = 'grid';
+                    gridMain.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                    gridMain.style.gap = '16px';
+                    gridMain.style.marginBottom = '24px';
+                    for (let pNum = 1; pNum <= 8; pNum++) {
+                        gridMain.innerHTML += buildPartyCard(pNum);
+                    }
+                    tempContainer.appendChild(gridMain);
+
+                    // Render Sub Team Section
+                    const subHeader = document.createElement('div');
+                    subHeader.style.fontSize = '15px';
+                    subHeader.style.fontWeight = '900';
+                    subHeader.style.color = '#1e1b4b';
+                    subHeader.style.marginBottom = '12px';
+                    subHeader.style.padding = '8px 16px';
+                    subHeader.style.background = '#fdf2f8';
+                    subHeader.style.borderRadius = '12px';
+                    subHeader.style.border = '1.5px solid #fecdd3';
+                    subHeader.style.display = 'flex';
+                    subHeader.style.justifyContent = 'space-between';
+                    subHeader.innerHTML = `<span>⚔️ ทีมรอง (Sub Team) - ปาร์ตี้ 9 - 16</span> <span>${subCount}/${subMax} คน</span>`;
+                    tempContainer.appendChild(subHeader);
+
+                    const gridSub = document.createElement('div');
+                    gridSub.style.display = 'grid';
+                    gridSub.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                    gridSub.style.gap = '16px';
+                    for (let pNum = 9; pNum <= 16; pNum++) {
+                        gridSub.innerHTML += buildPartyCard(pNum);
+                    }
+                    tempContainer.appendChild(gridSub);
+                } else {
+                    // Single 4x2 grid (Main, Sub, or Card Auction)
+                    const grid = document.createElement('div');
+                    grid.style.display = 'grid';
+                    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                    grid.style.gap = '16px';
+                    for (let pNum = startP; pNum <= endP; pNum++) {
+                        grid.innerHTML += buildPartyCard(pNum);
+                    }
+                    tempContainer.appendChild(grid);
+                }
 
                 // Check on-leave members
                 const allLeaveNames = new Set([
@@ -2101,7 +2299,7 @@
                     leaveFooter.style.background = '#fff1f2';
                     leaveFooter.style.borderRadius = '16px';
                     leaveFooter.style.border = '1.5px solid #fecdd3';
-                    leaveFooter.style.fontSize = '12px';
+                    leaveFooter.style.fontSize = '13px';
                     leaveFooter.style.color = '#be123c';
                     leaveFooter.style.fontWeight = 'bold';
                     leaveFooter.innerHTML = `🏖️ สมาชิกแจ้งลากิจกรรม (${allLeaveNames.size} คน): <span style="color:#e11d48;font-weight:600;">${Array.from(allLeaveNames).join(', ')}</span>`;
@@ -2112,7 +2310,7 @@
                 const footerDiv = document.createElement('div');
                 footerDiv.style.marginTop = '20px';
                 footerDiv.style.textAlign = 'center';
-                footerDiv.style.fontSize = '11px';
+                footerDiv.style.fontSize = '12px';
                 footerDiv.style.color = '#94a3b8';
                 footerDiv.style.fontWeight = 'bold';
                 footerDiv.innerText = 'Wendell Guild Management System • Ragnarok Origin Classic (ROOC)';
@@ -2143,7 +2341,8 @@
                 const jpgData = canvas.toDataURL('image/jpeg', 0.95);
                 const a = document.createElement('a');
                 const today = new Date().toISOString().slice(0, 10);
-                a.download = `rooc_party_${currentMode}_${today}.jpg`;
+                const fileSuffix = (teamType === 'main') ? 'main_team_1-8' : ((teamType === 'sub') ? 'sub_team_9-16' : 'all_1-16');
+                a.download = `rooc_party_${fileSuffix}_${currentMode}_${today}.jpg`;
                 a.href = jpgData;
                 document.body.appendChild(a);
                 a.click();
@@ -2153,9 +2352,9 @@
                 console.error('Export JPG error:', err);
                 alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ JPG: ' + err.message);
             } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = origHtml;
+                if (activeBtn) {
+                    activeBtn.disabled = false;
+                    activeBtn.innerHTML = origHtml;
                 }
             }
         }
