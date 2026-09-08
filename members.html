@@ -10,6 +10,7 @@
     <!-- Firebase SDKs (Compat version for Browser) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <style>
         body { 
@@ -131,7 +132,7 @@
     <!-- Main Content -->
     <main class="flex-1 max-w-[98%] 2xl:max-w-[1750px] mx-auto w-full px-2 sm:px-4 lg:px-6 py-6 pb-28 md:pb-6 space-y-6">
         
-        <div class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-xl">
+        <div id="membersTableCard" class="roo-card rounded-3xl overflow-hidden animate-fade-in shadow-xl">
             <!-- Header Section -->
             <div class="p-5 sm:p-7 border-b border-purple-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -148,6 +149,11 @@
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                    <!-- Export JPG Button -->
+                    <button id="btnExportMembersJpg" onclick="exportMembersTableAsJpg()" class="px-3.5 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white text-xs font-black rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                        <span>📷</span> Export เป็น JPG
+                    </button>
+
                     <!-- Whitelist Button (Admin Only) -->
                     <button id="btnManageWhitelist" onclick="openWhitelistModal()" class="hidden px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-xl shadow-2xs transition flex items-center gap-1.5 border border-purple-200 cursor-pointer">
                         🔑 อนุญาตเข้าเว็บ (Whitelist)
@@ -1947,6 +1953,130 @@
                 setTimeout(() => {
                     statusText.innerText = 'สามารถกดส่งด้วยตนเองได้ทันทีโดยไม่ต้องรอรอบ';
                 }, 4000);
+            }
+        }
+
+        async function exportMembersTableAsJpg() {
+            const btn = document.getElementById('btnExportMembersJpg');
+            const origHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+            }
+
+            try {
+                const target = document.getElementById('membersTableCard');
+                if (!target) {
+                    alert('ไม่พบข้อมูลตารางสมาชิก');
+                    return;
+                }
+
+                // Member count
+                const totalCount = membersData ? membersData.length : 0;
+                const activeCount = membersData ? membersData.filter(m => m.active !== false && m.active !== 'false').length : 0;
+
+                // Create offscreen container with desktop width for full table visibility
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-99999px';
+                tempContainer.style.left = '0';
+                tempContainer.style.width = '1300px';
+                tempContainer.style.backgroundColor = '#ffffff';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.padding = '36px';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.borderRadius = '24px';
+                tempContainer.style.zIndex = '-9999';
+
+                // Header Infographic
+                const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                const headerDiv = document.createElement('div');
+                headerDiv.style.display = 'flex';
+                headerDiv.style.justifyContent = 'space-between';
+                headerDiv.style.alignItems = 'center';
+                headerDiv.style.marginBottom = '24px';
+                headerDiv.style.paddingBottom = '18px';
+                headerDiv.style.borderBottom = '2.5px solid #e9d5ff';
+                headerDiv.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <img src="images/guild_icon.jpg" style="width:58px;height:58px;border-radius:16px;object-fit:cover;box-shadow:0 6px 16px rgba(124,58,237,0.2);border:2px solid #ffffff;">
+                        <div>
+                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• รายชื่อสมาชิกกิลด์</span></div>
+                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">👥 Guild Member Roster • ข้อมูล ณ วันที่: ${dateStr}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;display:flex;gap:8px;">
+                        <span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">สมาชิกทั้งหมด: ${totalCount} คน</span>
+                        <span style="background:#ecfdf5;color:#047857;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #a7f3d0;">พร้อมแข่ง: ${activeCount} คน</span>
+                    </div>
+                `;
+                tempContainer.appendChild(headerDiv);
+
+                // Clone target
+                const clone = target.cloneNode(true);
+                clone.style.width = '100%';
+                clone.style.boxShadow = 'none';
+
+                // Hide buttons, search input, and action buttons in clone
+                const cloneHeaderRight = clone.querySelector('.flex.flex-wrap.items-center.gap-3');
+                if (cloneHeaderRight) cloneHeaderRight.style.display = 'none';
+
+                // Remove Actions column (last th and last td of each row)
+                clone.querySelectorAll('tr').forEach(row => {
+                    const lastCell = row.lastElementChild;
+                    if (lastCell) lastCell.style.display = 'none';
+                });
+
+                tempContainer.appendChild(clone);
+
+                // Footer
+                const footerDiv = document.createElement('div');
+                footerDiv.style.marginTop = '20px';
+                footerDiv.style.textAlign = 'center';
+                footerDiv.style.fontSize = '11px';
+                footerDiv.style.color = '#94a3b8';
+                footerDiv.style.fontWeight = 'bold';
+                footerDiv.innerText = 'Wendell Guild Management System • Ragnarok Origin Classic (ROOC)';
+                tempContainer.appendChild(footerDiv);
+
+                document.body.appendChild(tempContainer);
+
+                // Wait for images
+                await Promise.all(Array.from(tempContainer.querySelectorAll('img')).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(tempContainer);
+
+                const jpgData = canvas.toDataURL('image/jpeg', 0.95);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                a.download = `rooc_guild_members_${today}.jpg`;
+                a.href = jpgData;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error('Export Members JPG error:', err);
+                alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ JPG: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
             }
         }
     </script>

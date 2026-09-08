@@ -236,6 +236,9 @@
                     </div>
 
                     <div class="flex items-center gap-2.5 flex-wrap">
+                        <button id="btnExportCardJpg" onclick="exportCardAuctionJpg()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                            <span>📷</span> Export เป็น JPG
+                        </button>
                         <button onclick="calculateCardAuction()" id="btnCalculateCard" class="roo-button px-5 py-2.5 font-black rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
                             <span>🧮</span> คำนวณ & อัปเดตผลการ์ด
                         </button>
@@ -286,13 +289,18 @@
             </div>
 
             <!-- Card Result Table Section -->
-            <div class="roo-card rounded-3xl p-6 border border-purple-100 shadow-xl space-y-4">
+            <div id="cardResultSection" class="roo-card rounded-3xl p-6 border border-purple-100 shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-purple-100 pb-3">
                     <h3 class="text-base font-black text-indigo-950 flex items-center gap-2">
                         <span>📊</span> ตารางสรุปผลการแบ่งการ์ดรอบปัจจุบัน
                     </h3>
-                    <div id="cardResultCountBadge" class="text-xs font-black text-purple-700">
-                        จัดสรรแล้ว 0 คน
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportCardAuctionJpg()" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                            <span>📷</span> Export เป็น JPG
+                        </button>
+                        <div id="cardResultCountBadge" class="text-xs font-black text-purple-700">
+                            จัดสรรแล้ว 0 คน
+                        </div>
                     </div>
                 </div>
 
@@ -508,9 +516,14 @@
                             <button onclick="calculateFeatherAuction()" id="btnCalculateFeather" class="roo-button w-full py-3 text-white font-black rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
                                 <span>🧮</span> คำนวณ & อัปเดตผลขนนก
                             </button>
-                            <button onclick="copyFeatherResultText()" class="w-full py-2 bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
-                                <span>📋</span> คัดลอกผลประมูลขนนก
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="copyFeatherResultText()" class="flex-1 py-2 bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
+                                    <span>📋</span> คัดลอกผลประมูล
+                                </button>
+                                <button id="btnExportFeatherJpg" onclick="exportFeatherAuctionJpg()" class="flex-1 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                    <span>📷</span> Export เป็น JPG
+                                </button>
+                            </div>
                         </div>
 
                     </div>
@@ -551,13 +564,18 @@
             </div>
 
             <!-- Feather Result Table Section -->
-            <div class="roo-card rounded-3xl p-6 border border-purple-100 shadow-xl space-y-4">
+            <div id="featherResultSection" class="roo-card rounded-3xl p-6 border border-purple-100 shadow-xl space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-purple-100 pb-3">
                     <h3 class="text-base font-black text-indigo-950 flex items-center gap-2">
                         <span>📊</span> ตารางสรุปผลการแบ่งขนนก (ขนขาว & ขนดำ)
                     </h3>
-                    <div id="featherResultCountBadge" class="text-xs font-black text-purple-700">
-                        จัดสรรแล้ว 0 คน
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportFeatherAuctionJpg()" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                            <span>📷</span> Export เป็น JPG
+                        </button>
+                        <div id="featherResultCountBadge" class="text-xs font-black text-purple-700">
+                            จัดสรรแล้ว 0 คน
+                        </div>
                     </div>
                 </div>
 
@@ -1998,6 +2016,117 @@
             });
         }
 
+        async function exportCardAuctionJpg() {
+            const btn = document.getElementById('btnExportCardJpg');
+            const origHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+            }
+
+            try {
+                const target = document.getElementById('cardResultSection');
+                if (!target) {
+                    alert('ไม่พบข้อมูลตารางสรุปผลการประมูลการ์ด');
+                    return;
+                }
+
+                const countBadge = document.getElementById('cardResultCountBadge');
+                const countText = countBadge ? countBadge.innerText : '';
+
+                // Create offscreen container with clean desktop width
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-99999px';
+                tempContainer.style.left = '0';
+                tempContainer.style.width = '1100px';
+                tempContainer.style.backgroundColor = '#ffffff';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.padding = '36px';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.borderRadius = '24px';
+                tempContainer.style.zIndex = '-9999';
+
+                // Header
+                const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                const headerDiv = document.createElement('div');
+                headerDiv.style.display = 'flex';
+                headerDiv.style.justifyContent = 'space-between';
+                headerDiv.style.alignItems = 'center';
+                headerDiv.style.marginBottom = '24px';
+                headerDiv.style.paddingBottom = '18px';
+                headerDiv.style.borderBottom = '2.5px solid #e9d5ff';
+                headerDiv.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <img src="images/guild_icon.jpg" style="width:58px;height:58px;border-radius:16px;object-fit:cover;box-shadow:0 6px 16px rgba(124,58,237,0.2);border:2px solid #ffffff;">
+                        <div>
+                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• สรุปผลการประมูลการ์ด</span></div>
+                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">🃏 Card Auction Summary • ข้อมูล ณ วันที่: ${dateStr}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">${countText}</span>
+                    </div>
+                `;
+                tempContainer.appendChild(headerDiv);
+
+                // Clone target
+                const clone = target.cloneNode(true);
+                clone.style.width = '100%';
+                clone.querySelectorAll('button').forEach(b => b.style.display = 'none');
+                tempContainer.appendChild(clone);
+
+                // Footer
+                const footerDiv = document.createElement('div');
+                footerDiv.style.marginTop = '20px';
+                footerDiv.style.textAlign = 'center';
+                footerDiv.style.fontSize = '11px';
+                footerDiv.style.color = '#94a3b8';
+                footerDiv.style.fontWeight = 'bold';
+                footerDiv.innerText = 'Wendell Guild Management System • Ragnarok Origin Classic (ROOC)';
+                tempContainer.appendChild(footerDiv);
+
+                document.body.appendChild(tempContainer);
+
+                // Wait for images
+                await Promise.all(Array.from(tempContainer.querySelectorAll('img')).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(tempContainer);
+
+                const jpgData = canvas.toDataURL('image/jpeg', 0.95);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                a.download = `rooc_card_auction_${today}.jpg`;
+                a.href = jpgData;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error('Export Card JPG error:', err);
+                alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ JPG: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+            }
+        }
+
         function resetCardHoldersRound() {
             if (!canEditParties) return;
             if (confirm('คุณต้องการรีเซ็ตรอบประมูลการ์ด (ล้างรายชื่อผู้ได้รับและตารางผลการแบ่งการ์ด) ใช่หรือไม่?')) {
@@ -2654,6 +2783,117 @@
                     alert('📋 คัดลอกข้อความสรุปผลการประมูลขนนกเรียบร้อยแล้ว!');
                 });
             });
+        }
+
+        async function exportFeatherAuctionJpg() {
+            const btn = document.getElementById('btnExportFeatherJpg');
+            const origHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+            }
+
+            try {
+                const target = document.getElementById('featherResultSection');
+                if (!target) {
+                    alert('ไม่พบข้อมูลตารางสรุปผลการแบ่งขนนก');
+                    return;
+                }
+
+                const countBadge = document.getElementById('featherResultCountBadge');
+                const countText = countBadge ? countBadge.innerText : '';
+
+                // Create offscreen container
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-99999px';
+                tempContainer.style.left = '0';
+                tempContainer.style.width = '1200px';
+                tempContainer.style.backgroundColor = '#ffffff';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.padding = '36px';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.borderRadius = '24px';
+                tempContainer.style.zIndex = '-9999';
+
+                // Header
+                const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                const headerDiv = document.createElement('div');
+                headerDiv.style.display = 'flex';
+                headerDiv.style.justifyContent = 'space-between';
+                headerDiv.style.alignItems = 'center';
+                headerDiv.style.marginBottom = '24px';
+                headerDiv.style.paddingBottom = '18px';
+                headerDiv.style.borderBottom = '2.5px solid #e9d5ff';
+                headerDiv.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <img src="images/guild_icon.jpg" style="width:58px;height:58px;border-radius:16px;object-fit:cover;box-shadow:0 6px 16px rgba(124,58,237,0.2);border:2px solid #ffffff;">
+                        <div>
+                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• สรุปผลการประมูลขนนก</span></div>
+                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">🪶 Feather Auction Summary • ข้อมูล ณ วันที่: ${dateStr}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">${countText}</span>
+                    </div>
+                `;
+                tempContainer.appendChild(headerDiv);
+
+                // Clone target
+                const clone = target.cloneNode(true);
+                clone.style.width = '100%';
+                clone.querySelectorAll('button').forEach(b => b.style.display = 'none');
+                tempContainer.appendChild(clone);
+
+                // Footer
+                const footerDiv = document.createElement('div');
+                footerDiv.style.marginTop = '20px';
+                footerDiv.style.textAlign = 'center';
+                footerDiv.style.fontSize = '11px';
+                footerDiv.style.color = '#94a3b8';
+                footerDiv.style.fontWeight = 'bold';
+                footerDiv.innerText = 'Wendell Guild Management System • Ragnarok Origin Classic (ROOC)';
+                tempContainer.appendChild(footerDiv);
+
+                document.body.appendChild(tempContainer);
+
+                // Wait for images
+                await Promise.all(Array.from(tempContainer.querySelectorAll('img')).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(tempContainer);
+
+                const jpgData = canvas.toDataURL('image/jpeg', 0.95);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                a.download = `rooc_feather_auction_${today}.jpg`;
+                a.href = jpgData;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error('Export Feather JPG error:', err);
+                alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ JPG: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+            }
         }
 
         function resetFeatherRounds() {

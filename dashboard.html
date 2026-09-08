@@ -10,6 +10,7 @@
     <!-- Firebase SDKs (Compat version for Browser) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <!-- Tesseract.js for Real AI OCR directly in Browser -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -272,7 +273,10 @@
                     </div>
                 </div>
 
-                <div class="pt-2 flex justify-end">
+                <div class="pt-2 flex justify-end gap-2.5 flex-wrap">
+                    <button type="button" onclick="exportCharacterCardAsJpg()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                        <span>📷</span> Export เป็น JPG
+                    </button>
                     <button id="btnSaveInfo" class="roo-button font-black py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-2 shadow-md cursor-pointer">
                         💾 บันทึกข้อมูลตัวละคร
                     </button>
@@ -337,6 +341,9 @@
                 </div>
                 
                 <div class="flex items-center gap-3 flex-wrap">
+                    <button id="btnExportStatsJpg" onclick="exportCharacterCardAsJpg()" class="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                        <span>📷</span> Export เป็น JPG
+                    </button>
                     <!-- Hidden Multi-file input for AI -->
                     <input type="file" id="aiMultiFileInput" accept="image/*" multiple class="hidden">
                     
@@ -1520,6 +1527,278 @@
             }
 
             return matchedCount;
+        }
+
+        async function exportCharacterCardAsJpg() {
+            const btn = document.getElementById('btnExportStatsJpg');
+            const origHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+            }
+
+            try {
+                const charName = document.getElementById('charName').value.trim() || 'สมาชิกกิลด์';
+                const charClass = document.getElementById('charClass').value || 'ไม่ระบุอาชีพ';
+                const charSubRole = document.getElementById('charSubRole').value || 'ไม่ระบุตำแหน่งรอง';
+                const charUid = document.getElementById('charUid').value || '';
+                
+                const avatarImg = document.getElementById('avatarPreviewImg');
+                const hasAvatar = avatarImg && !avatarImg.classList.contains('hidden') && avatarImg.src && avatarImg.src.length > 5;
+                const avatarSrc = hasAvatar ? avatarImg.src : null;
+
+                const getVal = (id) => {
+                    const el = document.getElementById(id);
+                    return el && el.value ? el.value : '-';
+                };
+
+                const cpVal = getVal('stat_cp');
+                const maxHpVal = getVal('stat_maxHp');
+                const maxSpVal = getVal('stat_maxSp');
+                const pAtkVal = getVal('stat_pAtk');
+                const mAtkVal = getVal('stat_mAtk');
+                const pDefVal = getVal('stat_pDef');
+                const mDefVal = getVal('stat_mDef');
+                const ignPDefVal = getVal('stat_ignorePDef');
+                const ignMDefVal = getVal('stat_ignoreMDef');
+
+                const pDmgVal = getVal('stat_pDmg');
+                const mDmgVal = getVal('stat_mDmg');
+                const pReducVal = getVal('stat_pReduc');
+                const mReducVal = getVal('stat_mReduc');
+                const pvpDmgVal = getVal('stat_pvpDmg');
+                const pvpReducVal = getVal('stat_pvpReduc');
+                const criVal = getVal('stat_cri');
+                const criDamVal = getVal('stat_criDam');
+
+                const reducMSizeVal = getVal('stat_reducMSize');
+                const reducDemiVal = getVal('stat_reducDemi');
+                const dmgMSizeVal = getVal('stat_dmgMSize');
+                const dmgDemiVal = getVal('stat_dmgDemi');
+                const aspdVal = getVal('stat_aspd');
+                const mspdVal = getVal('stat_mspd');
+
+                // Create offscreen container
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-99999px';
+                tempContainer.style.left = '0';
+                tempContainer.style.width = '1050px';
+                tempContainer.style.backgroundColor = '#ffffff';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.padding = '36px';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.borderRadius = '28px';
+                tempContainer.style.fontFamily = "'Prompt', sans-serif";
+                tempContainer.style.zIndex = '-9999';
+
+                // Header
+                const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                
+                // Class image icon fallback
+                const classKey = charClass.toLowerCase().replace(/ /g, '-');
+                const classImgPath = `images/classes/${classKey}.webp`;
+
+                let avatarHtml = '';
+                if (avatarSrc) {
+                    avatarHtml = `<img src="${avatarSrc}" style="width:110px;height:110px;border-radius:24px;object-fit:cover;border:3px solid #ffffff;box-shadow:0 8px 20px rgba(124,58,237,0.18);">`;
+                } else {
+                    avatarHtml = `
+                        <div style="width:110px;height:110px;border-radius:24px;background:#f3e8ff;border:3px solid #ffffff;box-shadow:0 8px 20px rgba(124,58,237,0.18);display:flex;align-items:center;justify-content:center;">
+                            <img src="${classImgPath}" style="width:70px;height:70px;object-fit:contain;" onerror="this.src='images/guild_icon.jpg'">
+                        </div>
+                    `;
+                }
+
+                tempContainer.innerHTML = `
+                    <!-- Brand Top Header -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;margin-bottom:24px;border-bottom:2.5px solid #e9d5ff;">
+                        <div style="display:flex;align-items:center;gap:14px;">
+                            <img src="images/guild_icon.jpg" style="width:52px;height:52px;border-radius:14px;object-fit:cover;box-shadow:0 4px 14px rgba(124,58,237,0.15);">
+                            <div>
+                                <h1 style="font-size:24px;font-weight:900;color:#1e1b4b;margin:0;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• การ์ดสเตตัสตัวละคร</span></h1>
+                                <p style="font-size:12px;color:#64748b;margin:3px 0 0 0;font-weight:600;">ROOC Character Status Card • อัปเดตล่าสุด: ${dateStr}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="background:#9333ea;color:#ffffff;padding:6px 14px;border-radius:9999px;font-size:12px;font-weight:800;letter-spacing:0.5px;">WENDELL GUILD</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Overview Card -->
+                    <div style="background:#ffffff;border-radius:24px;padding:24px;border:1.5px solid #f1f5f9;box-shadow:0 10px 25px rgba(124,58,237,0.06);display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:24px;">
+                        <div style="display:flex;align-items:center;gap:20px;">
+                            ${avatarHtml}
+                            <div>
+                                <div style="font-size:26px;font-weight:900;color:#0f172a;line-height:1.2;">${charName}</div>
+                                <div style="display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+                                    <span style="background:#f3e8ff;color:#7e22ce;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:800;border:1px solid #d8b4fe;">⚔️ ${charClass}</span>
+                                    <span style="background:#f1f5f9;color:#475569;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid #cbd5e1;">🚩 ${charSubRole}</span>
+                                    <span style="font-size:11px;color:#94a3b8;font-weight:600;">UID: ${charUid}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);border:2px solid #fde68a;border-radius:20px;padding:16px 28px;text-align:center;box-shadow:0 6px 16px rgba(245,158,11,0.12);">
+                            <div style="font-size:11px;font-weight:900;color:#92400e;letter-spacing:1px;text-transform:uppercase;">🌟 COMBAT POWER (CP)</div>
+                            <div style="font-size:28px;font-weight:900;color:#b45309;margin-top:2px;">${cpVal}</div>
+                        </div>
+                    </div>
+
+                    <!-- Section 1: Primary Combat Stats (9 Stats) -->
+                    <div style="background:#ffffff;border-radius:20px;padding:20px;border:1px solid #f1f5f9;margin-bottom:18px;box-shadow:0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="font-size:13px;font-weight:900;color:#4338ca;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">🛡️ สเตตัสพื้นฐานการต่อสู้ (Primary Combat)</div>
+                        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;">
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">MAX HP</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${maxHpVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">MAX SP</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${maxSpVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">P.ATK</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${pAtkVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">M.ATK</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${mAtkVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">P.DEF</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${pDefVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">M.DEF</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${mDefVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">IGN P.DEF</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${ignPDefVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">IGN M.DEF</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${ignMDefVal}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: PVP & Critical Stats (8 Stats) -->
+                    <div style="background:#ffffff;border-radius:20px;padding:20px;border:1px solid #f1f5f9;margin-bottom:18px;box-shadow:0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="font-size:13px;font-weight:900;color:#9333ea;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">⚔️ สเตตัส PVP & CRITICAL</div>
+                        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;">
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#4338ca;text-transform:uppercase;">P.DMG (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#4338ca;margin-top:2px;">${pDmgVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#4338ca;text-transform:uppercase;">M.DMG (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#4338ca;margin-top:2px;">${mDmgVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#0284c7;text-transform:uppercase;">P.REDUC (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#0284c7;margin-top:2px;">${pReducVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#0284c7;text-transform:uppercase;">M.REDUC (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#0284c7;margin-top:2px;">${mReducVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#e11d48;text-transform:uppercase;">PVP DMG</div>
+                                <div style="font-size:16px;font-weight:900;color:#e11d48;margin-top:2px;">${pvpDmgVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#059669;text-transform:uppercase;">PVP REDUC</div>
+                                <div style="font-size:16px;font-weight:900;color:#059669;margin-top:2px;">${pvpReducVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;">CRI</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;">${criVal}</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#4338ca;text-transform:uppercase;">CRI DAM (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#4338ca;margin-top:2px;">${criDamVal}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Monster Bonuses & Speed (6 Stats) -->
+                    <div style="background:#ffffff;border-radius:20px;padding:20px;border:1px solid #f1f5f9;box-shadow:0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="font-size:13px;font-weight:900;color:#0f766e;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">🛡️ โบนัสขนาด/กึ่งมนุษย์ & ความเร็ว (Bonus & Speed)</div>
+                        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;">
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#0f766e;text-transform:uppercase;">REDUC.Msize (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f766e;margin-top:2px;">${reducMSizeVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#0f766e;text-transform:uppercase;">REDUC.Demi (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#0f766e;margin-top:2px;">${reducDemiVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#7e22ce;text-transform:uppercase;">DMG.Msize (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#7e22ce;margin-top:2px;">${dmgMSizeVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#7e22ce;text-transform:uppercase;">DMG.Demi (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#7e22ce;margin-top:2px;">${dmgDemiVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#b45309;text-transform:uppercase;">ASPD (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#b45309;margin-top:2px;">${aspdVal}%</div>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px;">
+                                <div style="font-size:10px;font-weight:800;color:#b45309;text-transform:uppercase;">MSPD (%)</div>
+                                <div style="font-size:16px;font-weight:900;color:#b45309;margin-top:2px;">${mspdVal}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Footer -->
+                    <div style="margin-top:20px;text-align:center;font-size:11px;color:#94a3b8;font-weight:bold;">
+                        Wendell Guild Management System • Ragnarok Origin Classic (ROOC)
+                    </div>
+                `;
+
+                document.body.appendChild(tempContainer);
+
+                // Wait for all images inside
+                await Promise.all(Array.from(tempContainer.querySelectorAll('img')).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(tempContainer);
+
+                const jpgData = canvas.toDataURL('image/jpeg', 0.95);
+                const a = document.createElement('a');
+                const cleanName = charName.replace(/[^a-zA-Z0-9ก-๙_-]/g, '_');
+                const today = new Date().toISOString().slice(0, 10);
+                a.download = `rooc_${cleanName}_stats_${today}.jpg`;
+                a.href = jpgData;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error('Export Character Card JPG error:', err);
+                alert('เกิดข้อผิดพลาดในการสร้างรูปภาพสเตตัส JPG: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+            }
         }
     </script>
 </body>

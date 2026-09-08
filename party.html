@@ -218,6 +218,9 @@
             </div>
             
             <div class="flex items-center gap-3 flex-wrap">
+                <button id="btnExportPartyJpg" onclick="exportPartyAsJpg()" class="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                    <span>📷</span> Export เป็น JPG
+                </button>
                 <button onclick="exportPartyLineup()" class="roo-button px-4 py-2 font-black rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                     📋 Export ตาราง
                 </button>
@@ -260,7 +263,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left 16 Parties (Main Team 40 คน + Sub Team 40 คน) -->
-            <div class="lg:col-span-8 xl:col-span-9 space-y-8">
+            <div id="partiesLineupWrapper" class="lg:col-span-8 xl:col-span-9 space-y-8">
                 
                 <!-- Main Team (ทีมหลัก 1 - 8) -->
                 <div class="space-y-3">
@@ -505,9 +508,12 @@
                 <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none cursor-pointer">&times;</button>
             </div>
             <textarea id="exportTextarea" readonly class="w-full h-80 bg-purple-50/50 border border-purple-200 rounded-2xl p-4 text-xs font-mono text-slate-800 focus:outline-none shadow-inner leading-relaxed select-all"></textarea>
-            <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-purple-100">
+            <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-purple-100 flex-wrap">
                 <button onclick="closeExportModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition cursor-pointer">
                     ปิด
+                </button>
+                <button onclick="exportPartyAsJpg()" class="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black rounded-xl text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                    <span>📷</span> บันทึกเป็นรูปภาพ JPG
                 </button>
                 <button onclick="copyExportText()" class="roo-button px-5 py-2 rounded-xl font-black text-xs shadow-md flex items-center gap-1.5 cursor-pointer">
                     📋 คัดลอกข้อความทั้งหมด
@@ -1995,6 +2001,163 @@
             }).catch(err => {
                 alert('คัดลอกไม่สำเร็จ: ' + err.message);
             });
+        }
+
+        async function exportPartyAsJpg() {
+            const btn = document.getElementById('btnExportPartyJpg');
+            const origHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> กำลังสร้างรูป JPG...';
+            }
+
+            try {
+                const target = document.getElementById('partiesLineupWrapper');
+                if (!target) {
+                    alert('ไม่พบข้อมูลผังปาร์ตี้');
+                    return;
+                }
+
+                let modeTitle = '🏆 Guild League (40v40)';
+                if (currentMode === 'emperiumOverrun') modeTitle = '🏰 Emperium Overrun';
+                if (currentMode === 'cardAuction') modeTitle = '🃏 ปาร์ตี้ประมูลการ์ด';
+
+                const mainCount = document.getElementById('assignedMainCount') ? document.getElementById('assignedMainCount').innerText : '0';
+                const mainMax = document.getElementById('assignedMainMax') ? document.getElementById('assignedMainMax').innerText : '40';
+                const subCount = document.getElementById('assignedSubCount') ? document.getElementById('assignedSubCount').innerText : '0';
+                const subMax = document.getElementById('assignedSubMax') ? document.getElementById('assignedSubMax').innerText : '40';
+
+                // Create offscreen container with desktop width for high fidelity
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '-99999px';
+                tempContainer.style.left = '0';
+                tempContainer.style.width = '1280px';
+                tempContainer.style.backgroundColor = '#ffffff';
+                tempContainer.style.backgroundImage = 'linear-gradient(135deg, #f8f6ff 0%, #fff0f5 50%, #fffbf0 100%)';
+                tempContainer.style.padding = '36px';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.borderRadius = '24px';
+                tempContainer.style.zIndex = '-9999';
+
+                // Guild Infographic Header
+                const dateStr = new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                const headerDiv = document.createElement('div');
+                headerDiv.style.display = 'flex';
+                headerDiv.style.justifyContent = 'space-between';
+                headerDiv.style.alignItems = 'center';
+                headerDiv.style.marginBottom = '24px';
+                headerDiv.style.paddingBottom = '18px';
+                headerDiv.style.borderBottom = '2.5px solid #e9d5ff';
+
+                let countSummaryHtml = '';
+                if (currentMode === 'cardAuction') {
+                    countSummaryHtml = `<span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">🃏 รวมสมาชิก: ${mainCount}/${mainMax} คน</span>`;
+                } else {
+                    countSummaryHtml = `
+                        <div style="display:flex;gap:10px;">
+                            <span style="background:#f3e8ff;color:#6b21a8;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #d8b4fe;">🛡️ ทีมหลัก: ${mainCount}/${mainMax} คน</span>
+                            <span style="background:#f1f5f9;color:#334155;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:800;border:1px solid #cbd5e1;">⚔️ ทีมรอง: ${subCount}/${subMax} คน</span>
+                        </div>
+                    `;
+                }
+
+                headerDiv.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <img src="images/guild_icon.jpg" style="width:58px;height:58px;border-radius:16px;object-fit:cover;box-shadow:0 6px 16px rgba(124,58,237,0.2);border:2px solid #ffffff;">
+                        <div>
+                            <div style="font-size:26px;font-weight:900;color:#1e1b4b;line-height:1.2;">Wendell Guild <span style="background:linear-gradient(135deg,#9333ea,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">• ผังจัดปาร์ตี้</span></div>
+                            <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:600;">กิจกรรม: <strong style="color:#7e22ce;">${modeTitle}</strong> • ข้อมูล ณ วันที่: ${dateStr}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        ${countSummaryHtml}
+                    </div>
+                `;
+                tempContainer.appendChild(headerDiv);
+
+                // Clone party grid
+                const clone = target.cloneNode(true);
+                clone.style.width = '100%';
+                
+                // Remove buttons or drag artifacts inside clone
+                clone.querySelectorAll('button').forEach(b => {
+                    if (b.innerText.includes('โอนคิว')) {
+                        b.style.display = 'none';
+                    }
+                });
+
+                tempContainer.appendChild(clone);
+
+                // Check on-leave members
+                const allLeaveNames = new Set([
+                    ...leaveMembers,
+                    ...allGuildMembers.filter(m => m.active === false || m.active === 'false').map(m => m.name)
+                ]);
+                if (allLeaveNames.size > 0) {
+                    const leaveFooter = document.createElement('div');
+                    leaveFooter.style.marginTop = '24px';
+                    leaveFooter.style.padding = '14px 20px';
+                    leaveFooter.style.background = '#fff1f2';
+                    leaveFooter.style.borderRadius = '16px';
+                    leaveFooter.style.border = '1.5px solid #fecdd3';
+                    leaveFooter.style.fontSize = '12px';
+                    leaveFooter.style.color = '#be123c';
+                    leaveFooter.style.fontWeight = 'bold';
+                    leaveFooter.innerHTML = `🏖️ สมาชิกแจ้งลากิจกรรม (${allLeaveNames.size} คน): <span style="color:#e11d48;font-weight:600;">${Array.from(allLeaveNames).join(', ')}</span>`;
+                    tempContainer.appendChild(leaveFooter);
+                }
+
+                // Guild Brand Footer
+                const footerDiv = document.createElement('div');
+                footerDiv.style.marginTop = '20px';
+                footerDiv.style.textAlign = 'center';
+                footerDiv.style.fontSize = '11px';
+                footerDiv.style.color = '#94a3b8';
+                footerDiv.style.fontWeight = 'bold';
+                footerDiv.innerText = 'Wendell Guild Management System • Ragnarok Origin Classic (ROOC)';
+                tempContainer.appendChild(footerDiv);
+
+                document.body.appendChild(tempContainer);
+
+                // Ensure images loaded
+                await Promise.all(Array.from(tempContainer.querySelectorAll('img')).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(tempContainer);
+
+                // Export as JPG (quality 0.95)
+                const jpgData = canvas.toDataURL('image/jpeg', 0.95);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                a.download = `rooc_party_${currentMode}_${today}.jpg`;
+                a.href = jpgData;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            } catch (err) {
+                console.error('Export JPG error:', err);
+                alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ JPG: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+            }
         }
 
         // 11. Stats Detail Modal (ตัวส่องข้อมูลสเตตัส)
