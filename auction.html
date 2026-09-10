@@ -976,66 +976,88 @@
             }
         }
 
-        function checkUserPermission() {
-            const safeUid = currentUser.toLowerCase().trim();
-            const isSuper = (safeUid === 'daffodil2693');
+        const EDIT_ALLOWED_ROLES = ['Admin', 'หัวหน้ากิลด์', 'รองหัวหน้ากิลด์', 'ผู้จัดการ'];
 
-            db.ref(`members/${safeUid}`).once('value', (snap) => {
-                const memberData = snap.val();
-                if (memberData && memberData.name) {
-                    currentMemberName = memberData.name;
-                }
-                let role = (memberData && memberData.role) ? memberData.role : (isSuper ? 'Admin' : 'สมาชิกกิลด์');
-                if (isSuper) role = 'Admin';
-                currentRole = role;
+        function applyPermissionUI() {
+            const role = currentRole || 'สมาชิกกิลด์';
+            const userDisplay = `👤 ${currentUser} [${role}]`;
+            const navEl = document.getElementById('navUsername');
+            const navMobEl = document.getElementById('navUsernameMobile');
+            if (navEl) navEl.innerText = userDisplay;
+            if (navMobEl) navMobEl.innerText = userDisplay;
 
-                const userDisplay = `👤 ${currentUser} [${role}]`;
-                const navEl = document.getElementById('navUsername');
-                const navMobEl = document.getElementById('navUsernameMobile');
-                if (navEl) navEl.innerText = userDisplay;
-                if (navMobEl) navMobEl.innerText = userDisplay;
-
-                const roleBadge = document.getElementById('rolePermissionBadge');
+            const roleBadge = document.getElementById('rolePermissionBadge');
+            if (roleBadge) {
                 if (role === 'Admin') {
                     roleBadge.className = "text-xs bg-rose-50 text-rose-700 font-black px-3 py-1 rounded-full border border-rose-200 shadow-2xs";
                     roleBadge.innerText = "⚡ สิทธิ์: Admin";
-                    canEditParties = true;
                 } else if (role === 'หัวหน้ากิลด์') {
                     roleBadge.className = "text-xs bg-amber-50 text-amber-800 font-black px-3 py-1 rounded-full border border-amber-200 shadow-2xs";
                     roleBadge.innerText = "👑 สิทธิ์: หัวหน้ากิลด์";
-                    canEditParties = true;
                 } else if (role === 'รองหัวหน้ากิลด์') {
                     roleBadge.className = "text-xs bg-indigo-50 text-indigo-700 font-black px-3 py-1 rounded-full border border-indigo-200 shadow-2xs";
                     roleBadge.innerText = "⚔️ สิทธิ์: รองหัวหน้ากิลด์";
-                    canEditParties = true;
                 } else if (role === 'ผู้จัดการ') {
                     roleBadge.className = "text-xs bg-teal-50 text-teal-700 font-black px-3 py-1 rounded-full border border-teal-200 shadow-2xs";
                     roleBadge.innerText = "📋 สิทธิ์: ผู้จัดการ";
-                    canEditParties = true;
                 } else {
                     roleBadge.className = "text-xs bg-slate-100 text-slate-700 font-medium px-3 py-1 rounded-full border border-slate-200";
                     roleBadge.innerText = "🛡️ สิทธิ์: สมาชิกกิลด์ (ดูเท่านั้น)";
-                    canEditParties = false;
                 }
+            }
 
-                // Hide edit buttons if read-only
-                const editButtons = ['btnCalculateCard', 'btnResetCardHolders', 'btnCalculateFeather', 'btnResetFeathers'];
-                editButtons.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el && !canEditParties) {
+            // Hide edit buttons if read-only
+            const editButtons = ['btnCalculateCard', 'btnResetCardHolders', 'btnCalculateFeather', 'btnResetFeathers'];
+            editButtons.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (!canEditParties) {
                         el.disabled = true;
                         el.classList.add('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        el.disabled = false;
+                        el.classList.remove('opacity-50', 'cursor-not-allowed');
                     }
-                });
-
-                renderCardParties();
-                renderCardWaitlist();
-                renderCardQueue();
-                renderFeatherQueue();
+                }
             });
         }
 
+        function checkUserPermission(membersData = null) {
+            const isSuper = (currentUser.toLowerCase().trim() === 'daffodil2693');
+
+            if (membersData) {
+                let foundMember = null;
+                for (let k in membersData) {
+                    const m = membersData[k];
+                    if (!m) continue;
+                    if (k.toLowerCase() === currentUser.toLowerCase() || 
+                        (m.name && m.name.toLowerCase() === currentUser.toLowerCase()) || 
+                        (m.uid && m.uid.toLowerCase() === currentUser.toLowerCase()) ||
+                        (m.discordUser && m.discordUser.toLowerCase() === currentUser.toLowerCase()) ||
+                        (m.discordId && String(m.discordId).trim() === currentUser.trim())) {
+                        foundMember = m;
+                        break;
+                    }
+                }
+
+                if (foundMember && foundMember.name) {
+                    currentMemberName = foundMember.name;
+                }
+
+                let role = isSuper ? 'Admin' : ((foundMember && foundMember.role) ? foundMember.role : 'สมาชิกกิลด์');
+                currentRole = role;
+                canEditParties = isSuper || EDIT_ALLOWED_ROLES.includes(currentRole);
+                applyPermissionUI();
+            } else {
+                currentRole = isSuper ? 'Admin' : 'สมาชิกกิลด์';
+                canEditParties = isSuper;
+                applyPermissionUI();
+            }
+        }
+
+        // Initialize UI immediately to prevent "ตรวจสอบสิทธิ์..." hanging
         checkUserPermission();
+        updateProgressBadges();
 
         // Check query param e.g. ?type=feather or ?type=card
         const queryMode = urlParams.get('type') || urlParams.get('mode') || urlParams.get('tab');
@@ -1145,6 +1167,7 @@
         // 1. Members Listener
         db.ref('members').on('value', (snapshot) => {
             const data = snapshot.val();
+            checkUserPermission(data);
             if (data) {
                 Object.keys(data).forEach(key => {
                     const m = data[key];

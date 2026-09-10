@@ -980,11 +980,17 @@
             db.ref('members').on('value', (snapshot) => {
                 const membersData = snapshot.val() || {};
                 
-                // Match case-insensitively by UID or Name
+                // Match case-insensitively by key, Name, UID, discordUser, or discordId
                 let foundMember = null;
                 for (let k in membersData) {
-                    if (k.toLowerCase() === currentUser.toLowerCase() || (membersData[k].name && membersData[k].name.toLowerCase() === currentUser.toLowerCase())) {
-                        foundMember = membersData[k];
+                    const m = membersData[k];
+                    if (!m) continue;
+                    if (k.toLowerCase() === currentUser.toLowerCase() || 
+                        (m.name && m.name.toLowerCase() === currentUser.toLowerCase()) || 
+                        (m.uid && m.uid.toLowerCase() === currentUser.toLowerCase()) ||
+                        (m.discordUser && m.discordUser.toLowerCase() === currentUser.toLowerCase()) ||
+                        (m.discordId && String(m.discordId).trim() === currentUser.trim())) {
+                        foundMember = m;
                         break;
                     }
                 }
@@ -1028,6 +1034,7 @@
             }
         }
 
+        applyPermissionUI();
         checkUserPermission();
 
         // 4. Render 16 Parties Layout (Main 1-8, Sub 9-16)
