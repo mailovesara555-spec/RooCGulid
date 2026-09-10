@@ -1756,7 +1756,7 @@
                 }
 
                 orderRemaining.forEach((mName, k) => {
-                    let guildRound = 1 + k; // สมาชิกที่เหลือในปาร์ตี้ยังคงเริ่มรับคิวตั้งแต่รอบที่ 1 (การกดรับการ์ดนอกรอบไม่ตัดสิทธิ์รอบของปาร์ตี้)
+                    let guildRound = completedCount + 1 + k;
                     allQueueItems.push({
                         partyKey: p.pKey,
                         partyNum: p.pNum,
@@ -1836,12 +1836,11 @@
             let allocations = {};
             let currIndex = ((startPage - 1) * 4) + (startSlot - 1);
             let remainingSupply = supply;
-            let partyCardsAllocated = {};
-            eligibleParties.forEach(p => { partyCardsAllocated[p.pKey] = 0; });
 
             while (remainingSupply > 0) {
                 let allQueueItems = [];
                 eligibleParties.forEach(p => {
+                    let completedCount = p.members.filter(m => currentHolders.includes(m)).length;
                     let remaining = p.members.filter(m => !currentHolders.includes(m));
                     let transferTarget = p.transferTarget;
                     let orderRemaining = [];
@@ -1854,9 +1853,8 @@
                         orderRemaining = [...remaining];
                     }
 
-                    const allocatedCountForParty = partyCardsAllocated[p.pKey] || 0;
                     orderRemaining.forEach((mName, k) => {
-                        let guildRound = allocatedCountForParty + 1 + k;
+                        let guildRound = completedCount + 1 + k;
                         allQueueItems.push({
                             partyKey: p.pKey,
                             partyNum: p.pNum,
@@ -1873,7 +1871,6 @@
 
                 if (allQueueItems.length === 0) {
                     currentHolders = [];
-                    eligibleParties.forEach(p => { partyCardsAllocated[p.pKey] = 0; });
                     continue;
                 }
 
@@ -1886,7 +1883,6 @@
 
                 allocations[recipient].push({ page, startSlot: slot, endSlot: slot, count: 1 });
                 currentHolders.push(recipient);
-                partyCardsAllocated[nextItem.partyKey] = (partyCardsAllocated[nextItem.partyKey] || 0) + 1;
 
                 let pObj = eligibleParties.find(p => p.pKey === nextItem.partyKey);
                 if (pObj) {
