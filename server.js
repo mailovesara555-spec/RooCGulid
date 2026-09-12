@@ -271,6 +271,92 @@ app.get('/auth/discord/callback', async (req, res) => {
     }
 });
 
+// API: ดึงการตั้งค่ารอบและการแจ้งเตือน Discord
+app.get('/api/discord/settings', async (req, res) => {
+    try {
+        const settings = await announcer.getAnnouncementSettings();
+        const cycle = announcer.getCycleInfo(new Date(), settings);
+        res.json({
+            success: true,
+            settings,
+            cycle
+        });
+    } catch (err) {
+        console.error('API discord get settings error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API: บันทึกการตั้งค่ารอบและการแจ้งเตือน Discord (Admin / Whitelist Only)
+app.post('/api/discord/settings', async (req, res) => {
+    try {
+        const { token, startDate, endDate, cycleDays, reminderTime } = req.body || {};
+        const verified = verifyAuthToken(token);
+        if (!verified) {
+            return res.status(401).json({ error: 'Unauthorized: จำเป็นต้องเข้าสู่ระบบ' });
+        }
+
+        // ตรวจสอบสิทธิ์ Admin / Allowed Roles
+        const user = verified.u.toLowerCase();
+        let isAllowed = ALLOWED_USERS.includes(user);
+
+        if (!isAllowed) {
+            // ตรวจสอบจาก Firebase whitelist
+            try {
+                const safeKey = user.replace(/\./g, '__dot__');
+                const wlRes = await axios.get(`https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app/whitelist/${safeKey}.json`);
+                if (wlRes.data && (wlRes.data.role === 'Guild Leader' || wlRes.data.role === 'Deputy' || wlRes.data.role === 'Admin')) {
+                    isAllowed = true;
+                }
+            } catch (e) {}
+        }
+
+        if (!isAllowed) {
+            return res.status(403).json({ error: 'Forbidden: เฉพาะ Admin หรือหัวหน้ากิลด์เท่านั้นที่สามารถแก้ไขการตั้งค่าได้' });
+        }
+
+        // Validate Input
+        if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+            return res.status(400).json({ error: 'รูปแบบวันที่เริ่มต้นไม่ถูกต้อง (ต้องเป็น YYYY-MM-DD)' });
+        }
+
+        const days = Math.max(1, parseInt(cycleDays) || 14);
+        const time = (reminderTime && /^\d{1,2}:\d{2}$/.test(reminderTime)) ? reminderTime : '12:00';
+
+        let calculatedEndDate = endDate;
+        if (!calculatedEndDate || !/^\d{4}-\d{2}-\d{2}$/.test(calculatedEndDate)) {
+            const sDate = new Date(`${startDate}T00:00:00+07:00`);
+            const eDate = new Date(sDate.getTime() + ((days - 1) * 24 * 60 * 60 * 1000));
+            calculatedEndDate = `${eDate.getFullYear()}-${(eDate.getMonth() + 1).toString().padStart(2, '0')}-${eDate.getDate().toString().padStart(2, '0')}`;
+        }
+
+        const payload = {
+            startDate,
+            endDate: calculatedEndDate,
+            cycleDays: days,
+            reminderTime: time,
+            updatedAt: Date.now(),
+            updatedBy: verified.u
+        };
+
+        await axios.put(`https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app/config/discordAnnouncementSettings.json`, payload);
+
+        // รีเฟรช cache ใน announcer
+        const updatedSettings = await announcer.getAnnouncementSettings(true);
+        const cycle = announcer.getCycleInfo(new Date(), updatedSettings);
+
+        res.json({
+            success: true,
+            message: 'บันทึกการตั้งค่ารอบและการแจ้งเตือนเรียบร้อยแล้ว',
+            settings: updatedSettings,
+            cycle
+        });
+    } catch (err) {
+        console.error('API discord save settings error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // API: ดึงสถานะรอบและการอัปเดตสเตตัสของสมาชิก
 app.get('/api/discord/status', async (req, res) => {
     try {
@@ -322,8 +408,9 @@ app.post('/api/discord/announce-now', async (req, res) => {
 // API: สำหรับ Cron Job (Vercel Cron / GitHub Actions / Cron-job.org)
 app.all('/api/discord/cron', async (req, res) => {
     try {
+        const settings = await announcer.getAnnouncementSettings();
         const bkkNow = announcer.getBangkokDate();
-        const cycle = announcer.getCycleInfo(bkkNow);
+        const cycle = announcer.getCycleInfo(bkkNow, settings);
         const isForce = req.query.force === 'true';
 
         console.log(`[Cron Triggered] วันที่ไทย: ${bkkNow.toLocaleString('th-TH')}, รอบที่: ${cycle.cycleNumber}, วันในรอบ: ${cycle.dayInCycle}`);
@@ -339,12 +426,12 @@ app.all('/api/discord/cron', async (req, res) => {
         }
 
         let result;
-        if (cycle.isSundayStart) {
-            console.log('[Cron] กำลังส่งประกาศวันอาทิตย์ (@everyone)...');
-            result = await announcer.sendSundayAnnouncement();
+        if (cycle.isStartDay) {
+            console.log('[Cron] กำลังส่งประกาศวันเริ่มต้นรอบ (@everyone)...');
+            result = await announcer.sendSundayAnnouncement(undefined, settings);
         } else if (cycle.isReminderPeriod) {
             console.log('[Cron] กำลังส่งประกาศแจ้งเตือนประจำวัน (ทวงคนที่ยังไม่อัปเดต)...');
-            result = await announcer.sendDailyReminderAnnouncement();
+            result = await announcer.sendDailyReminderAnnouncement(undefined, settings);
         } else {
             result = { message: 'ไม่อยู่ในช่วงเวลาการส่งประกาศ' };
         }

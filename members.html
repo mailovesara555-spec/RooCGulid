@@ -516,7 +516,7 @@
                                 Webhook Active
                             </span>
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">รอบละ 2 สัปดาห์ (เริ่ม 06/09/2026) • แจ้งเตือนอัตโนมัติทุกวันตอนเที่ยง (12:00 น.)</p>
+                        <p id="discordModalSubtitle" class="text-xs text-slate-500 font-medium">รอบละ 14 วัน • แจ้งเตือนอัตโนมัติทุกวันตอน 12:00 น.</p>
                     </div>
                 </div>
                 <button onclick="closeDiscordAnnounceModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer text-sm font-bold">
@@ -553,6 +553,68 @@
                         <p class="text-slate-600 text-[11px]">
                             Discord จะแท็กและแจ้งเตือนติดเฉพาะเมื่อใช้ <strong>Discord User ID (ตัวเลข 18-19 หลัก)</strong> เท่านั้น หากสมาชิกคนไหนขึ้น <span class="px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-bold">⚠️ @username</span> สามารถกดปุ่ม <span class="px-1.5 py-0.2 bg-indigo-600 text-white rounded font-bold text-[10px]">➕ ใส่ ID</span> เพื่อใส่เลข ID ได้ทันทีครับ
                         </p>
+                    </div>
+                </div>
+
+                <!-- Cycle & Announcement Schedule Configuration (Admin / Guild Leader Only) -->
+                <div class="border border-indigo-100 bg-gradient-to-br from-indigo-50/60 to-purple-50/60 rounded-2xl p-3.5 shadow-2xs">
+                    <div class="flex items-center justify-between gap-2 cursor-pointer select-none" onclick="toggleScheduleSettings()">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">⚙️</span>
+                            <div>
+                                <span class="text-xs font-black text-indigo-950">ตั้งค่ารอบและการแจ้งเตือนอัตโนมัติ</span>
+                                <span class="text-[10px] text-indigo-600 font-bold bg-indigo-100/80 px-1.5 py-0.2 rounded-md ml-1">Admin / ผู้นำกิลด์</span>
+                            </div>
+                        </div>
+                        <button type="button" id="btnToggleSettings" class="text-xs font-bold text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 px-2.5 py-1 rounded-xl transition cursor-pointer flex items-center gap-1">
+                            <span id="toggleSettingsText">แก้ไขการตั้งค่า</span> <span id="toggleSettingsIcon">▼</span>
+                        </button>
+                    </div>
+
+                    <div id="scheduleSettingsForm" class="hidden mt-3 pt-3 border-t border-indigo-100/80 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-bold text-indigo-900 mb-1">
+                                    🚀 วันเริ่มต้นรอบแรก (Start Date)
+                                </label>
+                                <input type="date" id="inputSettingStartDate" class="w-full bg-white border border-indigo-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-purple-500 shadow-xs">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">วันแรกจะประกาศแจ้งเตือนทุกคน (@everyone)</span>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-indigo-900 mb-1">
+                                    🏁 วันสิ้นสุดรอบแรก (End Date)
+                                </label>
+                                <input type="date" id="inputSettingEndDate" class="w-full bg-white border border-indigo-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-purple-500 shadow-xs">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">วันสิ้นสุดของรอบประเมินสเตตัส</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div>
+                                <label class="block text-[11px] font-bold text-indigo-900 mb-1">
+                                    🔄 แจ้งเตือนอีกทีหลังจากนี้กี่วัน (ระยะห่างรอบ)
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="inputSettingCycleDays" min="1" max="90" value="14" oninput="autoCalculateEndDate()" class="w-full bg-white border border-indigo-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-purple-500 shadow-xs">
+                                    <span class="shrink-0 font-bold text-slate-600 text-xs">วัน</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">เช่น 14 วัน = ทุกๆ 2 สัปดาห์วนรอบใหม่</span>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-indigo-900 mb-1">
+                                    ⏰ เวลาแจ้งเตือนประจำวัน (Daily Time)
+                                </label>
+                                <input type="time" id="inputSettingReminderTime" value="12:00" class="w-full bg-white border border-indigo-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-purple-500 shadow-xs">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">ตามทวงคนยังไม่อัปเดตทุกวันตามเวลานี้จนถึงรอบถัดไป</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span id="settingSaveStatus" class="text-[11px] text-slate-500 font-medium"></span>
+                            <button type="button" onclick="saveScheduleSettings()" id="btnSaveSettings" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-xs shadow-sm transition cursor-pointer flex items-center gap-1.5">
+                                <span>💾</span> บันทึกการตั้งค่ารอบ
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1592,14 +1654,25 @@
         // ระบบประกาศแจ้งเตือน Discord (Discord Announcement)
         // ==========================================
         const DISCORD_WEBHOOK_DEFAULT = 'https://discord.com/api/webhooks/1545110304008962130/WKNATtFB6_4RD97nE1jEDrlmzEHciGIYHGahGxtApIb9iMBl5gXJ8ZVGNc8_gS6NqThm';
-        const ANCHOR_DATE_MS = new Date('2026-09-06T00:00:00+07:00').getTime();
+        let currentDiscordSettings = {
+            startDate: '2026-09-06',
+            endDate: '2026-09-19',
+            cycleDays: 14,
+            reminderTime: '12:00'
+        };
         let currentDiscordUnupdated = [];
 
-        function getClientCycleInfo(dateObj = new Date()) {
+        // ฟังก์ชันคำนวณข้อมูลรอบแบบ Dynamic ตามการตั้งค่า
+        function getClientCycleInfo(dateObj = new Date(), customSettings = null) {
+            const settings = customSettings || currentDiscordSettings;
             const bkkStr = dateObj.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
             const bkkNow = new Date(bkkStr);
-            const anchor = new Date(ANCHOR_DATE_MS);
+
+            const startDatePart = (settings.startDate || '2026-09-06').split('T')[0];
+            const anchor = new Date(`${startDatePart}T00:00:00+07:00`);
             const bkkAnchor = new Date(anchor.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
+
+            const cycleDays = Math.max(1, parseInt(settings.cycleDays) || 14);
 
             const midnightNow = new Date(bkkNow.getFullYear(), bkkNow.getMonth(), bkkNow.getDate());
             const midnightAnchor = new Date(bkkAnchor.getFullYear(), bkkAnchor.getMonth(), bkkAnchor.getDate());
@@ -1614,13 +1687,13 @@
                 cycleNumber = 1;
                 dayInCycle = diffDays;
                 cycleStartDate = new Date(midnightAnchor);
-                cycleEndDate = new Date(midnightAnchor.getTime() + (13 * 24 * 60 * 60 * 1000));
+                cycleEndDate = new Date(midnightAnchor.getTime() + ((cycleDays - 1) * 24 * 60 * 60 * 1000));
             } else {
-                cycleNumber = Math.floor(diffDays / 14) + 1;
-                dayInCycle = diffDays % 14;
-                const startMs = midnightAnchor.getTime() + ((cycleNumber - 1) * 14 * 24 * 60 * 60 * 1000);
+                cycleNumber = Math.floor(diffDays / cycleDays) + 1;
+                dayInCycle = diffDays % cycleDays;
+                const startMs = midnightAnchor.getTime() + ((cycleNumber - 1) * cycleDays * 24 * 60 * 60 * 1000);
                 cycleStartDate = new Date(startMs);
-                cycleEndDate = new Date(startMs + (13 * 24 * 60 * 60 * 1000));
+                cycleEndDate = new Date(startMs + ((cycleDays - 1) * 24 * 60 * 60 * 1000));
             }
 
             const startStr = `${cycleStartDate.getDate().toString().padStart(2, '0')}/${(cycleStartDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleStartDate.getFullYear()}`;
@@ -1628,22 +1701,159 @@
 
             let scheduleText = 'กำลังอยู่ในรอบ';
             if (dayInCycle === 0) {
-                scheduleText = '📢 วันอาทิตย์: ส่งประกาศเตือนทุกคน (@everyone)';
-            } else if (dayInCycle >= 1 && dayInCycle <= 13) {
-                scheduleText = `⚠️ วันที่ ${dayInCycle + 1}/14: ทวงรายชื่อคนยังไม่อัปเดต`;
+                scheduleText = `📢 วันเริ่มต้นรอบ: ส่งประกาศเตือนทุกคน (@everyone)`;
+            } else if (dayInCycle >= 1 && dayInCycle < cycleDays) {
+                scheduleText = `⚠️ วันที่ ${dayInCycle + 1}/${cycleDays}: ทวงเฉพาะคนยังไม่อัปเดต (${settings.reminderTime || '12:00'} น.)`;
             } else {
-                scheduleText = `⏳ อีก ${Math.abs(diffDays)} วัน ถึงรอบแรก (06/09/2026)`;
+                scheduleText = `⏳ อีก ${Math.abs(diffDays)} วัน ถึงรอบแรก (${startStr})`;
             }
 
             return {
                 cycleNumber,
                 dayInCycle,
+                cycleDays,
                 cycleStartDate,
                 cycleEndDate,
                 startStr,
                 endStr,
-                scheduleText
+                scheduleText,
+                isStartDay: (dayInCycle === 0),
+                isReminderPeriod: (dayInCycle >= 1 && dayInCycle < cycleDays)
             };
+        }
+
+        // ฟังการตั้งค่าการแจ้งเตือนจาก Firebase RTDB แบบ Real-time
+        db.ref('config/discordAnnouncementSettings').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (val && typeof val === 'object') {
+                currentDiscordSettings = {
+                    startDate: val.startDate || '2026-09-06',
+                    endDate: val.endDate || '2026-09-19',
+                    cycleDays: Math.max(1, parseInt(val.cycleDays) || 14),
+                    reminderTime: val.reminderTime || '12:00',
+                    updatedAt: val.updatedAt || null,
+                    updatedBy: val.updatedBy || null
+                };
+
+                // ถ้า Modal กำลังเปิดอยู่ ให้โหลดข้อมูลใหม่
+                const modal = document.getElementById('discordAnnounceModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    loadDiscordAnnounceData();
+                }
+            }
+        });
+
+        // ควบคุมกล่องตั้งค่ารอบ
+        function toggleScheduleSettings() {
+            const form = document.getElementById('scheduleSettingsForm');
+            const icon = document.getElementById('toggleSettingsIcon');
+            const text = document.getElementById('toggleSettingsText');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                icon.innerText = '▲';
+                text.innerText = 'ซ่อนการตั้งค่า';
+                populateScheduleSettingsForm();
+            } else {
+                form.classList.add('hidden');
+                icon.innerText = '▼';
+                text.innerText = 'แก้ไขการตั้งค่า';
+            }
+        }
+
+        function populateScheduleSettingsForm() {
+            const startInput = document.getElementById('inputSettingStartDate');
+            const endInput = document.getElementById('inputSettingEndDate');
+            const daysInput = document.getElementById('inputSettingCycleDays');
+            const timeInput = document.getElementById('inputSettingReminderTime');
+
+            if (startInput) startInput.value = currentDiscordSettings.startDate || '2026-09-06';
+            if (daysInput) daysInput.value = currentDiscordSettings.cycleDays || 14;
+            if (timeInput) timeInput.value = currentDiscordSettings.reminderTime || '12:00';
+            if (endInput) endInput.value = currentDiscordSettings.endDate || '2026-09-19';
+        }
+
+        function autoCalculateEndDate() {
+            const startInput = document.getElementById('inputSettingStartDate');
+            const endInput = document.getElementById('inputSettingEndDate');
+            const daysInput = document.getElementById('inputSettingCycleDays');
+
+            const sVal = startInput?.value;
+            const days = parseInt(daysInput?.value) || 14;
+
+            if (sVal) {
+                const sDate = new Date(`${sVal}T00:00:00`);
+                if (!isNaN(sDate.getTime())) {
+                    const eDate = new Date(sDate.getTime() + ((days - 1) * 24 * 60 * 60 * 1000));
+                    const y = eDate.getFullYear();
+                    const m = (eDate.getMonth() + 1).toString().padStart(2, '0');
+                    const d = eDate.getDate().toString().padStart(2, '0');
+                    if (endInput) endInput.value = `${y}-${m}-${d}`;
+                }
+            }
+        }
+
+        async function saveScheduleSettings() {
+            if (!canManageWhitelist()) {
+                alert('⚠️ เฉพาะ Admin หรือหัวหน้ากิลด์เท่านั้นที่สามารถแก้ไขการตั้งค่าได้');
+                return;
+            }
+
+            const startDate = document.getElementById('inputSettingStartDate')?.value;
+            const endDate = document.getElementById('inputSettingEndDate')?.value;
+            const cycleDays = parseInt(document.getElementById('inputSettingCycleDays')?.value) || 14;
+            const reminderTime = document.getElementById('inputSettingReminderTime')?.value || '12:00';
+            const statusEl = document.getElementById('settingSaveStatus');
+            const btnSave = document.getElementById('btnSaveSettings');
+
+            if (!startDate) {
+                alert('⚠️ กรุณาระบุวันเริ่มต้นรอบ');
+                return;
+            }
+
+            btnSave.disabled = true;
+            statusEl.innerText = 'กำลังบันทึกการตั้งค่า...';
+
+            const payload = {
+                startDate,
+                endDate: endDate || '',
+                cycleDays,
+                reminderTime,
+                updatedAt: Date.now(),
+                updatedBy: currentUserDiscord || 'admin'
+            };
+
+            try {
+                // บันทึกตรงลง Firebase RTDB
+                await db.ref('config/discordAnnouncementSettings').set(payload);
+
+                // หากมี Token ให้ยิงแจ้ง Server API ด้วยเพื่อให้อัปเดต Cache ของ Background Scheduler
+                if (activeToken) {
+                    fetch('/api/discord/settings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: activeToken,
+                            ...payload
+                        })
+                    }).catch(e => console.warn('Server settings update sync warning:', e));
+                }
+
+                currentDiscordSettings = payload;
+                statusEl.innerText = '✅ บันทึกการตั้งค่าสำเร็จแล้ว';
+                statusEl.className = 'text-[11px] text-emerald-600 font-bold';
+                setTimeout(() => {
+                    statusEl.innerText = '';
+                }, 3500);
+
+                // โหลดการแสดงผลใหม่
+                loadDiscordAnnounceData();
+            } catch (err) {
+                console.error('Save schedule settings error:', err);
+                statusEl.innerText = '❌ เกิดข้อผิดพลาด: ' + err.message;
+                statusEl.className = 'text-[11px] text-rose-600 font-bold';
+            } finally {
+                btnSave.disabled = false;
+            }
         }
 
         function parseThaiMemberDate(dateStr) {
@@ -1678,6 +1888,12 @@
 
         async function loadDiscordAnnounceData() {
             const cycle = getClientCycleInfo();
+            const subTitleEl = document.getElementById('discordModalSubtitle');
+            if (subTitleEl) {
+                subTitleEl.innerText = `รอบละ ${cycle.cycleDays} วัน (เริ่ม ${cycle.startStr}) • แจ้งเตือนอัตโนมัติทุกวันตอน ${currentDiscordSettings.reminderTime || '12:00'} น.`;
+            }
+            populateScheduleSettingsForm();
+
             document.getElementById('discordCycleDates').innerText = `${cycle.startStr} - ${cycle.endStr} (รอบที่ ${cycle.cycleNumber})`;
             document.getElementById('discordTodaySchedule').innerText = cycle.scheduleText;
 
@@ -1933,7 +2149,7 @@
                                     ...fields,
                                     { name: "🔗 ช่องทางอัปเดต", value: "[คลิกเข้าสู่ระบบเว็บกิลด์เพื่ออัปเดต](https://roocguild.xyz/dashboard.html)", inline: false }
                                 ],
-                                footer: { text: `รอบวันที่ ${cycle.startStr} - ${cycle.endStr} • เตือนประจำวันเวลา 12:00 น.` },
+                                footer: { text: `รอบวันที่ ${cycle.startStr} - ${cycle.endStr} • เตือนประจำวันเวลา ${currentDiscordSettings.reminderTime || '12:00'} น.` },
                                 timestamp: new Date().toISOString()
                             }]
                         };

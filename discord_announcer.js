@@ -12,7 +12,64 @@ const { URL } = require('url');
 
 const DEFAULT_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || 'https://discord.com/api/webhooks/1545110304008962130/WKNATtFB6_4RD97nE1jEDrlmzEHciGIYHGahGxtApIb9iMBl5gXJ8ZVGNc8_gS6NqThm';
 const FIREBASE_RTDB_URL = 'https://rooc-guild-default-rtdb.asia-southeast1.firebasedatabase.app';
-const ANCHOR_DATE_STR = '2026-09-06T00:00:00+07:00'; // อาทิตย์ที่ 6 ก.ย. 2026
+const DEFAULT_ANCHOR_DATE_STR = '2026-09-06';
+const DEFAULT_CYCLE_DAYS = 14;
+const DEFAULT_REMINDER_TIME = '12:00';
+
+// Cache การตั้งค่าในหน่วยความจำชั่วคราว
+let cachedSettings = null;
+let lastSettingsFetchTime = 0;
+
+// ดึงการตั้งค่ารอบจาก Firebase RTDB (/config/discordAnnouncementSettings)
+async function getAnnouncementSettings(forceRefresh = false) {
+    const now = Date.now();
+    if (!forceRefresh && cachedSettings && (now - lastSettingsFetchTime < 30 * 1000)) {
+        return cachedSettings;
+    }
+
+    try {
+        const data = await makeRequest(`${FIREBASE_RTDB_URL}/config/discordAnnouncementSettings.json`);
+        if (data && typeof data === 'object') {
+            const startDate = data.startDate || DEFAULT_ANCHOR_DATE_STR;
+            const cycleDays = Math.max(1, parseInt(data.cycleDays) || DEFAULT_CYCLE_DAYS);
+            const reminderTime = data.reminderTime || DEFAULT_REMINDER_TIME;
+            
+            // คำนวณ endDate หากไม่ได้ระบุ หรือตาม cycleDays
+            let endDate = data.endDate;
+            if (!endDate) {
+                const sDate = new Date(`${startDate}T00:00:00+07:00`);
+                if (!isNaN(sDate.getTime())) {
+                    const eDate = new Date(sDate.getTime() + ((cycleDays - 1) * 24 * 60 * 60 * 1000));
+                    endDate = `${eDate.getFullYear()}-${(eDate.getMonth() + 1).toString().padStart(2, '0')}-${eDate.getDate().toString().padStart(2, '0')}`;
+                }
+            }
+
+            cachedSettings = {
+                startDate,
+                endDate,
+                cycleDays,
+                reminderTime,
+                updatedAt: data.updatedAt || null,
+                updatedBy: data.updatedBy || null
+            };
+            lastSettingsFetchTime = now;
+            return cachedSettings;
+        }
+    } catch (err) {
+        console.warn('⚠️ ไม่สามารถโหลด discordAnnouncementSettings จาก Firebase ได้:', err.message);
+    }
+
+    cachedSettings = {
+        startDate: DEFAULT_ANCHOR_DATE_STR,
+        endDate: '2026-09-19',
+        cycleDays: DEFAULT_CYCLE_DAYS,
+        reminderTime: DEFAULT_REMINDER_TIME,
+        updatedAt: null,
+        updatedBy: 'system'
+    };
+    lastSettingsFetchTime = now;
+    return cachedSettings;
+}
 
 // Helper ดึงเวลา ณ ปัจจุบันในเขตเวลาประเทศไทย (Asia/Bangkok)
 function getBangkokDate(dateObj = new Date()) {
@@ -20,11 +77,21 @@ function getBangkokDate(dateObj = new Date()) {
     return new Date(bkkStr);
 }
 
-// คำนวณข้อมูลรอบ 2 สัปดาห์ (Bi-weekly Cycle)
-function getCycleInfo(targetDate = new Date()) {
+// คำนวณข้อมูลรอบ (Dynamic Cycle Calculation)
+function getCycleInfo(targetDate = new Date(), customSettings = null) {
+    const settings = customSettings || cachedSettings || {
+        startDate: DEFAULT_ANCHOR_DATE_STR,
+        endDate: '2026-09-19',
+        cycleDays: DEFAULT_CYCLE_DAYS,
+        reminderTime: DEFAULT_REMINDER_TIME
+    };
+
     const bkkNow = getBangkokDate(targetDate);
-    const anchor = new Date(ANCHOR_DATE_STR);
+    const anchorDatePart = (settings.startDate || DEFAULT_ANCHOR_DATE_STR).split('T')[0];
+    const anchor = new Date(`${anchorDatePart}T00:00:00+07:00`);
     const bkkAnchor = getBangkokDate(anchor);
+
+    const cycleDays = Math.max(1, parseInt(settings.cycleDays) || DEFAULT_CYCLE_DAYS);
 
     // ปรับเวลาให้เป็น 00:00:00 เพื่อคำนวณจำนวนวัน
     const midnightNow = new Date(bkkNow.getFullYear(), bkkNow.getMonth(), bkkNow.getDate());
@@ -34,37 +101,47 @@ function getCycleInfo(targetDate = new Date()) {
     const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
 
     let cycleNumber = 1;
-    let dayInCycle = 0; // 0 = วันอาทิตย์ต้นรอบ, 1 = จันทร์, ..., 13 = เสาร์ปลายรอบ
+    let dayInCycle = 0; // 0 = วันแรกของรอบ (ประกาศรวม @everyone), 1 ถึง cycleDays - 1 = วันทวงตามรายชื่อ
     let cycleStartDate;
     let cycleEndDate;
 
     if (diffDays < 0) {
-        // ยังไม่ถึงรอบแรก (ก่อน 6 ก.ย. 2026)
+        // ยังไม่ถึงรอบแรก
         cycleNumber = 1;
         dayInCycle = diffDays;
         cycleStartDate = new Date(midnightAnchor);
-        cycleEndDate = new Date(midnightAnchor.getTime() + (13 * 24 * 60 * 60 * 1000));
+        cycleEndDate = new Date(midnightAnchor.getTime() + ((cycleDays - 1) * 24 * 60 * 60 * 1000));
     } else {
-        cycleNumber = Math.floor(diffDays / 14) + 1;
-        dayInCycle = diffDays % 14;
-        const startMs = midnightAnchor.getTime() + ((cycleNumber - 1) * 14 * 24 * 60 * 60 * 1000);
+        cycleNumber = Math.floor(diffDays / cycleDays) + 1;
+        dayInCycle = diffDays % cycleDays;
+        const startMs = midnightAnchor.getTime() + ((cycleNumber - 1) * cycleDays * 24 * 60 * 60 * 1000);
         cycleStartDate = new Date(startMs);
-        cycleEndDate = new Date(startMs + (13 * 24 * 60 * 60 * 1000));
+        cycleEndDate = new Date(startMs + ((cycleDays - 1) * 24 * 60 * 60 * 1000));
     }
 
-    const isSundayStart = (dayInCycle === 0);
-    const isReminderPeriod = (dayInCycle >= 1 && dayInCycle <= 13);
+    // วันแรกของรอบ: ประกาศแจ้งเตือนทุกคน (@everyone)
+    const isStartDay = (dayInCycle === 0);
+    // วันถัดๆ ไปในรอบจนถึงวันก่อนเริ่มรอบใหม่: ตามทวงเฉพาะคนที่ยังไม่อัปเดตทุกวัน
+    const isReminderPeriod = (dayInCycle >= 1 && dayInCycle < cycleDays);
+
+    const startStr = `${cycleStartDate.getDate().toString().padStart(2, '0')}/${(cycleStartDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleStartDate.getFullYear()}`;
+    const endStr = `${cycleEndDate.getDate().toString().padStart(2, '0')}/${(cycleEndDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleEndDate.getFullYear()}`;
 
     return {
         now: bkkNow,
+        settings,
+        cycleDays,
         cycleNumber,
         dayInCycle,
         cycleStartDate,
         cycleEndDate,
-        isSundayStart,
+        isSundayStart: isStartDay, // เข้ากันได้กับโค้ดเดิม
+        isStartDay,
         isReminderPeriod,
-        cycleStartDateStr: `${cycleStartDate.getDate().toString().padStart(2, '0')}/${(cycleStartDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleStartDate.getFullYear()}`,
-        cycleEndDateStr: `${cycleEndDate.getDate().toString().padStart(2, '0')}/${(cycleEndDate.getMonth() + 1).toString().padStart(2, '0')}/${cycleEndDate.getFullYear()}`
+        cycleStartDateStr: startStr,
+        cycleEndDateStr: endStr,
+        startStr,
+        endStr
     };
 }
 
@@ -132,8 +209,9 @@ async function makeRequest(url, options = {}) {
 }
 
 // ดึงข้อมูลสมาชิกและกรองคนที่ยังไม่ได้อัปเดตสเตตัสในรอบปัจจุบัน
-async function getMembersUpdateStatus(targetDate = new Date()) {
-    const cycle = getCycleInfo(targetDate);
+async function getMembersUpdateStatus(targetDate = new Date(), customSettings = null) {
+    const settings = customSettings || await getAnnouncementSettings();
+    const cycle = getCycleInfo(targetDate, settings);
     const membersData = await makeRequest(`${FIREBASE_RTDB_URL}/members.json`);
     const whitelistData = await makeRequest(`${FIREBASE_RTDB_URL}/whitelist.json`).catch(() => ({}));
 
@@ -211,12 +289,13 @@ async function postToDiscordWebhook(payload, webhookUrl = DEFAULT_WEBHOOK_URL) {
     });
 }
 
-// 1. ส่งประกาศวันอาทิตย์: แจ้งเตือนทุกคน (@everyone)
-async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
-    const cycle = getCycleInfo();
+// 1. ส่งประกาศวันเริ่มต้นรอบ: แจ้งเตือนทุกคน (@everyone)
+async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL, customSettings = null) {
+    const settings = customSettings || await getAnnouncementSettings();
+    const cycle = getCycleInfo(new Date(), settings);
 
     const payload = {
-        content: "@everyone 📢 **[ROOC GUILD ANNOUNCEMENT] แจ้งเตือนอัปเดตสเตตัสประจำรอบ 2 สัปดาห์!**",
+        content: `@everyone 📢 **[ROOC GUILD ANNOUNCEMENT] แจ้งเตือนอัปเดตสเตตัสประจำรอบ (${cycle.cycleStartDateStr} - ${cycle.cycleEndDateStr})!**`,
         allowed_mentions: {
             parse: ['everyone', 'users', 'roles']
         },
@@ -228,12 +307,12 @@ async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
                 fields: [
                     {
                         name: "📅 รอบประจำวันที่",
-                        value: `${cycle.cycleStartDateStr} ถึง ${cycle.cycleEndDateStr}`,
+                        value: `${cycle.cycleStartDateStr} ถึง ${cycle.cycleEndDateStr} (${cycle.cycleDays} วัน)`,
                         inline: true
                     },
                     {
-                        name: "⏰ กำหนดส่ง",
-                        value: "ก่อนเที่ยงวันจันทร์ (หากยังไม่อัปเดตจะแจ้งเตือนทวงรายชื่อ)",
+                        name: "⏰ กำหนดส่ง / การแจ้งเตือน",
+                        value: `แจ้งเตือนทวงรายชื่อทุกวันเวลา ${settings.reminderTime || '12:00'} น. จนกว่าจะอัปเดตครบ`,
                         inline: true
                     },
                     {
@@ -252,13 +331,14 @@ async function sendSundayAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
     };
 
     const result = await postToDiscordWebhook(payload, webhookUrl);
-    await recordLastSent('SUNDAY_ANNOUNCEMENT');
-    return { success: true, type: 'SUNDAY_ANNOUNCEMENT', result };
+    await recordLastSent('START_CYCLE_ANNOUNCEMENT');
+    return { success: true, type: 'START_CYCLE_ANNOUNCEMENT', result };
 }
 
-// 2. ส่งประกาศประจำวันตอนเที่ยงวัน: รายชื่อคนที่ยังไม่อัปเดต พร้อม @ดิสคอร์ด
-async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
-    const statusData = await getMembersUpdateStatus();
+// 2. ส่งประกาศประจำวันตามเวลาที่ตั้งไว้: รายชื่อคนที่ยังไม่อัปเดต พร้อม @ดิสคอร์ด
+async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL, customSettings = null) {
+    const settings = customSettings || await getAnnouncementSettings();
+    const statusData = await getMembersUpdateStatus(new Date(), settings);
     const { cycle, totalMembers, updatedCount, unupdatedMembers } = statusData;
 
     if (unupdatedMembers.length === 0) {
@@ -324,7 +404,7 @@ async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
                     }
                 ],
                 footer: {
-                    text: `รอบวันที่ ${cycle.cycleStartDateStr} - ${cycle.cycleEndDateStr} • เตือนประจำวันเวลา 12:00 น.`,
+                    text: `รอบประจำวันที่ ${cycle.cycleStartDateStr} - ${cycle.cycleEndDateStr} • เตือนประจำวันเวลา ${settings.reminderTime || '12:00'} น.`,
                     icon_url: "https://raw.githubusercontent.com/daffodil2693/ROOCguild/main/images/classes/high-priest.webp"
                 },
                 timestamp: new Date().toISOString()
@@ -372,31 +452,40 @@ async function hasSentToday() {
 }
 
 // ฟังก์ชันตรวจสอบและรันประกาศอัตโนมัติ (Scheduler Check)
-// เรียกทำงานทุกๆ 1 นาที: ถ้าเป็นเวลา 12:00 น. ในประเทศไทย และวันนี้ยังไม่ได้ส่ง -> ส่งประกาศ
+// เรียกทำงานทุกๆ 1 นาที: ถ้าตรงกับเวลาที่ตั้งค่าไว้ และวันนี้ยังไม่ได้ส่ง -> ส่งประกาศ
 async function checkAndTriggerScheduler() {
+    const settings = await getAnnouncementSettings();
     const bkkNow = getBangkokDate();
     const hours = bkkNow.getHours();
     const minutes = bkkNow.getMinutes();
 
-    // ทำงานเมื่อถึงเวลา 12:00 ถึง 12:05 น.
-    if (hours === 12 && minutes >= 0 && minutes <= 5) {
+    // ดึงเวลาที่ตั้งไว้ เช่น "12:00"
+    const [targetHourStr, targetMinStr] = (settings.reminderTime || '12:00').split(':');
+    const targetHour = parseInt(targetHourStr) || 12;
+    const targetMin = parseInt(targetMinStr) || 0;
+
+    // ทำงานเมื่อถึงเวลา targetHour:targetMin ถึง +5 นาที
+    const isTargetHour = (hours === targetHour);
+    const isTargetMin = (minutes >= targetMin && minutes <= targetMin + 5);
+
+    if (isTargetHour && isTargetMin) {
         const alreadySent = await hasSentToday();
         if (alreadySent) {
             return;
         }
 
-        const cycle = getCycleInfo(bkkNow);
+        const cycle = getCycleInfo(bkkNow, settings);
 
-        console.log(`[Discord Scheduler] ตรวจพบเวลา 12:00 น. (รอบที่ ${cycle.cycleNumber}, วันในรอบที่ ${cycle.dayInCycle}) กำลังส่งประกาศ...`);
+        console.log(`[Discord Scheduler] ตรวจพบเวลา ${settings.reminderTime || '12:00'} น. (รอบที่ ${cycle.cycleNumber}, วันในรอบที่ ${cycle.dayInCycle}) กำลังส่งประกาศ...`);
 
-        if (cycle.isSundayStart) {
-            // วันอาทิตย์ต้นรอบ -> ประกาศ @everyone
-            console.log("[Discord Scheduler] ส่งประกาศวันอาทิตย์ (@everyone)...");
-            await sendSundayAnnouncement();
+        if (cycle.isStartDay) {
+            // วันเริ่มต้นรอบ -> ประกาศ @everyone
+            console.log("[Discord Scheduler] ส่งประกาศเริ่มต้นรอบ (@everyone)...");
+            await sendSundayAnnouncement(DEFAULT_WEBHOOK_URL, settings);
         } else if (cycle.isReminderPeriod) {
-            // วันจันทร์ - เสาร์ -> ประกาศทวงรายชื่อคนที่ยังไม่อัปเดต
+            // วันถัดๆ ไป -> ประกาศทวงรายชื่อคนที่ยังไม่อัปเดต
             console.log("[Discord Scheduler] ส่งประกาศประจำวันทวงรายชื่อคนยังไม่อัปเดต...");
-            await sendDailyReminderAnnouncement();
+            await sendDailyReminderAnnouncement(DEFAULT_WEBHOOK_URL, settings);
         }
     }
 }
@@ -424,7 +513,11 @@ function stopScheduler() {
 
 module.exports = {
     DEFAULT_WEBHOOK_URL,
+    DEFAULT_ANCHOR_DATE_STR,
+    DEFAULT_CYCLE_DAYS,
+    DEFAULT_REMINDER_TIME,
     getBangkokDate,
+    getAnnouncementSettings,
     getCycleInfo,
     parseMemberDate,
     getMembersUpdateStatus,
