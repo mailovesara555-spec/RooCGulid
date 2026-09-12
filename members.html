@@ -1709,7 +1709,8 @@
                         role: m.role || 'สมาชิกกิลด์',
                         discordUsername: discordUser,
                         discordId: discordId,
-                        lastUpdate: m.lastUpdate || 'ยังไม่เคยอัปเดต'
+                        lastUpdate: m.lastUpdate || 'ยังไม่เคยอัปเดต',
+                        hasStats: !!hasStats
                     });
                 }
             });
@@ -1768,7 +1769,7 @@
                                     ${idActionBtn}
                                 </div>
                                 <div class="text-[10px] text-slate-500 mt-0.5">
-                                    ตำแหน่ง: ${m.role} • อัปเดตล่าสุด: <span class="font-medium text-rose-600">${m.lastUpdate}</span>
+                                    ตำแหน่ง: ${m.role} • ${!m.hasStats ? '<span class="font-bold text-amber-600">❌ ยังไม่มีข้อมูลสเตตัสในระบบ</span>' : `อัปเดตล่าสุด: <span class="font-medium text-rose-600">${m.lastUpdate}</span>`}
                                 </div>
                             </div>
                         </div>
@@ -1898,7 +1899,15 @@
                         const mentions = currentDiscordUnupdated.map(m => m.discordId ? `<@${m.discordId}>` : `@${m.discordUsername}`).join(' ');
                         const memberLines = currentDiscordUnupdated.map((m, idx) => {
                             const tag = m.discordId ? `<@${m.discordId}>` : `@${m.discordUsername}`;
-                            return `\`${(idx + 1).toString().padStart(2, '0')}.\` **${m.name}** (${m.charClass}) • ${tag}\n└ *อัปเดตล่าสุด: ${m.lastUpdate}*`;
+                            let noteText = '';
+                            if (!m.hasStats) {
+                                noteText = (m.lastUpdate && m.lastUpdate !== 'ยังไม่เคยอัปเดต')
+                                    ? `❌ ยังไม่มีข้อมูลสเตตัสในระบบ (บันทึกเฉพาะโปรไฟล์: ${m.lastUpdate})`
+                                    : `❌ ยังไม่เคยกรอกสเตตัสในระบบ`;
+                            } else {
+                                noteText = `อัปเดตล่าสุด: ${m.lastUpdate}`;
+                            }
+                            return `\`${(idx + 1).toString().padStart(2, '0')}.\` **${m.name}** (${m.charClass}) • ${tag}\n└ *${noteText}*`;
                         });
 
                         const fields = [];

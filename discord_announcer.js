@@ -182,7 +182,8 @@ async function getMembersUpdateStatus(targetDate = new Date()) {
                 role: m.role || 'สมาชิกกิลด์',
                 discordUsername: discordUsername || 'ไม่ระบุ',
                 discordId: discordId,
-                lastUpdate: m.lastUpdate || 'ยังไม่เคยอัปเดต'
+                lastUpdate: m.lastUpdate || 'ยังไม่เคยอัปเดต',
+                hasStats: !!hasStats
             });
         }
     }
@@ -281,7 +282,15 @@ async function sendDailyReminderAnnouncement(webhookUrl = DEFAULT_WEBHOOK_URL) {
     // แบ่งรายการสมาชิกเป็นกลุ่มไม่เกิน 20 คนต่อ Field หรือ Embed
     const memberLines = unupdatedMembers.map((m, idx) => {
         const tag = m.discordId ? `<@${m.discordId}>` : (m.discordUsername ? `@${m.discordUsername}` : '-');
-        return `\`${(idx + 1).toString().padStart(2, '0')}.\` **${m.name}** (${m.charClass}) • ${tag}\n└ *อัปเดตล่าสุด: ${m.lastUpdate}*`;
+        let noteText = '';
+        if (!m.hasStats) {
+            noteText = (m.lastUpdate && m.lastUpdate !== 'ยังไม่เคยอัปเดต')
+                ? `❌ ยังไม่มีข้อมูลสเตตัสในระบบ (บันทึกเฉพาะโปรไฟล์: ${m.lastUpdate})`
+                : `❌ ยังไม่เคยกรอกสเตตัสในระบบ`;
+        } else {
+            noteText = `อัปเดตล่าสุด: ${m.lastUpdate}`;
+        }
+        return `\`${(idx + 1).toString().padStart(2, '0')}.\` **${m.name}** (${m.charClass}) • ${tag}\n└ *${noteText}*`;
     });
 
     // แบ่งเป็น Embed Fields

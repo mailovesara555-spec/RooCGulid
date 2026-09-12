@@ -1005,7 +1005,7 @@
                 return db.ref('members/' + safeKey).update(payload);
             }).then(() => {
                 const charTypeStr = (activeCharIndex === 1) ? 'ตัวละครหลัก (ตัวที่ 1)' : 'ตัวละครรอง (ตัวที่ 2)';
-                alert(`💾 บันทึกข้อมูล ${charTypeStr} เรียบร้อยแล้ว!`);
+                alert(`💾 บันทึกข้อมูล ${charTypeStr} เรียบร้อยแล้ว!\n\n⚠️ หมายเหตุ: อย่าลืมเลื่อนลงไปกรอกสเตตัสและกดปุ่ม "💾 บันทึกค่าสเตตัส" ด้านล่างด้วยนะครับ เพื่อไม่ให้ติดแจ้งเตือนสมาชิกที่ยังไม่ได้อัปเดตสเตตัส`);
                 const charSuffix = (activeCharIndex === 1) ? '' : ' [ตัวที่ 2]';
                 const roleDisplay = (activeCharIndex === 2) ? 'สมาชิกกิลด์' : currentUserRole;
                 document.getElementById('navUsername').innerText = `${name}${charSuffix} (${currentUser}) [${roleDisplay}]`;
